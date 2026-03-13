@@ -4,7 +4,7 @@ import { createAdminClient } from '@/lib/supabase/server'
 import { attachSessionCookie } from '@/lib/auth/session'
 import { generateTwoFactorCode, getTwoFactorExpiryIso, hashTwoFactorCode } from '@/lib/auth/two-factor'
 import { buildTwoFactorCodeEmail } from '@/lib/email/templates'
-import { sendTransactionalEmail } from '@/lib/email/send'
+import { EmailSendError, sendTransactionalEmail } from '@/lib/email/send'
 
 export async function POST(request: NextRequest) {
   try {
@@ -83,8 +83,31 @@ export async function POST(request: NextRequest) {
           .update({ used: true })
           .eq('id', twoFactorRecord.id)
 
-        console.error('2FA email error:', emailError)
-        return NextResponse.json({ error: 'Nepodařilo se odeslat ověřovací kód na email.' }, { status: 502 })
+        const fromAddress = process.env.EMAIL_FROM || 'TeamPulse <onboarding@resend.dev>'
+        const isProd = process.env.NODE_ENV === 'production'
+
+        const debugDetails = emailError instanceof EmailSendError
+          ? emailError.details
+          : emailError instanceof Error
+            ? emailError.message
+            : String(emailError)
+
+        console.error('2FA email error:', {
+          message: emailError instanceof Error ? emailError.message : String(emailError),
+          details: debugDetails,
+          envHint: {
+            hasResendKey: Boolean(process.env.RESEND_API_KEY),
+            emailFrom: fromAddress,
+          },
+        })
+
+        return NextResponse.json(
+          {
+            error: 'Nepodařilo se odeslat ověřovací kód na email.',
+            debug: isProd ? undefined : debugDetails,
+          },
+          { status: 502 }
+        )
       }
 
       return NextResponse.json({

@@ -11,6 +11,16 @@ type SendTransactionalEmailInput = {
 
 let resendClient: Resend | null = null
 
+export class EmailSendError extends Error {
+  details?: string
+
+  constructor(message: string, details?: string) {
+    super(message)
+    this.name = 'EmailSendError'
+    this.details = details
+  }
+}
+
 function getResendClient() {
   if (!process.env.RESEND_API_KEY) {
     throw new Error('Missing RESEND_API_KEY environment variable')
@@ -30,9 +40,10 @@ export function isEmailSendingConfigured() {
 export async function sendTransactionalEmail(input: SendTransactionalEmailInput) {
   const resend = getResendClient()
   const recipients = Array.isArray(input.to) ? input.to : [input.to]
+  const from = getEmailFrom()
 
   const { error } = await resend.emails.send({
-    from: getEmailFrom(),
+    from,
     to: recipients,
     subject: input.subject,
     html: input.html,
@@ -41,6 +52,26 @@ export async function sendTransactionalEmail(input: SendTransactionalEmailInput)
   })
 
   if (error) {
-    throw new Error(error.message || 'Nepodařilo se odeslat email přes Resend.')
+    const raw = error as unknown as {
+      name?: string
+      statusCode?: number
+      message?: string
+      error?: string
+    }
+
+    const details = [
+      raw.name ? `name=${raw.name}` : null,
+      typeof raw.statusCode === 'number' ? `status=${raw.statusCode}` : null,
+      raw.error ? `error=${raw.error}` : null,
+      raw.message ? `message=${raw.message}` : null,
+      `from=${from}`,
+    ]
+      .filter(Boolean)
+      .join(' | ')
+
+    throw new EmailSendError(
+      raw.message || 'Nepodařilo se odeslat email přes Resend.',
+      details || 'No additional provider details.'
+    )
   }
 }
