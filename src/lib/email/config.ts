@@ -2,6 +2,35 @@ function trimTrailingSlash(value: string) {
   return value.replace(/\/$/, '')
 }
 
+function normalizeEmailFrom(value: string) {
+  const trimmed = value.trim().replace(/^"|"$/g, '')
+
+  if (!trimmed) {
+    return 'TeamPulse <onboarding@resend.dev>'
+  }
+
+  if (trimmed.includes('<') && trimmed.includes('>')) {
+    return trimmed
+  }
+
+  const simpleEmailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (simpleEmailPattern.test(trimmed)) {
+    return trimmed
+  }
+
+  const parts = trimmed.split(/\s+/)
+  const last = parts[parts.length - 1]
+
+  if (last && simpleEmailPattern.test(last) && parts.length > 1) {
+    const name = parts.slice(0, -1).join(' ').trim()
+    if (name) {
+      return `${name} <${last}>`
+    }
+  }
+
+  return trimmed
+}
+
 export function getAppBaseUrl() {
   const configured = process.env.NEXT_PUBLIC_APP_URL || process.env.APP_URL
 
@@ -17,7 +46,7 @@ export function getAppBaseUrl() {
 }
 
 export function getEmailFrom() {
-  return process.env.EMAIL_FROM || 'TeamPulse <onboarding@resend.dev>'
+  return normalizeEmailFrom(process.env.EMAIL_FROM || 'TeamPulse <onboarding@resend.dev>')
 }
 
 export function getSupportEmail() {
