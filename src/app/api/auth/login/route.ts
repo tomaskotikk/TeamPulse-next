@@ -84,7 +84,6 @@ export async function POST(request: NextRequest) {
           .eq('id', twoFactorRecord.id)
 
         const fromAddress = process.env.EMAIL_FROM || 'TeamPulse <onboarding@resend.dev>'
-        const isProd = process.env.NODE_ENV === 'production'
 
         const debugDetails = emailError instanceof EmailSendError
           ? emailError.details
@@ -104,7 +103,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json(
           {
             error: 'Nepodařilo se odeslat ověřovací kód na email.',
-            debug: isProd ? undefined : debugDetails,
+            debug: debugDetails,
           },
           { status: 502 }
         )

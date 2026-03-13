@@ -6,6 +6,7 @@ import Link from 'next/link'
 
 export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
+  const [debugInfo, setDebugInfo] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [show2FA, setShow2FA] = useState(false)
   const [userId, setUserId] = useState<number | null>(null)
@@ -15,6 +16,7 @@ export default function LoginPage() {
   async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setError(null)
+    setDebugInfo(null)
     setLoading(true)
 
     const form = e.currentTarget
@@ -32,6 +34,7 @@ export default function LoginPage() {
 
       if (!res.ok) {
         setError(data.error ?? 'Neplatný e-mail nebo heslo.')
+        setDebugInfo(typeof data.debug === 'string' ? data.debug : null)
       } else if (data.requires2FA) {
         setUserId(data.userId)
         setShow2FA(true)
@@ -48,6 +51,7 @@ export default function LoginPage() {
   async function handle2FA(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setError(null)
+    setDebugInfo(null)
     setLoading(true)
 
     const code = codeRefs.current.map((i) => i?.value ?? '').join('')
@@ -63,6 +67,7 @@ export default function LoginPage() {
 
       if (!res.ok) {
         setError(data.error ?? 'Neplatný kód.')
+        setDebugInfo(typeof data.debug === 'string' ? data.debug : null)
       } else {
         window.location.href = '/dashboard'
       }
@@ -96,7 +101,16 @@ export default function LoginPage() {
         <h1 className="login-title">Přihlášení</h1>
         <p className="login-subtitle">Přihlaste se do svého účtu TeamPulse</p>
 
-        {error && <div className="login-error">{error}</div>}
+        {error && (
+          <div className="login-error">
+            <div>{error}</div>
+            {debugInfo && (
+              <div style={{ marginTop: 8, fontSize: 12, opacity: 0.85, wordBreak: 'break-word' }}>
+                Debug: {debugInfo}
+              </div>
+            )}
+          </div>
+        )}
 
         <form className="login-form" onSubmit={handleLogin}>
           <div className="form-group">
@@ -156,7 +170,16 @@ export default function LoginPage() {
               Zadejte ho níže pro dokončení přihlášení.
             </div>
 
-            {error && <div className="login-error" style={{ marginBottom: 16 }}>{error}</div>}
+            {error && (
+              <div className="login-error" style={{ marginBottom: 16 }}>
+                <div>{error}</div>
+                {debugInfo && (
+                  <div style={{ marginTop: 8, fontSize: 12, opacity: 0.85, wordBreak: 'break-word' }}>
+                    Debug: {debugInfo}
+                  </div>
+                )}
+              </div>
+            )}
 
             <form onSubmit={handle2FA}>
               <div className="code-inputs">
