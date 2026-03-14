@@ -44,12 +44,14 @@ export default function ChatPage() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const membersRef = useRef<AppUser[]>([])
+  const userIdRef = useRef<number | null>(null)
   const supabaseClient = useRef(createClient())
 
   const isManager = user?.role === 'manažer'
 
-  // Keep membersRef in sync for use inside Realtime handler
+  // Keep refs in sync for use inside Realtime handler (closures don't re-read state)
   useEffect(() => { membersRef.current = members }, [members])
+  useEffect(() => { userIdRef.current = user?.id ?? null }, [user])
 
   useEffect(() => {
     let mounted = true
@@ -117,7 +119,10 @@ export default function ChatPage() {
             club_id: number
           }
           setMessages((prev) => {
-            // Skip if already present (own message replaced from optimistic)
+            // Skip own messages – they are already in state via optimistic update + API response.
+            // Adding them here would create a duplicate because the optimistic ID differs from the real DB ID.
+            if (row.user_id === userIdRef.current) return prev
+            // Skip if somehow already present
             if (prev.some((m) => m.id === row.id)) return prev
             const sender = membersRef.current.find((m) => m.id === row.user_id)
             return [
