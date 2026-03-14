@@ -42,6 +42,10 @@ export function getAppBaseUrl() {
     return `https://${trimTrailingSlash(process.env.VERCEL_URL)}`
   }
 
+  if (process.env.NODE_ENV === 'production') {
+    return 'https://teampulse.cfd'
+  }
+
   return 'http://localhost:3000'
 }
 
