@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/server'
 import { attachSessionCookie } from '@/lib/auth/session'
+import { clearRememberedDeviceCookie, createRememberedDevice } from '@/lib/auth/device-tokens'
 import { verifyTwoFactorCode } from '@/lib/auth/two-factor'
 
 export async function POST(request: NextRequest) {
@@ -68,6 +69,12 @@ export async function POST(request: NextRequest) {
       },
       Boolean(rememberMe)
     )
+
+    if (rememberMe) {
+      await createRememberedDevice(response, user.id, request)
+    } else {
+      clearRememberedDeviceCookie(response)
+    }
 
     return response
   } catch (err) {

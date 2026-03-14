@@ -1,6 +1,7 @@
 import { SignJWT, jwtVerify } from 'jose'
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
+import { DEVICE_COOKIE_NAME, resolveSessionFromRememberedDevice } from '@/lib/auth/device-tokens'
 
 export const SESSION_COOKIE_NAME = 'tp_session'
 
@@ -24,7 +25,7 @@ async function signSession(payload: SessionPayload, rememberMe: boolean) {
   return new SignJWT(payload)
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
-    .setExpirationTime(rememberMe ? '7d' : '1d')
+    .setExpirationTime(rememberMe ? '30d' : '1d')
     .sign(getSessionSecret())
 }
 
@@ -40,7 +41,7 @@ export async function attachSessionCookie(
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
     path: '/',
-    maxAge: rememberMe ? 60 * 60 * 24 * 7 : 60 * 60 * 24,
+    maxAge: rememberMe ? 60 * 60 * 24 * 30 : 60 * 60 * 24,
   })
 }
 
@@ -69,5 +70,16 @@ export async function readSessionFromCookieValue(cookieValue?: string) {
 
 export async function readSessionFromCookies() {
   const cookieStore = await cookies()
-  return readSessionFromCookieValue(cookieStore.get(SESSION_COOKIE_NAME)?.value)
+  const session = await readSessionFromCookieValue(cookieStore.get(SESSION_COOKIE_NAME)?.value)
+
+  if (session) {
+    return session
+  }
+
+  const rememberedDeviceCookie = cookieStore.get(DEVICE_COOKIE_NAME)?.value
+  if (!rememberedDeviceCookie) {
+    return null
+  }
+
+  return resolveSessionFromRememberedDevice(rememberedDeviceCookie)
 }

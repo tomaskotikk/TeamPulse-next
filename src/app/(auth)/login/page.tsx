@@ -149,7 +149,7 @@ export default function LoginPage() {
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
               />
-              Zapamatovat si tohle zařízení.
+              Zapamatovat si tohle zařízení na 30 dní.
             </label>
 
             <button type="submit" className="auth-btn-primary" disabled={loading}>

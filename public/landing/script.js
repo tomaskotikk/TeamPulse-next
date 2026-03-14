@@ -204,18 +204,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const progressEl = document.getElementById('platformaProgress');
     const counterEl = document.getElementById('platformaCounter');
     const pathEl = document.getElementById('platformaWindowPath');
-    console.log("🔍 imgEl nalezen:", imgEl);
+    const prevPeekButton = document.getElementById('platformaPrevPeek');
+    const nextPeekButton = document.getElementById('platformaNextPeek');
+    const prevPeekImage = document.getElementById('platformaPrevImage');
+    const nextPeekImage = document.getElementById('platformaNextImage');
 
-    // Error handling pro obrazky
-    if (imgEl) {
-        imgEl.addEventListener("error", function() {
-            console.error("❌ CHYBA: Obrazek se nepodarilo nacist:", this.src);
-            console.error("❌ Zkontrolujte, zda soubor existuje ve slozce /img/");
-        });
-        imgEl.addEventListener("load", function() {
-            console.log("✅ Obrazek uspesne nacten:", this.src);
-        });
-    }
     const arrows = Array.from(document.querySelectorAll('.platforma-arrow'));
 
     const panelEl = document.querySelector('.platforma-panel');
@@ -225,6 +218,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let activeIndex = Math.max(0, FEATURES.findIndex(f => f.id === 'profil'));
     let animLock = false;
+
+    const getLoopIndex = (idx) => (idx + FEATURES.length) % FEATURES.length;
+
+    const renderSidePreviews = (index) => {
+        const prevFeature = FEATURES[getLoopIndex(index - 1)];
+        const nextFeature = FEATURES[getLoopIndex(index + 1)];
+
+        if (prevPeekImage && prevFeature) {
+            prevPeekImage.src = prevFeature.img;
+            prevPeekImage.alt = `Předchozí: ${prevFeature.title}`;
+        }
+
+        if (nextPeekImage && nextFeature) {
+            nextPeekImage.src = nextFeature.img;
+            nextPeekImage.alt = `Další: ${nextFeature.title}`;
+        }
+    };
 
     const routeByFeature = {
         profil: '/app/profil',
@@ -293,9 +303,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         imgEl.src = f.img;
-        console.log("📸 setContentInstant - měním obrázek na:", f.img);
         imgEl.alt = `Ukázka: ${f.title}`;
         renderMeta(f.id, idx);
+        renderSidePreviews(idx);
     };
 
     const setActiveTabUI = (featureId) => {
@@ -312,6 +322,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const f = FEATURES[nextIndex];
     if (!f) return;
 
+    const movingRight = getLoopIndex(nextIndex - activeIndex) === 1;
+
     setActiveTabUI(f.id);
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -323,6 +335,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     animLock = true;
+
+    panelEl.classList.toggle('slide-right', movingRight);
+    panelEl.classList.toggle('slide-left', !movingRight);
+    mediaFrameEl.classList.toggle('slide-right', movingRight);
+    mediaFrameEl.classList.toggle('slide-left', !movingRight);
 
     mediaFrameEl.classList.add('is-switching');
 
@@ -366,11 +383,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         imgEl.addEventListener('load', onLoad);
         imgEl.src = f.img;
-        console.log("🖼️ Měním obrázek na:", f.img);
-        console.log("🎯 imgEl element:", imgEl);
-        console.log("✅ Nové src:", imgEl.src);
         imgEl.alt = `Ukázka: ${f.title}`;
         renderMeta(f.id, nextIndex);
+        renderSidePreviews(nextIndex);
 
         // fallback pro cache / rychlý load
         setTimeout(() => {
@@ -381,6 +396,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setTimeout(() => {
         mediaFrameEl.classList.remove('is-switching');
+        panelEl.classList.remove('slide-left', 'slide-right');
+        mediaFrameEl.classList.remove('slide-left', 'slide-right');
     }, 460);
 };
 
@@ -401,6 +418,18 @@ document.addEventListener('DOMContentLoaded', () => {
             render(next);
         });
     });
+
+    if (prevPeekButton) {
+        prevPeekButton.addEventListener('click', () => {
+            render(getLoopIndex(activeIndex - 1));
+        });
+    }
+
+    if (nextPeekButton) {
+        nextPeekButton.addEventListener('click', () => {
+            render(getLoopIndex(activeIndex + 1));
+        });
+    }
 
     // init
     setActiveTabUI(FEATURES[activeIndex]?.id || 'profil');

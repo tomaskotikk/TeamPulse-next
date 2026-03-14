@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import { createAdminClient } from '@/lib/supabase/server'
 import { attachSessionCookie } from '@/lib/auth/session'
+import { clearRememberedDeviceCookie, createRememberedDevice } from '@/lib/auth/device-tokens'
 import { generateTwoFactorCode, getTwoFactorExpiryIso, hashTwoFactorCode } from '@/lib/auth/two-factor'
 import { buildTwoFactorCodeEmail } from '@/lib/email/templates'
 import { EmailSendError, sendTransactionalEmail } from '@/lib/email/send'
@@ -125,6 +126,12 @@ export async function POST(request: NextRequest) {
       },
       Boolean(rememberMe)
     )
+
+    if (rememberMe) {
+      await createRememberedDevice(response, profile.id, request)
+    } else {
+      clearRememberedDeviceCookie(response)
+    }
 
     return response
   } catch (err) {
