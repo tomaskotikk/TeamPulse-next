@@ -110,8 +110,8 @@ export default function NotificationBell() {
   }, [open])
 
   async function markAllRead() {
+    setNotifications([])
     setUnread(0)
-    setNotifications((prev) => prev.map((n) => ({ ...n, read_at: n.read_at ?? new Date().toISOString() })))
     await fetch('/api/notifications', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -120,9 +120,7 @@ export default function NotificationBell() {
   }
 
   async function markOneRead(id: number) {
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, read_at: n.read_at ?? new Date().toISOString() } : n))
-    )
+    setNotifications((prev) => prev.filter((n) => n.id !== id))
     setUnread((c) => Math.max(0, c - 1))
     await fetch('/api/notifications', {
       method: 'POST',
@@ -153,11 +151,16 @@ export default function NotificationBell() {
         <div className="notif-panel">
           <div className="notif-panel-header">
             <span className="notif-panel-title">Notifikace</span>
-            {unread > 0 && (
-              <button className="notif-mark-all" onClick={markAllRead}>
-                Označit vše jako přečtené
-              </button>
-            )}
+            <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+              {notifications.length > 0 && (
+                <button className="notif-mark-all" onClick={markAllRead}>
+                  Smazat vše
+                </button>
+              )}
+              <a href="/notifications" className="notif-mark-all" style={{ textDecoration: 'none' }}>
+                Zobrazit vše
+              </a>
+            </div>
           </div>
 
           <div className="notif-list">
@@ -170,8 +173,8 @@ export default function NotificationBell() {
             {notifications.map((n) => (
               <div
                 key={n.id}
-                className={`notif-item${n.read_at ? '' : ' unread'}`}
-                onClick={() => { if (!n.read_at) markOneRead(n.id) }}
+                className="notif-item unread"
+                onClick={() => markOneRead(n.id)}
               >
                 <div className={`notif-icon-wrap type-${n.type}`}>
                   {notifIcon(n.type)}

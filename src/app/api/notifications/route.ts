@@ -12,10 +12,10 @@ export async function GET() {
 
     const { data, error } = await supabase
       .from('notifications')
-      .select('id, type, title, body, actor_id, read_at, created_at')
+      .select('id, user_id, type, title, body, actor_id, read_at, created_at')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false })
-      .limit(40)
+      .limit(100)
 
     if (error) {
       console.error('Notifications GET error:', error)
@@ -49,9 +49,8 @@ export async function POST(request: NextRequest) {
     if (action === 'read-all') {
       await supabase
         .from('notifications')
-        .update({ read_at: new Date().toISOString() })
+        .delete()
         .eq('user_id', user.id)
-        .is('read_at', null)
 
       return NextResponse.json({ success: true })
     }
@@ -59,7 +58,7 @@ export async function POST(request: NextRequest) {
     if (action === 'read-one' && body?.id) {
       await supabase
         .from('notifications')
-        .update({ read_at: new Date().toISOString() })
+        .delete()
         .eq('id', Number(body.id))
         .eq('user_id', user.id)
 

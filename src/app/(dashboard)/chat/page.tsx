@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import DashboardLayout from '@/components/DashboardLayout'
 import Topbar from '@/components/Topbar'
+import { createClient } from '@/lib/supabase/client'
 
 type AppUser = {
   id: number
@@ -42,8 +43,13 @@ export default function ChatPage() {
   const [sending, setSending] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const membersRef = useRef<AppUser[]>([])
+  const supabaseClient = useRef(createClient())
 
   const isManager = user?.role === 'manažer'
+
+  // Keep membersRef in sync for use inside Realtime handler
+  useEffect(() => { membersRef.current = members }, [members])
 
   useEffect(() => {
     let mounted = true
@@ -87,6 +93,55 @@ export default function ChatPage() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
+
+  // Supabase Realtime – subscribe to new messages for this club
+  useEffect(() => {
+    if (!club) return
+
+    const channel = supabaseClient.current
+      .channel(`chat-club-${club.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'chat_messages',
+          filter: `club_id=eq.${club.id}`,
+        },
+        (payload) => {
+          const row = payload.new as {
+            id: number
+            user_id: number
+            message: string
+            created_at: string
+            club_id: number
+          }
+          setMessages((prev) => {
+            // Skip if already present (own message replaced from optimistic)
+            if (prev.some((m) => m.id === row.id)) return prev
+            const sender = membersRef.current.find((m) => m.id === row.user_id)
+            return [
+              ...prev,
+              {
+                id: row.id,
+                user_id: row.user_id,
+                message: row.message,
+                created_at: row.created_at,
+                first_name: sender?.first_name ?? '',
+                last_name: sender?.last_name ?? '',
+                role: sender?.role ?? '',
+                profile_picture: sender?.profile_picture ?? null,
+              },
+            ]
+          })
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabaseClient.current.removeChannel(channel)
+    }
+  }, [club?.id])
 
   async function sendMessage(e: React.FormEvent) {
     e.preventDefault()
