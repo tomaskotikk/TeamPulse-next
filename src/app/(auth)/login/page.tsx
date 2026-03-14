@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import Image from 'next/image'
 import Link from 'next/link'
+import AuthShowcaseLayout from '@/components/AuthShowcaseLayout'
 
 export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
@@ -93,72 +93,77 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="login-page">
-      <div className="login-card">
-        <div className="login-logo">
-          <Image src="/tp-logo.png" alt="TeamPulse" width={80} height={80} priority />
+    <>
+      <AuthShowcaseLayout
+        title="Přihlášení"
+        subtitle="Vítejte zpět v TeamPulse"
+        backHref="/landing/index.html"
+        backLabel="Zpět na úvod"
+      >
+        <div className="auth-form-panel">
+          <h2>Přihlášení</h2>
+          <p className="auth-note">Přihlaste se do svého účtu TeamPulse a pokračujte do dashboardu.</p>
+
+          {error && (
+            <div className="auth-feedback error">
+              <div>{error}</div>
+              {debugInfo && (
+                <div style={{ marginTop: 8, fontSize: 12, opacity: 0.85, wordBreak: 'break-word' }}>
+                  Debug: {debugInfo}
+                </div>
+              )}
+            </div>
+          )}
+
+          <form className="login-form" onSubmit={handleLogin}>
+            <div className="form-group">
+              <label htmlFor="email" className="form-label">E-mail</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                className="form-input"
+                placeholder="vas@email.cz"
+                required
+                autoComplete="email"
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="password" className="form-label">Heslo</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                className="form-input"
+                placeholder="••••••••"
+                required
+                autoComplete="current-password"
+              />
+            </div>
+
+            <label className="login-remember">
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+              />
+              Zapamatovat si tohle zařízení.
+            </label>
+
+            <button type="submit" className="auth-btn-primary" disabled={loading}>
+              {loading ? 'Přihlašování…' : 'Přihlásit se'}
+            </button>
+          </form>
+
+          <p className="auth-switch">
+            <Link href="/password/reset">Zapomněli jste heslo?</Link>
+          </p>
+          <p className="auth-switch">
+            Chceš založit klub? <Link href="/zalozit-klub">Založit klub.</Link>
+          </p>
         </div>
-        <h1 className="login-title">Přihlášení</h1>
-        <p className="login-subtitle">Přihlaste se do svého účtu TeamPulse</p>
-
-        {error && (
-          <div className="login-error">
-            <div>{error}</div>
-            {debugInfo && (
-              <div style={{ marginTop: 8, fontSize: 12, opacity: 0.85, wordBreak: 'break-word' }}>
-                Debug: {debugInfo}
-              </div>
-            )}
-          </div>
-        )}
-
-        <form className="login-form" onSubmit={handleLogin}>
-          <div className="form-group">
-            <label htmlFor="email" className="form-label">E-mail</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              className="form-input"
-              placeholder="vas@email.cz"
-              required
-              autoComplete="email"
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="password" className="form-label">Heslo</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              className="form-input"
-              placeholder="••••••••"
-              required
-              autoComplete="current-password"
-            />
-          </div>
-
-          <label className="login-remember">
-            <input
-              type="checkbox"
-              checked={rememberMe}
-              onChange={(e) => setRememberMe(e.target.checked)}
-            />
-            Zapamatovat si mě na 7 dní
-          </label>
-
-          <button type="submit" className="login-btn" disabled={loading}>
-            {loading ? 'Přihlašování…' : 'Přihlásit se'}
-          </button>
-        </form>
-
-        <div className="login-links">
-          <Link href="/password/reset">Zapomněli jste heslo?</Link>
-          {' · '}
-          <Link href="/">Zpět na úvodní stránku</Link>
-        </div>
-      </div>
+      </AuthShowcaseLayout>
 
       {/* 2FA Modal */}
       {show2FA && (
@@ -215,6 +220,6 @@ export default function LoginPage() {
           </div>
         </div>
       )}
-    </div>
+    </>
   )
 }

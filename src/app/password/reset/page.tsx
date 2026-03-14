@@ -14,6 +14,14 @@ function PasswordResetContent() {
   const [success, setSuccess] = useState<string | null>(null)
   const requestRef = useRef(0)
 
+  async function safeReadJson(response: Response) {
+    try {
+      return await response.json()
+    } catch {
+      return null
+    }
+  }
+
   async function handleRequestReset(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (loading) return
@@ -32,17 +40,17 @@ function PasswordResetContent() {
         body: JSON.stringify({ email }),
       })
 
-      const data = await res.json()
+      const data = await safeReadJson(res)
       if (!res.ok) {
         if (requestRef.current !== requestId) return
         setSuccess(null)
-        setError(data.error ?? 'Nepodařilo se odeslat reset e-mail.')
+        setError(data?.error ?? 'Nepodařilo se odeslat reset e-mail.')
         return
       }
 
       if (requestRef.current !== requestId) return
       setError(null)
-      setSuccess(data.message ?? 'Pokud je e-mail registrován, byl odeslán reset odkaz.')
+      setSuccess(data?.message ?? 'Pokud je e-mail registrován, byl odeslán reset odkaz.')
       e.currentTarget.reset()
     } catch {
       if (requestRef.current !== requestId) return
@@ -74,11 +82,11 @@ function PasswordResetContent() {
         body: JSON.stringify({ token, newPassword, confirmPassword }),
       })
 
-      const data = await res.json()
+      const data = await safeReadJson(res)
       if (!res.ok) {
         if (requestRef.current !== requestId) return
         setSuccess(null)
-        setError(data.error ?? 'Nepodařilo se změnit heslo.')
+        setError(data?.error ?? 'Nepodařilo se změnit heslo.')
         return
       }
 

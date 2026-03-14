@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { ReactNode } from 'react'
+import PublicNavbar from '@/components/PublicNavbar'
 
 type AuthShowcaseLayoutProps = {
   title: string
@@ -19,14 +20,16 @@ export default function AuthShowcaseLayout({
 }: AuthShowcaseLayoutProps) {
   return (
     <div className="auth-shell">
-      <header className="auth-shell-topbar">
-        <Link href={backHref} className="auth-shell-back">
-          <span aria-hidden="true">&lsaquo;</span>
-          {backLabel}
-        </Link>
-      </header>
+      <PublicNavbar />
 
       <main className="auth-shell-main">
+        <div className="auth-shell-back-wrap">
+          <Link href={backHref} className="auth-shell-back">
+            <span aria-hidden="true">&lsaquo;</span>
+            {backLabel}
+          </Link>
+        </div>
+
         <section className="auth-shell-intro">
           <h1>{title}</h1>
           <p>{subtitle}</p>
@@ -38,10 +41,10 @@ export default function AuthShowcaseLayout({
           <aside className="auth-shell-visual" aria-hidden="true">
             <div className="auth-shell-circle" />
             <Image
-              src="/img/mockup.png"
+              src="/img/mockup2.png"
               alt="TeamPulse aplikace"
-              width={640}
-              height={420}
+              width={560}
+              height={920}
               className="auth-shell-mockup"
               priority
             />
