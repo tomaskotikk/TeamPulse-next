@@ -43,6 +43,13 @@ function PasswordResetContent() {
       const data = await safeReadJson(res)
       if (!res.ok) {
         if (requestRef.current !== requestId) return
+        if (res.status >= 500) {
+          setError(null)
+          setSuccess('Pokud je e-mail registrován, byl odeslán reset odkaz.')
+          e.currentTarget.reset()
+          return
+        }
+
         setSuccess(null)
         setError(data?.error ?? 'Nepodařilo se odeslat reset e-mail.')
         return
@@ -54,8 +61,9 @@ function PasswordResetContent() {
       e.currentTarget.reset()
     } catch {
       if (requestRef.current !== requestId) return
-      setSuccess(null)
-      setError('Nastala chyba serveru. Zkuste to znovu.')
+      setError(null)
+      setSuccess('Pokud je e-mail registrován, byl odeslán reset odkaz.')
+      e.currentTarget.reset()
     } finally {
       if (requestRef.current === requestId) {
         setLoading(false)
