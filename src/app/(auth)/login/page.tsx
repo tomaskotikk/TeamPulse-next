@@ -99,6 +99,7 @@ export default function LoginPage() {
         subtitle="Vítejte zpět v TeamPulse"
         backHref="/landing/index.html"
         backLabel="Zpět na úvod"
+        variant="login"
       >
         <div className="auth-form-panel">
           <h2>Přihlášení</h2>

@@ -9,6 +9,7 @@ type AuthShowcaseLayoutProps = {
   children: ReactNode
   backHref?: string
   backLabel?: string
+  variant?: 'default' | 'login'
 }
 
 export default function AuthShowcaseLayout({
@@ -17,9 +18,10 @@ export default function AuthShowcaseLayout({
   children,
   backHref = '/login',
   backLabel = 'Zpět na přihlášení',
+  variant = 'default',
 }: AuthShowcaseLayoutProps) {
   return (
-    <div className="auth-shell">
+    <div className={`auth-shell auth-shell--${variant}`}>
       <PublicNavbar />
 
       <main className="auth-shell-main">
