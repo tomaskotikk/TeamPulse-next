@@ -38,12 +38,12 @@ export function getAppBaseUrl() {
     return trimTrailingSlash(configured)
   }
 
-  if (process.env.VERCEL_URL) {
-    return `https://${trimTrailingSlash(process.env.VERCEL_URL)}`
-  }
-
   if (process.env.NODE_ENV === 'production') {
     return 'https://teampulse.cfd'
+  }
+
+  if (process.env.VERCEL_URL) {
+    return `https://${trimTrailingSlash(process.env.VERCEL_URL)}`
   }
 
   return 'http://localhost:3000'
