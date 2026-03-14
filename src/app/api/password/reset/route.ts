@@ -43,6 +43,21 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    const { data: claimRecord } = await supabase
+      .from('password_resets')
+      .update({ used: true })
+      .eq('id', resetRecord.id)
+      .eq('used', false)
+      .select('id')
+      .maybeSingle()
+
+    if (!claimRecord) {
+      return NextResponse.json(
+        { error: 'Tento odkaz pro obnovení hesla již byl použit.' },
+        { status: 400 }
+      )
+    }
+
     const hash = await bcrypt.hash(safePassword, 12)
 
     const { error: updateUserError } = await supabase
@@ -54,12 +69,6 @@ export async function POST(request: NextRequest) {
       console.error('Password update error:', updateUserError)
       return NextResponse.json({ error: 'Nepodařilo se uložit nové heslo.' }, { status: 500 })
     }
-
-    await supabase
-      .from('password_resets')
-      .update({ used: true })
-      .eq('user_id', resetRecord.user_id)
-      .eq('used', false)
 
     return NextResponse.json({ success: true })
   } catch (err) {

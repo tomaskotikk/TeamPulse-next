@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { FormEvent, Suspense, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
+import AuthShowcaseLayout from '@/components/AuthShowcaseLayout'
 
 type InviteInfo = {
   email: string
@@ -100,33 +101,37 @@ function AcceptInviteContent() {
   }
 
   return (
-    <div className="login-page">
-      <div className="login-card">
-        <h1 className="login-title">Přijmout pozvánku</h1>
-        <p className="login-subtitle">Dokončete registraci do klubu TeamPulse.</p>
+    <AuthShowcaseLayout
+      title="Přijmout pozvánku"
+      subtitle="Dokončete registraci do klubu TeamPulse"
+    >
+      <div className="auth-form-panel">
+        <h2>Přijmout pozvánku</h2>
+        <p className="auth-note">Dokončete registraci a aktivujte svůj účet člena klubu.</p>
 
-        {loading && <div className="alert alert-info">Načítám pozvánku…</div>}
-
-        {!loading && error && <div className="login-error">{error}</div>}
-        {!loading && success && <div className="alert alert-success">{success}</div>}
+        {loading && <div className="auth-feedback success">Načítám pozvánku…</div>}
+        {!loading && error && !success && <div className="auth-feedback error">{error}</div>}
+        {!loading && success && <div className="auth-feedback success">{success}</div>}
 
         {!loading && invite && !success && (
           <>
-            <div className="alert alert-info" style={{ marginBottom: 20 }}>
+            <div className="auth-feedback success">
               Klub: <strong>{invite.club_name}</strong><br />
               Role: <strong>{invite.role}</strong><br />
               E-mail: <strong>{invite.email}</strong>
             </div>
 
-            <form className="login-form" onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label htmlFor="first_name" className="form-label">Jméno</label>
-                <input id="first_name" name="first_name" className="form-input" required />
-              </div>
+            <form onSubmit={handleSubmit}>
+              <div className="auth-two-columns">
+                <div className="form-group">
+                  <label htmlFor="first_name" className="form-label">Jméno *</label>
+                  <input id="first_name" name="first_name" className="form-input" required />
+                </div>
 
-              <div className="form-group">
-                <label htmlFor="last_name" className="form-label">Příjmení</label>
-                <input id="last_name" name="last_name" className="form-input" required />
+                <div className="form-group">
+                  <label htmlFor="last_name" className="form-label">Příjmení *</label>
+                  <input id="last_name" name="last_name" className="form-input" required />
+                </div>
               </div>
 
               <div className="form-group">
@@ -135,12 +140,12 @@ function AcceptInviteContent() {
               </div>
 
               <div className="form-group">
-                <label htmlFor="password" className="form-label">Heslo</label>
+                <label htmlFor="password" className="form-label">Heslo *</label>
                 <input id="password" name="password" type="password" className="form-input" minLength={6} required />
               </div>
 
               <div className="form-group">
-                <label htmlFor="password_confirm" className="form-label">Potvrdit heslo</label>
+                <label htmlFor="password_confirm" className="form-label">Potvrzení hesla *</label>
                 <input
                   id="password_confirm"
                   name="password_confirm"
@@ -151,18 +156,18 @@ function AcceptInviteContent() {
                 />
               </div>
 
-              <button type="submit" className="login-btn" disabled={submitting}>
+              <button type="submit" className="auth-btn-primary" disabled={submitting}>
                 {submitting ? 'Dokončuji registraci…' : 'Dokončit registraci'}
               </button>
             </form>
           </>
         )}
 
-        <div className="login-links">
-          <Link href="/login">Zpět na přihlášení</Link>
-        </div>
+        <p className="auth-switch">
+          Už máte účet? <Link href="/login">Přihlaste se.</Link>
+        </p>
       </div>
-    </div>
+    </AuthShowcaseLayout>
   )
 }
 

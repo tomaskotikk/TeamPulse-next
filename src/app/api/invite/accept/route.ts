@@ -118,6 +118,18 @@ export async function POST(request: NextRequest) {
     const clubName = getClubName(invitation)
     const supabase = await createAdminClient()
 
+    const { data: claimRecord } = await supabase
+      .from('team_invitations')
+      .update({ used: true })
+      .eq('id', invitation.id)
+      .eq('used', false)
+      .select('id')
+      .maybeSingle()
+
+    if (!claimRecord) {
+      return NextResponse.json({ error: 'Tato pozvánka již byla použita.' }, { status: 409 })
+    }
+
     const { data: existing } = await supabase
       .from('users')
       .select('id')
@@ -125,7 +137,6 @@ export async function POST(request: NextRequest) {
       .maybeSingle()
 
     if (existing) {
-      await supabase.from('team_invitations').update({ used: true }).eq('id', invitation.id)
       return NextResponse.json({ error: 'Účet s tímto e-mailem už existuje.' }, { status: 409 })
     }
 
@@ -149,8 +160,6 @@ export async function POST(request: NextRequest) {
       console.error('Invite accept user create error:', createUserError)
       return NextResponse.json({ error: 'Nepodařilo se vytvořit účet.' }, { status: 500 })
     }
-
-    await supabase.from('team_invitations').update({ used: true }).eq('id', invitation.id)
 
     const { data: managerData } = await supabase
       .from('clubs')

@@ -1,8 +1,9 @@
 'use client'
 
 import Link from 'next/link'
-import { FormEvent, Suspense, useMemo, useState } from 'react'
+import { FormEvent, Suspense, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
+import AuthShowcaseLayout from '@/components/AuthShowcaseLayout'
 
 function PasswordResetContent() {
   const searchParams = useSearchParams()
@@ -11,9 +12,13 @@ function PasswordResetContent() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+  const requestRef = useRef(0)
 
   async function handleRequestReset(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    if (loading) return
+
+    const requestId = ++requestRef.current
     setLoading(true)
     setError(null)
     setSuccess(null)
@@ -29,21 +34,32 @@ function PasswordResetContent() {
 
       const data = await res.json()
       if (!res.ok) {
+        if (requestRef.current !== requestId) return
+        setSuccess(null)
         setError(data.error ?? 'Nepodařilo se odeslat reset e-mail.')
         return
       }
 
+      if (requestRef.current !== requestId) return
+      setError(null)
       setSuccess(data.message ?? 'Pokud je e-mail registrován, byl odeslán reset odkaz.')
       e.currentTarget.reset()
     } catch {
+      if (requestRef.current !== requestId) return
+      setSuccess(null)
       setError('Nastala chyba serveru. Zkuste to znovu.')
     } finally {
-      setLoading(false)
+      if (requestRef.current === requestId) {
+        setLoading(false)
+      }
     }
   }
 
   async function handleSetPassword(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    if (loading) return
+
+    const requestId = ++requestRef.current
     setLoading(true)
     setError(null)
     setSuccess(null)
@@ -60,36 +76,52 @@ function PasswordResetContent() {
 
       const data = await res.json()
       if (!res.ok) {
+        if (requestRef.current !== requestId) return
+        setSuccess(null)
         setError(data.error ?? 'Nepodařilo se změnit heslo.')
         return
       }
 
+      if (requestRef.current !== requestId) return
+      setError(null)
       setSuccess('Heslo bylo úspěšně změněno. Nyní se můžete přihlásit.')
       e.currentTarget.reset()
     } catch {
+      if (requestRef.current !== requestId) return
+      setSuccess(null)
       setError('Nastala chyba serveru. Zkuste to znovu.')
     } finally {
-      setLoading(false)
+      if (requestRef.current === requestId) {
+        setLoading(false)
+      }
     }
   }
 
   const isSetPasswordMode = Boolean(token)
+  const visibleError = success ? null : error
 
   return (
-    <div className="login-page">
-      <div className="login-card">
-        <h1 className="login-title">{isSetPasswordMode ? 'Nastavit nové heslo' : 'Zapomenuté heslo'}</h1>
-        <p className="login-subtitle">
+    <AuthShowcaseLayout
+      title={isSetPasswordMode ? 'Nastavit nové heslo' : 'Zapomenuté heslo'}
+      subtitle={
+        isSetPasswordMode
+          ? 'Zadejte své nové heslo pro účet TeamPulse'
+          : 'Zadejte svůj e-mail a my vám pošleme odkaz pro obnovení hesla'
+      }
+    >
+      <div className="auth-form-panel">
+        <h2>{isSetPasswordMode ? 'Nastavit nové heslo' : 'Obnovit heslo'}</h2>
+        <p className="auth-note">
           {isSetPasswordMode
-            ? 'Zadejte nové heslo pro svůj účet TeamPulse.'
-            : 'Zadejte svůj e-mail a pošleme vám odkaz pro obnovení hesla.'}
+            ? 'Vytvořte si nové, bezpečné heslo pro váš účet.'
+            : 'Zadejte e-mailovou adresu spojenou s vaším účtem a my vám pošleme odkaz pro vytvoření nového hesla.'}
         </p>
 
-        {error && <div className="login-error">{error}</div>}
-        {success && <div className="alert alert-success">{success}</div>}
+        {visibleError && <div className="auth-feedback error">{visibleError}</div>}
+        {success && <div className="auth-feedback success">{success}</div>}
 
         {!isSetPasswordMode ? (
-          <form className="login-form" onSubmit={handleRequestReset}>
+          <form onSubmit={handleRequestReset}>
             <div className="form-group">
               <label htmlFor="email" className="form-label">E-mail</label>
               <input
@@ -102,14 +134,14 @@ function PasswordResetContent() {
               />
             </div>
 
-            <button type="submit" className="login-btn" disabled={loading}>
-              {loading ? 'Odesílám…' : 'Odeslat reset odkaz'}
+            <button type="submit" className="auth-btn-primary" disabled={loading}>
+              {loading ? 'Odesílám…' : 'Odeslat odkaz'}
             </button>
           </form>
         ) : (
-          <form className="login-form" onSubmit={handleSetPassword}>
+          <form onSubmit={handleSetPassword}>
             <div className="form-group">
-              <label htmlFor="new_password" className="form-label">Nové heslo</label>
+              <label htmlFor="new_password" className="form-label">Nové heslo *</label>
               <input
                 id="new_password"
                 name="new_password"
@@ -118,10 +150,11 @@ function PasswordResetContent() {
                 minLength={6}
                 required
               />
+              <p className="form-help">Minimálně 6 znaků</p>
             </div>
 
             <div className="form-group">
-              <label htmlFor="confirm_password" className="form-label">Potvrdit heslo</label>
+              <label htmlFor="confirm_password" className="form-label">Potvrzení hesla *</label>
               <input
                 id="confirm_password"
                 name="confirm_password"
@@ -132,17 +165,17 @@ function PasswordResetContent() {
               />
             </div>
 
-            <button type="submit" className="login-btn" disabled={loading}>
-              {loading ? 'Ukládám…' : 'Uložit nové heslo'}
+            <button type="submit" className="auth-btn-primary" disabled={loading}>
+              {loading ? 'Ukládám…' : 'Nastavit nové heslo'}
             </button>
           </form>
         )}
 
-        <div className="login-links">
-          <Link href="/login">Zpět na přihlášení</Link>
-        </div>
+        <p className="auth-switch">
+          Vzpomněli jste si na heslo? <Link href="/login">Přihlaste se.</Link>
+        </p>
       </div>
-    </div>
+    </AuthShowcaseLayout>
   )
 }
 
