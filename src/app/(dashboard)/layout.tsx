@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { readSessionFromCookies } from '@/lib/auth/session'
+import { getCurrentAppUser, getClubForUser, getThemeVars } from '@/lib/app-context'
 
 export default async function DashboardRootLayout({
   children,
@@ -15,5 +16,17 @@ export default async function DashboardRootLayout({
     redirect('/login')
   }
 
-  return <>{children}</>
+  // Inject theme CSS variables before any React hydration so there is no color flash
+  const appUser = await getCurrentAppUser()
+  const club = appUser ? await getClubForUser(appUser) : null
+  const themeVars = getThemeVars(club)
+  const themeCss = `.app-layout{${Object.entries(themeVars).map(([k, v]) => `${k}:${v}`).join(';')}}`
+
+  return (
+    <>
+      {/* eslint-disable-next-line react/no-danger */}
+      <style dangerouslySetInnerHTML={{ __html: themeCss }} />
+      {children}
+    </>
+  )
 }

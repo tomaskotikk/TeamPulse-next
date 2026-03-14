@@ -102,6 +102,33 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Nepodařilo se odeslat zprávu.' }, { status: 500 })
     }
 
+    // Create notifications for all club members except the sender (fire-and-forget)
+    void (async () => {
+      try {
+        const { data: members } = await supabase
+          .from('users')
+          .select('id')
+          .eq('organization', club.name)
+          .neq('id', user.id)
+
+        if (members?.length) {
+          const senderName = `${user.first_name} ${user.last_name}`.trim()
+          const preview = trimmed.length > 80 ? `${trimmed.slice(0, 80)}…` : trimmed
+          const rows = members.map((m) => ({
+            user_id: m.id,
+            club_id: club.id,
+            type: 'new_message',
+            title: `Nová zpráva od ${senderName}`,
+            body: preview,
+            actor_id: user.id,
+          }))
+          await supabase.from('notifications').insert(rows)
+        }
+      } catch (notifErr) {
+        console.error('Notification insert error (chat):', notifErr)
+      }
+    })()
+
     return NextResponse.json({
       message: {
         ...data,

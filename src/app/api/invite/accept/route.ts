@@ -203,6 +203,18 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Notify manager via in-app notification too (fire-and-forget)
+    if (manager?.owner_user_id) {
+      void supabase.from('notifications').insert({
+        user_id: manager.owner_user_id,
+        club_id: invitation.club_id,
+        type: 'member_joined',
+        title: `${safeFirst} ${safeLast} se přidal(a) do klubu`,
+        body: `${invitation.role} · ${invitation.email}`,
+        actor_id: createdUser.id,
+      })
+    }
+
     return NextResponse.json({ success: true })
   } catch (err) {
     console.error('Invite accept POST error:', err)

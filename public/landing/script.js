@@ -204,10 +204,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const progressEl = document.getElementById('platformaProgress');
     const counterEl = document.getElementById('platformaCounter');
     const pathEl = document.getElementById('platformaWindowPath');
-    const prevPeekButton = document.getElementById('platformaPrevPeek');
-    const nextPeekButton = document.getElementById('platformaNextPeek');
-    const prevPeekImage = document.getElementById('platformaPrevImage');
-    const nextPeekImage = document.getElementById('platformaNextImage');
 
     const arrows = Array.from(document.querySelectorAll('.platforma-arrow'));
 
@@ -220,21 +216,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let animLock = false;
 
     const getLoopIndex = (idx) => (idx + FEATURES.length) % FEATURES.length;
-
-    const renderSidePreviews = (index) => {
-        const prevFeature = FEATURES[getLoopIndex(index - 1)];
-        const nextFeature = FEATURES[getLoopIndex(index + 1)];
-
-        if (prevPeekImage && prevFeature) {
-            prevPeekImage.src = prevFeature.img;
-            prevPeekImage.alt = `Předchozí: ${prevFeature.title}`;
-        }
-
-        if (nextPeekImage && nextFeature) {
-            nextPeekImage.src = nextFeature.img;
-            nextPeekImage.alt = `Další: ${nextFeature.title}`;
-        }
-    };
 
     const routeByFeature = {
         profil: '/app/profil',
@@ -305,7 +286,6 @@ document.addEventListener('DOMContentLoaded', () => {
         imgEl.src = f.img;
         imgEl.alt = `Ukázka: ${f.title}`;
         renderMeta(f.id, idx);
-        renderSidePreviews(idx);
     };
 
     const setActiveTabUI = (featureId) => {
@@ -385,7 +365,6 @@ document.addEventListener('DOMContentLoaded', () => {
         imgEl.src = f.img;
         imgEl.alt = `Ukázka: ${f.title}`;
         renderMeta(f.id, nextIndex);
-        renderSidePreviews(nextIndex);
 
         // fallback pro cache / rychlý load
         setTimeout(() => {
@@ -418,18 +397,6 @@ document.addEventListener('DOMContentLoaded', () => {
             render(next);
         });
     });
-
-    if (prevPeekButton) {
-        prevPeekButton.addEventListener('click', () => {
-            render(getLoopIndex(activeIndex - 1));
-        });
-    }
-
-    if (nextPeekButton) {
-        nextPeekButton.addEventListener('click', () => {
-            render(getLoopIndex(activeIndex + 1));
-        });
-    }
 
     // init
     setActiveTabUI(FEATURES[activeIndex]?.id || 'profil');
