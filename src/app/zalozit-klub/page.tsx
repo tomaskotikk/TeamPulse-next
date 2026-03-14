@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { FormEvent, useState } from 'react'
+import { FormEvent, MouseEvent, useState } from 'react'
 import PublicNavbar from '@/components/PublicNavbar'
 
 export default function CreateClubPage() {
@@ -68,6 +68,17 @@ export default function CreateClubPage() {
 
   const isCompleted = Boolean(success)
   const phase = isCompleted ? 3 : step
+
+  function handleContinueToAdmin(e: MouseEvent<HTMLButtonElement>) {
+    const form = e.currentTarget.form
+    if (!form) return
+
+    if (!form.reportValidity()) {
+      return
+    }
+
+    setStep(2)
+  }
 
   return (
     <div className={`club-create-page club-create-page--step-${phase}`}>
@@ -179,7 +190,7 @@ export default function CreateClubPage() {
                   </div>
 
                   <div className="club-create-actions">
-                    <button type="button" className="club-create-btn primary" onClick={() => setStep(2)}>
+                    <button type="button" className="club-create-btn primary" onClick={handleContinueToAdmin}>
                       Pokračovat na správce
                     </button>
                   </div>

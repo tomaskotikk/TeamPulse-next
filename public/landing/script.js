@@ -34,7 +34,7 @@ const observer = new IntersectionObserver((entries) => {
 // Observe elements for scroll animations
 document.addEventListener('DOMContentLoaded', () => {
     const animatedElements = document.querySelectorAll(
-        '.feature-card, .testimonial-card, .support-card, .why-card, .stat-card'
+        '.feature-card, .testimonial-card, .support-card, .why-card, .stat-card, .about-modern-story, .about-modern-timeline, .support-modern-card, .support-modern-faq'
     );
 
     animatedElements.forEach((el, index) => {
@@ -43,6 +43,29 @@ document.addEventListener('DOMContentLoaded', () => {
         el.style.transition = 'opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
         el.style.transitionDelay = `${index * 0.08}s`;
         observer.observe(el);
+    });
+
+    const faqButtons = document.querySelectorAll('.support-faq-item');
+    faqButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const alreadyActive = btn.classList.contains('active');
+
+            faqButtons.forEach((otherBtn) => {
+                otherBtn.classList.remove('active');
+                const answer = otherBtn.nextElementSibling;
+                if (answer && answer.classList.contains('support-faq-answer')) {
+                    answer.classList.remove('open');
+                }
+            });
+
+            if (!alreadyActive) {
+                btn.classList.add('active');
+                const answer = btn.nextElementSibling;
+                if (answer && answer.classList.contains('support-faq-answer')) {
+                    answer.classList.add('open');
+                }
+            }
+        });
     });
 });
 
@@ -177,6 +200,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const descEl = document.getElementById('platformaDesc');
     const bulletsEl = document.getElementById('platformaBullets');
     const imgEl = document.getElementById('platformaImage');
+    const tagsEl = document.getElementById('platformaTags');
+    const progressEl = document.getElementById('platformaProgress');
+    const counterEl = document.getElementById('platformaCounter');
+    const pathEl = document.getElementById('platformaWindowPath');
     console.log("🔍 imgEl nalezen:", imgEl);
 
     // Error handling pro obrazky
@@ -199,6 +226,56 @@ document.addEventListener('DOMContentLoaded', () => {
     let activeIndex = Math.max(0, FEATURES.findIndex(f => f.id === 'profil'));
     let animLock = false;
 
+    const routeByFeature = {
+        profil: '/app/profil',
+        web: '/app/web',
+        dashboard: '/app/dashboard',
+        clenove: '/app/clenove',
+        nastaveni: '/app/nastaveni',
+        komunikace: '/app/komunikace',
+        dochazka: '/app/dochazka',
+        prihlasky: '/app/prihlasky'
+    };
+
+    const tagsByFeature = {
+        profil: ['Profil', 'Kontakty', 'Historie'],
+        web: ['Web', 'Publikace', 'Branding'],
+        dashboard: ['Přehled', 'KPI', 'Rychlý start'],
+        clenove: ['Evidence', 'Role', 'Filtry'],
+        nastaveni: ['Barvy', '2FA', 'Notifikace'],
+        komunikace: ['Nástěnka', 'Notifikace', 'Skupiny'],
+        dochazka: ['Docházka', 'Omluvenky', 'Kapacity'],
+        prihlasky: ['Formuláře', 'Automatizace', 'Import']
+    };
+
+    const renderMeta = (featureId, idx) => {
+        const total = FEATURES.length;
+        const current = idx + 1;
+
+        if (counterEl) {
+            counterEl.textContent = `${String(current).padStart(2, '0')} / ${String(total).padStart(2, '0')}`;
+        }
+
+        if (progressEl) {
+            progressEl.style.width = `${(current / total) * 100}%`;
+        }
+
+        if (pathEl) {
+            pathEl.textContent = routeByFeature[featureId] || `/app/${featureId}`;
+        }
+
+        if (tagsEl) {
+            const tags = tagsByFeature[featureId] || [];
+            tagsEl.innerHTML = '';
+            tags.forEach(tag => {
+                const item = document.createElement('span');
+                item.className = 'platforma-tag';
+                item.textContent = tag;
+                tagsEl.appendChild(item);
+            });
+        }
+    };
+
     const setContentInstant = (idx) => {
         const f = FEATURES[idx];
         if (!f) return;
@@ -218,6 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
         imgEl.src = f.img;
         console.log("📸 setContentInstant - měním obrázek na:", f.img);
         imgEl.alt = `Ukázka: ${f.title}`;
+        renderMeta(f.id, idx);
     };
 
     const setActiveTabUI = (featureId) => {
@@ -245,6 +323,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     animLock = true;
+
+    mediaFrameEl.classList.add('is-switching');
 
     // animace ven
     panelEl.classList.add('is-animating', 'fade-out');
@@ -290,6 +370,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("🎯 imgEl element:", imgEl);
         console.log("✅ Nové src:", imgEl.src);
         imgEl.alt = `Ukázka: ${f.title}`;
+        renderMeta(f.id, nextIndex);
 
         // fallback pro cache / rychlý load
         setTimeout(() => {
@@ -297,6 +378,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 120);
 
     }, 160);
+
+    setTimeout(() => {
+        mediaFrameEl.classList.remove('is-switching');
+    }, 460);
 };
 
 

@@ -159,7 +159,12 @@
     <div class="platforma-showcase">
       <div class="platforma-media">
         <div class="platforma-media-frame">
-          <!-- DŮLEŽITÉ: tohle ID musí být přesně platformaImage -->
+                    <div class="platforma-window-bar">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <div class="platforma-window-path" id="platformaWindowPath">/app/profil</div>
+                    </div>
           <img id="platformaImage" src="/img/preview.png" alt="Ukázka funkce TeamPulse">
         </div>
 
@@ -170,6 +175,10 @@
       </div>
 
       <div class="platforma-panel">
+                <div class="platforma-panel-meta">
+                    <span class="platforma-counter" id="platformaCounter">01 / 08</span>
+                    <div class="platforma-progress-line"><span id="platformaProgress"></span></div>
+                </div>
         <h3 id="platformaTitle">Uživatelský profil</h3>
         <p id="platformaDesc">
           Přehledný profil člena s fotkou, kontakty, rolí v týmu, historií plateb, dokumenty a rychlými akcemi.
@@ -182,6 +191,12 @@
           <li>Dokumenty a historie</li>
           <li>Rychlé akce pro správce</li>
         </ul>
+
+                <div class="platforma-tags" id="platformaTags">
+                    <span class="platforma-tag">Přehled</span>
+                    <span class="platforma-tag">Rychlé akce</span>
+                    <span class="platforma-tag">Bez papírů</span>
+                </div>
       </div>
     </div>
   </div>
@@ -342,98 +357,125 @@
     </section>
 
     <!-- O nás Section -->
-    <section id="o-nas" class="about-section">
+    <section id="o-nas" class="about-section about-modern-section">
         <div class="container">
             <div class="section-header">
                 <h2 class="section-title">O nás</h2>
-                <p class="section-subtitle">Váš partner pro sportovní management</p>
+                <p class="section-subtitle">Stavíme produkt, který klubům vrací čas na sport.</p>
             </div>
-            <div class="about-content-new">
-                <div class="about-main-image">
-                    <img src="https://plus.unsplash.com/premium_photo-1723291359453-aea7e6bcbebd?q=80&w=1023&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Sportovní tým">
-                </div>
-                <div class="about-text-new">
-                    <div class="about-description">
-                        <p>TeamPulse vznikl z potřeby zjednodušit správu sportovních klubů a organizací. Naše platforma pomáhá stovkám klubů po celé České republice efektivněji spravovat členy, komunikovat a organizovat aktivity.</p>
-                        <p>Jsme tým zkušených vývojářů a sportovních nadšenců, kteří rozumí potřebám moderních klubů. Naším cílem je poskytovat nejlepší řešení pro sportovní management.</p>
-                    </div>
-                    <div class="about-stats-new">
-                        <div class="stat-card">
-                            <div class="stat-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-                                </svg>
-                            </div>
-                            <div class="stat-number">1000+</div>
-                            <div class="stat-label">Aktivních členů</div>
+
+            <div class="about-modern-grid">
+                <article class="about-modern-story">
+                    <h3>Od chaosu v tabulkách k jednomu chytrému workflow</h3>
+                    <p>
+                        TeamPulse vznikl přímo v klubovém prostředí. Viděli jsme desítky admin úkolů,
+                        které se opakovaly pořád dokola, a rozhodli jsme se je zautomatizovat.
+                    </p>
+                    <p>
+                        Nechceme dělat jen “další systém”. Děláme nástroj, který je rychlý, přehledný,
+                        a přirozený pro trenéry, vedení i rodiče.
+                    </p>
+                    <div class="about-modern-metrics">
+                        <div>
+                            <strong>230k+</strong>
+                            <span>aktivních členů</span>
                         </div>
-                        <div class="stat-card">
-                            <div class="stat-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                                </svg>
-                            </div>
-                            <div class="stat-number">500+</div>
-                            <div class="stat-label">Klubů</div>
+                        <div>
+                            <strong>900+</strong>
+                            <span>klubů v provozu</span>
                         </div>
-                        <div class="stat-card">
-                            <div class="stat-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                            </div>
-                            <div class="stat-number">10+</div>
-                            <div class="stat-label">Let zkušeností</div>
+                        <div>
+                            <strong>24/7</strong>
+                            <span>dostupnost platformy</span>
                         </div>
                     </div>
-                </div>
+                </article>
+
+                <aside class="about-modern-timeline">
+                    <h4>Jak přemýšlíme o produktu</h4>
+                    <ol>
+                        <li>
+                            <span>1</span>
+                            <div>
+                                <strong>Posloucháme kluby</strong>
+                                <p>Každou funkci stavíme na reálné zpětné vazbě.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <span>2</span>
+                            <div>
+                                <strong>Navrhujeme jednoduchost</strong>
+                                <p>Méně kliků, jasné kroky, menší chybovost.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <span>3</span>
+                            <div>
+                                <strong>Iterujeme rychle</strong>
+                                <p>Vylepšení doručujeme průběžně bez složitých migrací.</p>
+                            </div>
+                        </li>
+                    </ol>
+                </aside>
             </div>
         </div>
     </section>
 
     <!-- Podpora Section -->
-    <section id="podpora" class="support-section">
+    <section id="podpora" class="support-section support-modern-section">
         <div class="container">
             <div class="section-header">
                 <h2 class="section-title">Podpora</h2>
-                <p class="section-subtitle">Jsme tu pro vás, kdykoliv potřebujete</p>
+                <p class="section-subtitle">Ne jen helpdesk. Partner, který řeší věci s vámi.</p>
             </div>
-            <div class="support-grid">
-                <div class="support-card">
-                    <div class="support-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
-                        </svg>
-                    </div>
-                    <h3>Emailová podpora</h3>
-                    <p>Odpověď do 24 hodin na všechny vaše dotazy a požadavky.</p>
+
+            <div class="support-modern-grid">
+                <div class="support-modern-channels">
+                    <article class="support-modern-card">
+                        <h3>Rychlé kanály</h3>
+                        <ul>
+                            <li>
+                                <strong>Email</strong>
+                                <span>odpověď obvykle do 2 hodin</span>
+                            </li>
+                            <li>
+                                <strong>Telefon</strong>
+                                <span>urgentní případy ve všední dny</span>
+                            </li>
+                            <li>
+                                <strong>Onboarding call</strong>
+                                <span>nastavení klubu krok za krokem</span>
+                            </li>
+                        </ul>
+                    </article>
+
+                    <article class="support-modern-card support-modern-card-accent">
+                        <h3>Co řešíme nejčastěji</h3>
+                        <p>Migrace dat, role a oprávnění, komunikace s rodiči, automatizace plateb.</p>
+                        <a href="/zalozit-klub">Domluvit onboarding</a>
+                    </article>
                 </div>
-                <div class="support-card">
-                    <div class="support-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                        </svg>
-                    </div>
-                    <h3>Telefonická podpora</h3>
-                    <p>Přímá linka pro urgentní záležitosti a prioritní klienty.</p>
-                </div>
-                <div class="support-card">
-                    <div class="support-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                        </svg>
-                    </div>
-                    <h3>Dokumentace</h3>
-                    <p>Kompletní návody, tutoriály a FAQ pro snadné použití.</p>
-                </div>
-                <div class="support-card">
-                    <div class="support-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-                        </svg>
-                    </div>
-                    <h3>Školení</h3>
-                    <p>Online i osobní školení pro váš tým, aby vše fungovalo na 100%.</p>
+
+                <div class="support-modern-faq">
+                    <h3>Časté dotazy</h3>
+
+                    <button class="support-faq-item active" type="button">
+                        <span>Jak rychle umíme TeamPulse nasadit?</span>
+                        <i>+</i>
+                    </button>
+                    <div class="support-faq-answer open">Většina klubů má hotovo během 1-3 dnů včetně importu členů.</div>
+
+                    <button class="support-faq-item" type="button">
+                        <span>Pomůžete nám s prvním nastavením?</span>
+                        <i>+</i>
+                    </button>
+                    <div class="support-faq-answer">Ano, onboarding vedeme společně na online hovoru a vše nastavíme spolu.</div>
+
+                    <button class="support-faq-item" type="button">
+                        <span>Je možné mít vlastní klubové barvy a logo?</span>
+                        <i>+</i>
+                    </button>
+                    <div class="support-faq-answer">Ano. Branding klubu si v administraci upravíte během pár kliknutí.</div>
                 </div>
             </div>
         </div>
