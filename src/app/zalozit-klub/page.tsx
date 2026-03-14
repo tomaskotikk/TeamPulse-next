@@ -66,10 +66,11 @@ export default function CreateClubPage() {
     }
   }
 
-  const progress = step === 1 ? 50 : 100
+  const isCompleted = Boolean(success)
+  const phase = isCompleted ? 3 : step
 
   return (
-    <div className="club-create-page">
+    <div className={`club-create-page club-create-page--step-${phase}`}>
       <PublicNavbar />
 
       <main className="club-create-main">
@@ -86,13 +87,30 @@ export default function CreateClubPage() {
           <aside className="club-create-side">
             <div className="club-create-side-card">
               <h3>Jak to probíhá</h3>
-              <ul>
-                <li className={step === 1 ? 'active' : ''}>1. Detail klubu</li>
-                <li className={step === 2 ? 'active' : ''}>2. Účet správce</li>
-                <li>3. Ověření e-mailem</li>
-              </ul>
-              <div className="club-create-progress-track">
-                <div className="club-create-progress-value" style={{ width: `${progress}%` }} />
+              <div className="club-create-map" aria-label="Průběh založení klubu">
+                <div className={`club-create-map-step ${phase >= 1 ? 'active' : ''} ${phase > 1 ? 'done' : ''}`}>
+                  <span className="club-create-map-dot">1</span>
+                  <div>
+                    <strong>Detail klubu</strong>
+                    <p>Základní údaje a kontakty</p>
+                  </div>
+                </div>
+
+                <div className={`club-create-map-step ${phase >= 2 ? 'active' : ''} ${phase > 2 ? 'done' : ''}`}>
+                  <span className="club-create-map-dot">2</span>
+                  <div>
+                    <strong>Účet správce</strong>
+                    <p>Vytvoření přístupu</p>
+                  </div>
+                </div>
+
+                <div className={`club-create-map-step ${phase >= 3 ? 'active' : ''}`}>
+                  <span className="club-create-map-dot">3</span>
+                  <div>
+                    <strong>Ověření e-mailem</strong>
+                    <p>Aktivace registrace</p>
+                  </div>
+                </div>
               </div>
             </div>
 

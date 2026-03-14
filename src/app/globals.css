@@ -1694,10 +1694,12 @@ body {
 .auth-shell-mockup {
   position: relative;
   z-index: 2;
-  width: min(70%, 300px);
+  width: 100%;
+  max-width: 420px;
   height: auto;
   transform: translateY(6%);
   filter: drop-shadow(0 14px 18px rgba(0, 0, 0, 0.18));
+  animation: loginFloat 4s ease-in-out infinite;
 }
 
 .auth-shell--login .auth-shell-visual {
@@ -1710,8 +1712,20 @@ body {
 }
 
 .auth-shell--login .auth-shell-mockup {
-  width: min(76%, 370px);
+  width: 100%;
+  max-width: 560px;
   transform: translateY(4%);
+}
+
+.auth-shell--login .auth-shell-visual::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0) 34%, rgba(255, 255, 255, 0.22) 50%, rgba(255, 255, 255, 0) 66%);
+  transform: translateX(-120%);
+  animation: loginShine 4.6s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 3;
 }
 
 .auth-form-panel h2 {
@@ -1934,7 +1948,8 @@ body {
   }
 
   .auth-shell-mockup {
-    width: min(46%, 220px);
+    width: 100%;
+    max-width: 260px;
     transform: translateY(5%);
   }
 
@@ -1943,7 +1958,8 @@ body {
   }
 
   .auth-shell--login .auth-shell-mockup {
-    width: min(54%, 250px);
+    width: 100%;
+    max-width: 320px;
   }
 }
 
@@ -1973,7 +1989,8 @@ body {
   }
 
   .auth-shell-mockup {
-    width: min(50%, 210px);
+    width: 100%;
+    max-width: 250px;
     transform: translateY(4%);
   }
 
@@ -2139,42 +2156,100 @@ body {
   color: #1a2130;
 }
 
-.club-create-side-card ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+.club-create-map {
+  position: relative;
   display: grid;
-  gap: 6px;
+  gap: 14px;
+  padding-left: 38px;
 }
 
-.club-create-side-card li {
+.club-create-map::before {
+  content: '';
+  position: absolute;
+  left: 14px;
+  top: 10px;
+  bottom: 10px;
+  width: 3px;
+  border-radius: 999px;
+  background: #e8edf3;
+}
+
+.club-create-map::after {
+  content: '';
+  position: absolute;
+  left: 14px;
+  top: 10px;
+  width: 3px;
+  height: 0%;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #ff5c53 0%, #e43432 100%);
+  transition: height 0.42s ease;
+}
+
+.club-create-page--step-1 .club-create-map::after {
+  height: 26%;
+}
+
+.club-create-page--step-2 .club-create-map::after {
+  height: 64%;
+}
+
+.club-create-page--step-3 .club-create-map::after {
+  height: 100%;
+}
+
+.club-create-map-step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 10px;
+  align-items: start;
+  color: #5f6877;
+  transition: transform 0.22s ease, color 0.22s ease;
+}
+
+.club-create-map-step.active {
+  color: #1f2735;
+}
+
+.club-create-map-step.active .club-create-map-dot {
+  background: #e43432;
+  border-color: #e43432;
+  color: #fff;
+  box-shadow: 0 0 0 6px rgba(228, 52, 50, 0.14);
+}
+
+.club-create-map-step.done .club-create-map-dot {
+  background: #1ea76f;
+  border-color: #1ea76f;
+  color: #fff;
+}
+
+.club-create-map-step strong {
+  display: block;
   font-size: 14px;
-  color: #596273;
-  border-radius: 8px;
-  padding: 8px 10px;
-  background: #f7f8fa;
-  transition: all 0.2s ease;
-}
-
-.club-create-side-card li.active {
-  background: rgba(228, 52, 50, 0.1);
-  color: #b71f20;
   font-weight: 700;
 }
 
-.club-create-progress-track {
-  height: 8px;
-  margin-top: 12px;
-  border-radius: 999px;
-  background: #eef1f5;
-  overflow: hidden;
+.club-create-map-step p {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: #6e7684;
 }
 
-.club-create-progress-value {
-  height: 100%;
+.club-create-map-dot {
+  width: 28px;
+  height: 28px;
   border-radius: 999px;
-  background: linear-gradient(90deg, #ff5c53 0%, #e43432 100%);
-  transition: width 0.35s ease;
+  border: 2px solid #cfd7e3;
+  background: #fff;
+  color: #516075;
+  font-size: 12px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease;
 }
 
 .club-create-side-note p {
@@ -2226,6 +2301,28 @@ body {
   font-size: 13px;
   font-weight: 700;
   color: #1b2232;
+}
+
+.club-create-card .form-input {
+  width: 100%;
+  border: 1px solid #d7deea;
+  background: #ffffff;
+  color: #1a2231;
+  border-radius: 10px;
+  padding: 11px 13px;
+  font-size: 14px;
+  font-family: inherit;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.club-create-card .form-input::placeholder {
+  color: #8a94a6;
+}
+
+.club-create-card .form-input:focus {
+  outline: none;
+  border-color: #e43432;
+  box-shadow: 0 0 0 3px rgba(228, 52, 50, 0.12);
 }
 
 .club-create-terms {
@@ -2330,6 +2427,28 @@ body {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes loginFloat {
+  0%,
+  100% {
+    transform: translateY(4%);
+  }
+
+  50% {
+    transform: translateY(2%);
+  }
+}
+
+@keyframes loginShine {
+  0%,
+  68% {
+    transform: translateX(-120%);
+  }
+
+  100% {
+    transform: translateX(120%);
   }
 }
 
