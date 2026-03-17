@@ -178,18 +178,16 @@ export default function SettingsPage() {
             <p className="section-description">Nastavení přihlašování a ověření</p>
           </div>
           <div className="section-content">
-            {/* 2FA */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 0', borderBottom: '1px solid var(--border)' }}>
-              <div>
-                <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)', marginBottom: 4 }}>Dvoufázové ověření</div>
-                <div style={{ fontSize: 13, color: 'var(--text-dim)' }}>
+            <div className="setting-row">
+              <div className="setting-label">
+                <div className="setting-label-title">Dvoufázové ověření</div>
+                <div className="setting-label-desc">
                   {twoFA ? 'Zapnuto – přihlášení vyžaduje zadání kódu z e-mailu' : 'Vypnuto – doporučujeme zapnout pro větší bezpečnost'}
                 </div>
               </div>
               <button
                 onClick={handleToggle2FA}
-                className={`btn ${twoFA ? 'btn-secondary' : 'btn-primary'}`}
-                style={{ width: 'auto', minWidth: 100 }}
+                className={`btn toggle-btn ${twoFA ? 'btn-secondary' : 'btn-primary'}`}
               >
                 {twoFA ? 'Vypnout' : 'Zapnout'}
               </button>
@@ -201,20 +199,19 @@ export default function SettingsPage() {
         {isManager && (
           <div className="section">
             <div className="section-header">
-              <h3 className="section-title">Barvy klubu</h3>
-              <p className="section-description">Přizpůsobte barevné schéma vašeho klubu</p>
+              <h3 className="section-title">Barevné schéma</h3>
+              <p className="section-description">Přizpůsobte design vašeho klubu vlastními barvami</p>
             </div>
             <div className="section-content">
               <form onSubmit={handleSaveColors}>
-                <div className="grid-2" style={{ gap: 20 }}>
+                <div className="grid-2">
                   <div className="form-group">
                     <label className="form-label">Primární barva</label>
-                    <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                    <div className="color-picker-group">
                       <input
                         type="color"
                         value={primaryColor}
                         onChange={(e) => setPrimaryColor(e.target.value)}
-                        style={{ width: 48, height: 40, border: '1px solid var(--border)', borderRadius: 6, cursor: 'pointer', padding: 2, background: 'var(--bg)' }}
                       />
                       <input
                         type="text"
@@ -225,17 +222,16 @@ export default function SettingsPage() {
                         style={{ flex: 1 }}
                       />
                     </div>
-                    <p className="form-help">Hlavní barva tlačítek, avatarů a akcentů</p>
+                    <p className="form-help">Použije se pro tlačítka, avatary a akcentace</p>
                   </div>
 
                   <div className="form-group">
                     <label className="form-label">Sekundární barva</label>
-                    <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                    <div className="color-picker-group">
                       <input
                         type="color"
                         value={secondaryColor}
                         onChange={(e) => setSecondaryColor(e.target.value)}
-                        style={{ width: 48, height: 40, border: '1px solid var(--border)', borderRadius: 6, cursor: 'pointer', padding: 2, background: 'var(--bg)' }}
                       />
                       <input
                         type="text"
@@ -246,16 +242,16 @@ export default function SettingsPage() {
                         style={{ flex: 1 }}
                       />
                     </div>
+                    <p className="form-help">Pozadí a sekundární prvky</p>
                   </div>
 
                   <div className="form-group">
                     <label className="form-label">Doplňková barva textu</label>
-                    <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                    <div className="color-picker-group">
                       <input
                         type="color"
                         value={accentColor}
                         onChange={(e) => setAccentColor(e.target.value)}
-                        style={{ width: 48, height: 40, border: '1px solid var(--border)', borderRadius: 6, cursor: 'pointer', padding: 2, background: 'var(--bg)' }}
                       />
                       <input
                         type="text"
@@ -266,26 +262,42 @@ export default function SettingsPage() {
                         style={{ flex: 1 }}
                       />
                     </div>
+                    <p className="form-help">Text na primární barvě</p>
                   </div>
                 </div>
 
                 {/* Náhled */}
-                <div style={{ marginTop: 20, padding: 20, background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 8 }}>
-                  <div style={{ fontSize: 12, color: 'var(--text-dimmer)', marginBottom: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5 }}>Náhled</div>
-                  <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                <div className="color-preview">
+                  <div className="color-preview-label">Živý náhled</div>
+                  <div className="color-preview-items">
                     <button
                       type="button"
-                      style={{ padding: '10px 20px', borderRadius: 6, border: 'none', background: primaryColor, color: accentColor, fontWeight: 600, fontFamily: 'inherit', cursor: 'default' }}
+                      className="preview-btn"
+                      style={{ 
+                        padding: '12px 24px', 
+                        background: primaryColor, 
+                        color: accentColor,
+                        fontSize: '14px',
+                        fontWeight: '600'
+                      }}
                     >
                       Primární tlačítko
                     </button>
-                    <div style={{ width: 40, height: 40, borderRadius: '50%', background: primaryColor, display: 'flex', alignItems: 'center', justifyContent: 'center', color: accentColor, fontWeight: 700, fontSize: 14 }}>AB</div>
+                    <div 
+                      className="preview-avatar"
+                      style={{ 
+                        background: primaryColor, 
+                        color: accentColor 
+                      }}
+                    >
+                      AB
+                    </div>
                   </div>
                 </div>
 
-                <div style={{ marginTop: 20 }}>
-                  <button type="submit" className="btn btn-primary" style={{ width: 'auto' }}>
-                    Uložit barvy
+                <div style={{ marginTop: 28 }}>
+                  <button type="submit" className="btn btn-primary">
+                    Uložit změny
                   </button>
                 </div>
               </form>
@@ -296,19 +308,20 @@ export default function SettingsPage() {
         {/* INFORMACE O ÚČTU */}
         <div className="section">
           <div className="section-header">
-            <h3 className="section-title">Informace o účtu</h3>
+            <h3 className="section-title">Profil a účet</h3>
+            <p className="section-description">Vaše osobní údaje a role</p>
           </div>
           <div className="section-content">
             <div className="data-row">
-              <span className="data-label">E-mail</span>
-              <span className="data-value">{user?.email ?? ''}</span>
+              <span className="data-label">E-mailová adresa</span>
+              <span className="data-value">{user?.email ?? '–'}</span>
             </div>
             <div className="data-row">
-              <span className="data-label">Role</span>
-              <span className="data-value">{user?.role ?? ''}</span>
+              <span className="data-label">Role v klubu</span>
+              <span className="data-value">{user?.role ?? '–'}</span>
             </div>
             <div className="data-row">
-              <span className="data-label">Klub</span>
+              <span className="data-label">Váš klub</span>
               <span className="data-value">{user?.organization ?? '–'}</span>
             </div>
           </div>

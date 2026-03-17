@@ -126,17 +126,15 @@ export default async function DashboardPage() {
 
             {/* ČLENOVÉ */}
             <div className="section">
-              <div className="section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div className="section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)' }}>
                 <div>
-                  <h3 className="section-title">Členové klubu</h3>
-                  <p className="section-description">Všichni registrovaní členové vašeho klubu</p>
+                  <h3 className="section-title">Tým • Členové klubu</h3>
+                  <p className="section-description">Všichni registrovaní hráči a personál</p>
                 </div>
                 {isManager && (
-                  <Link href="/invite" className="topbar-btn primary">
-                    <svg style={{ width: 16, height: 16 }} viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                    </svg>
-                    Přidat člena
+                  <Link href="/invite" className="btn btn-primary">
+                    <svg style={{ width: 18, height: 18 }} viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" /></svg>
+                    Pozvat člena
                   </Link>
                 )}
               </div>

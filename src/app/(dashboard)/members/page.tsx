@@ -39,13 +39,17 @@ export default async function MembersPage() {
 
       <div className="app-content">
         <div className="content-header">
-          <h2 className="content-title">Členové klubu</h2>
+          <h2 className="content-title">Tým • {members.length} členů</h2>
           <p className="content-subtitle">
-            Celkem {members.length} členů v klubu {club.name}
+            Přehled všech registrovaných členů a jejich rolí v klubu
           </p>
         </div>
 
         <div className="section">
+          <div className="section-header">
+            <h3 className="section-title">Seznam členů</h3>
+            <p className="section-description">Všichni hráči, trenéři a partneři</p>
+          </div>
           <div className="member-list">
             {members.length === 0 ? (
               <div className="section-content">
@@ -54,9 +58,10 @@ export default async function MembersPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                   </svg>
                   <div className="empty-title">Žádní členové</div>
-                  <div className="empty-description">Pozvěte první členy do vašeho klubu.</div>
+                  <div className="empty-description">Pozvěte první členy do vašeho klubu a začněte spolupracovat.</div>
                   {isManager && (
-                    <Link href="/invite" className="btn btn-primary" style={{ display: 'inline-flex', width: 'auto' }}>
+                    <Link href="/invite" className="btn btn-primary" style={{ display: 'inline-flex', width: 'auto', marginTop: '16px' }}>
+                      <svg style={{ width: 18, height: 18 }} viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" /></svg>
                       Pozvat členy
                     </Link>
                   )}
