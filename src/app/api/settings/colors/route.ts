@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/server'
-import { getClubForUser, getCurrentAppUser } from '@/lib/app-context'
+import { getClubForUser, getCurrentAppUser, getThemeVars } from '@/lib/app-context'
 
 const HEX_RE = /^#[0-9A-Fa-f]{6}$/
 
@@ -35,7 +35,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Nepodařilo se uložit barvy klubu.' }, { status: 500 })
     }
 
-    return NextResponse.json({ success: true })
+    const themeVars = getThemeVars({
+      ...club,
+      primary_color: primaryColor,
+      secondary_color: secondaryColor,
+      accent_color: accentColor,
+    })
+
+    return NextResponse.json({ success: true, themeVars })
   } catch (err) {
     console.error('Club colors settings error:', err)
     return NextResponse.json({ error: 'Nastala chyba serveru.' }, { status: 500 })

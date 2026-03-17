@@ -34,7 +34,7 @@ export type AppClub = {
 }
 
 const DEFAULT_COLORS = {
-  primary: '#E43432',
+  primary: '#FF3300',
   secondary: '#000000',
   accent: '#FFFFFF',
 }
@@ -147,6 +147,7 @@ export function getThemeVars(club: AppClub | null) {
   const primaryDark = darkenColor(primary, 0.15)
   const primaryLight = lightenColor(primary, 0.2)
   const primaryText = isLightColor(primary) ? '#000000' : '#FFFFFF'
+  const primaryRgb = hexToRgb(primary)
 
   const isSecondaryLight = isLightColor(secondary)
   const bg = secondary
@@ -166,6 +167,7 @@ export function getThemeVars(club: AppClub | null) {
     '--red': primary,
     '--red-dark': primaryDark,
     '--red-light': primaryLight,
+    '--red-rgb': `${primaryRgb.r}, ${primaryRgb.g}, ${primaryRgb.b}`,
     '--red-text': primaryText,
     '--bg': bg,
     '--bg-elevated': bgElevated,

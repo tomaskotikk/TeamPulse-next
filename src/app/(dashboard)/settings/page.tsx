@@ -15,15 +15,8 @@ type AppUser = {
   two_factor_enabled: boolean
 }
 
-type AppClub = {
-  primary_color: string | null
-  secondary_color: string | null
-  accent_color: string | null
-}
-
 export default function SettingsPage() {
   const [user, setUser] = useState<AppUser | null>(null)
-  const [club, setClub] = useState<AppClub | null>(null)
   const [themeVars, setThemeVars] = useState<Record<string, string>>({})
   const [loadingContext, setLoadingContext] = useState(true)
 
@@ -33,7 +26,7 @@ export default function SettingsPage() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [twoFA, setTwoFA] = useState(false)
 
-  const [primaryColor, setPrimaryColor] = useState('#E43432')
+  const [primaryColor, setPrimaryColor] = useState('#FF3300')
   const [secondaryColor, setSecondaryColor] = useState('#000000')
   const [accentColor, setAccentColor] = useState('#FFFFFF')
 
@@ -52,10 +45,9 @@ export default function SettingsPage() {
         if (!mounted) return
 
         setUser(data.user)
-        setClub(data.club)
         setThemeVars(data.themeVars ?? {})
         setTwoFA(Boolean(data.user?.two_factor_enabled))
-        setPrimaryColor(data.club?.primary_color ?? '#E43432')
+        setPrimaryColor(data.club?.primary_color ?? '#FF3300')
         setSecondaryColor(data.club?.secondary_color ?? '#000000')
         setAccentColor(data.club?.accent_color ?? '#FFFFFF')
       } catch {
@@ -119,12 +111,13 @@ export default function SettingsPage() {
     }
 
     showSuccess('Barvy klubu byly úspěšně uloženy.')
-    setThemeVars((prev) => ({
-      ...prev,
-      '--red': primaryColor,
-      '--bg': secondaryColor,
-      '--text': accentColor,
-    }))
+    setThemeVars(data.themeVars ?? {})
+  }
+
+  function applyDefaultPalette() {
+    setPrimaryColor('#FF3300')
+    setSecondaryColor('#000000')
+    setAccentColor('#FFFFFF')
   }
 
   const layoutUser = user ?? {
@@ -200,105 +193,103 @@ export default function SettingsPage() {
           <div className="section">
             <div className="section-header">
               <h3 className="section-title">Barevné schéma</h3>
-              <p className="section-description">Přizpůsobte design vašeho klubu vlastními barvami</p>
+              <p className="section-description">Vytvořte profesionální vzhled aplikace podle identity vašeho klubu</p>
             </div>
             <div className="section-content">
-              <form onSubmit={handleSaveColors}>
-                <div className="grid-2">
-                  <div className="form-group">
-                    <label className="form-label">Primární barva</label>
+              <form onSubmit={handleSaveColors} className="theme-editor-form">
+                <div className="theme-editor-top">
+                  <p className="theme-editor-note">Tip: Vysoký kontrast mezi pozadím a textem zlepšuje čitelnost celé aplikace.</p>
+                  <button type="button" className="btn btn-secondary" onClick={applyDefaultPalette}>
+                    Použít výchozí paletu
+                  </button>
+                </div>
+
+                <div className="theme-color-grid">
+                  <div className="theme-color-card">
+                    <div className="theme-color-header">
+                      <span className="theme-color-dot" style={{ background: primaryColor }} />
+                      <div>
+                        <label className="form-label">Primární</label>
+                        <p className="theme-color-hint">Tlačítka, aktivní prvky, akcenty</p>
+                      </div>
+                    </div>
                     <div className="color-picker-group">
-                      <input
-                        type="color"
-                        value={primaryColor}
-                        onChange={(e) => setPrimaryColor(e.target.value)}
-                      />
+                      <input type="color" value={primaryColor} onChange={(e) => setPrimaryColor(e.target.value)} />
                       <input
                         type="text"
                         className="form-input"
                         value={primaryColor}
                         onChange={(e) => setPrimaryColor(e.target.value)}
-                        placeholder="#E43432"
-                        style={{ flex: 1 }}
+                        placeholder="#FF3300"
                       />
                     </div>
-                    <p className="form-help">Použije se pro tlačítka, avatary a akcentace</p>
                   </div>
 
-                  <div className="form-group">
-                    <label className="form-label">Sekundární barva</label>
+                  <div className="theme-color-card">
+                    <div className="theme-color-header">
+                      <span className="theme-color-dot" style={{ background: secondaryColor }} />
+                      <div>
+                        <label className="form-label">Sekundární</label>
+                        <p className="theme-color-hint">Hlavní pozadí aplikace</p>
+                      </div>
+                    </div>
                     <div className="color-picker-group">
-                      <input
-                        type="color"
-                        value={secondaryColor}
-                        onChange={(e) => setSecondaryColor(e.target.value)}
-                      />
+                      <input type="color" value={secondaryColor} onChange={(e) => setSecondaryColor(e.target.value)} />
                       <input
                         type="text"
                         className="form-input"
                         value={secondaryColor}
                         onChange={(e) => setSecondaryColor(e.target.value)}
                         placeholder="#000000"
-                        style={{ flex: 1 }}
                       />
                     </div>
-                    <p className="form-help">Pozadí a sekundární prvky</p>
                   </div>
 
-                  <div className="form-group">
-                    <label className="form-label">Doplňková barva textu</label>
+                  <div className="theme-color-card">
+                    <div className="theme-color-header">
+                      <span className="theme-color-dot" style={{ background: accentColor }} />
+                      <div>
+                        <label className="form-label">Doplňková</label>
+                        <p className="theme-color-hint">Text a kontrastní obsah</p>
+                      </div>
+                    </div>
                     <div className="color-picker-group">
-                      <input
-                        type="color"
-                        value={accentColor}
-                        onChange={(e) => setAccentColor(e.target.value)}
-                      />
+                      <input type="color" value={accentColor} onChange={(e) => setAccentColor(e.target.value)} />
                       <input
                         type="text"
                         className="form-input"
                         value={accentColor}
                         onChange={(e) => setAccentColor(e.target.value)}
                         placeholder="#FFFFFF"
-                        style={{ flex: 1 }}
                       />
                     </div>
-                    <p className="form-help">Text na primární barvě</p>
                   </div>
                 </div>
 
-                {/* Náhled */}
-                <div className="color-preview">
-                  <div className="color-preview-label">Živý náhled</div>
-                  <div className="color-preview-items">
-                    <button
-                      type="button"
-                      className="preview-btn"
-                      style={{ 
-                        padding: '12px 24px', 
-                        background: primaryColor, 
-                        color: accentColor,
-                        fontSize: '14px',
-                        fontWeight: '600'
-                      }}
-                    >
-                      Primární tlačítko
+                <div className="theme-preview-modern" style={{ background: secondaryColor, color: accentColor }}>
+                  <div className="theme-preview-bar" style={{ borderColor: `${accentColor}22` }}>
+                    <div className="theme-preview-brand">TeamPulse</div>
+                    <button type="button" className="theme-preview-cta" style={{ background: primaryColor, color: accentColor }}>
+                      Primární akce
                     </button>
-                    <div 
-                      className="preview-avatar"
-                      style={{ 
-                        background: primaryColor, 
-                        color: accentColor 
-                      }}
-                    >
-                      AB
+                  </div>
+                  <div className="theme-preview-content">
+                    <div className="theme-preview-stat" style={{ borderColor: `${primaryColor}55` }}>
+                      <div className="theme-preview-stat-label">AKTIVNÍ ČLENOVÉ</div>
+                      <div className="theme-preview-stat-value" style={{ color: primaryColor }}>24</div>
+                    </div>
+                    <div className="theme-preview-user" style={{ borderColor: `${accentColor}22` }}>
+                      <div className="theme-preview-avatar" style={{ background: primaryColor, color: accentColor }}>AB</div>
+                      <div>
+                        <div className="theme-preview-user-name">Anna Berková</div>
+                        <div className="theme-preview-user-role">Manažerka klubu</div>
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                <div style={{ marginTop: 28 }}>
-                  <button type="submit" className="btn btn-primary">
-                    Uložit změny
-                  </button>
+                <div className="theme-editor-actions">
+                  <button type="submit" className="btn btn-primary">Uložit změny</button>
                 </div>
               </form>
             </div>

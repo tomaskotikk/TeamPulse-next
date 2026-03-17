@@ -39,7 +39,7 @@ function darkenColor(hex: string, amount: number): string {
 }
 
 export function getClubColorsCSSVars(colors: ClubColors): string {
-  const primary = colors.primary || '#E43432'
+  const primary = colors.primary || '#FF3300'
   const dark = darkenColor(primary, 30)
   const redText = isLightColor(primary) ? '#000000' : '#ffffff'
 
@@ -54,9 +54,9 @@ export function getClubColorsCSSVars(colors: ClubColors): string {
 
 export function getDefaultColors(): ClubColors {
   return {
-    primary: '#E43432',
-    secondary: '#1a1a1a',
-    accent: '#E43432',
+    primary: '#FF3300',
+    secondary: '#000000',
+    accent: '#FFFFFF',
     redText: '#ffffff',
   }
 }
