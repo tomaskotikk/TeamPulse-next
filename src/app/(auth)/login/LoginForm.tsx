@@ -102,7 +102,6 @@ export default function LoginForm() {
         variant="login"
       >
         <div className="auth-form-panel">
-          <h2>Přihlášení</h2>
           <p className="auth-note">Přihlaste se do svého účtu TeamPulse a pokračujte do dashboardu.</p>
 
           {error && (

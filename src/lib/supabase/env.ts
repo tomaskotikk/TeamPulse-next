@@ -3,10 +3,6 @@ type SupabaseClientConfig = {
   key: string
 }
 
-function isPlaceholder(value?: string) {
-  return !value || /^YOUR_[A-Z0-9_]+$/i.test(value)
-}
-
 function isHttpUrl(value: string) {
   try {
     const parsed = new URL(value)
