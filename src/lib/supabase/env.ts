@@ -24,14 +24,16 @@ function assertValidUrl(rawUrl: string, envName: string) {
   }
 }
 
-function assertRequired(value: string | undefined, envName: string) {
-  if (isPlaceholder(value)) {
+function assertRequired(value: string | undefined, envName: string): string {
+  const normalized = value?.trim()
+
+  if (!normalized || /^YOUR_[A-Z0-9_]+$/i.test(normalized)) {
     throw new Error(
       `Missing ${envName}. Set a real value in .env.local (not a placeholder like YOUR_...).`
     )
   }
 
-  return value
+  return normalized
 }
 
 export function getSupabaseBrowserConfig(): SupabaseClientConfig {
