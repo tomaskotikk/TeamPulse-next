@@ -121,8 +121,20 @@ export async function POST(request: NextRequest) {
             title: `Nová zpráva od ${senderName}`,
             body: preview,
             actor_id: user.id,
+            chat_message_id: data.id,
           }))
-          await supabase.from('notifications').insert(rows)
+
+          const { error: withMessageIdError } = await supabase.from('notifications').insert(rows)
+
+          if (withMessageIdError) {
+            // Backward compatibility if DB migration for chat_message_id has not been applied yet.
+            const fallbackRows = rows.map((row) => {
+              const copy = { ...row }
+              delete copy.chat_message_id
+              return copy
+            })
+            await supabase.from('notifications').insert(fallbackRows)
+          }
         }
       } catch (notifErr) {
         console.error('Notification insert error (chat):', notifErr)
@@ -140,6 +152,59 @@ export async function POST(request: NextRequest) {
     })
   } catch (err) {
     console.error('Chat POST error:', err)
+    return NextResponse.json({ error: 'Nastala chyba serveru.' }, { status: 500 })
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const user = await getCurrentAppUser()
+    if (!user) return NextResponse.json({ error: 'Neautorizováno.' }, { status: 401 })
+
+    const club = await getClubForUser(user)
+    if (!club) return NextResponse.json({ error: 'Klub nebyl nalezen.' }, { status: 400 })
+
+    const { id } = await request.json().catch(() => ({ id: null }))
+    const messageId = Number(id)
+
+    if (!Number.isFinite(messageId) || messageId <= 0) {
+      return NextResponse.json({ error: 'Neplatné ID zprávy.' }, { status: 400 })
+    }
+
+    const supabase = await createAdminClient()
+    const { data: message, error: messageError } = await supabase
+      .from('chat_messages')
+      .select('id, user_id, club_id')
+      .eq('id', messageId)
+      .eq('club_id', club.id)
+      .maybeSingle()
+
+    if (messageError) {
+      return NextResponse.json({ error: 'Nepodařilo se načíst zprávu.' }, { status: 500 })
+    }
+
+    if (!message) {
+      return NextResponse.json({ error: 'Zpráva nebyla nalezena.' }, { status: 404 })
+    }
+
+    const canDelete = user.role === 'manažer' || message.user_id === user.id
+    if (!canDelete) {
+      return NextResponse.json({ error: 'Nemáte oprávnění smazat tuto zprávu.' }, { status: 403 })
+    }
+
+    const { error: deleteError } = await supabase
+      .from('chat_messages')
+      .delete()
+      .eq('id', messageId)
+      .eq('club_id', club.id)
+
+    if (deleteError) {
+      return NextResponse.json({ error: 'Nepodařilo se smazat zprávu.' }, { status: 500 })
+    }
+
+    return NextResponse.json({ success: true, id: messageId })
+  } catch (err) {
+    console.error('Chat DELETE error:', err)
     return NextResponse.json({ error: 'Nastala chyba serveru.' }, { status: 500 })
   }
 }

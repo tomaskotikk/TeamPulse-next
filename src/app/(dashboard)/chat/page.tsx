@@ -41,11 +41,14 @@ export default function ChatPage() {
   const [loading, setLoading] = useState(true)
   const [newMessage, setNewMessage] = useState('')
   const [sending, setSending] = useState(false)
+  const [deletingMessageId, setDeletingMessageId] = useState<number | null>(null)
+  const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const membersRef = useRef<AppUser[]>([])
   const userIdRef = useRef<number | null>(null)
   const supabaseClient = useRef(createClient())
+  const clubId = club?.id ?? null
 
   const isManager = user?.role === 'manažer'
 
@@ -98,17 +101,18 @@ export default function ChatPage() {
 
   // Supabase Realtime – subscribe to new messages for this club
   useEffect(() => {
-    if (!club) return
+    if (!clubId) return
 
-    const channel = supabaseClient.current
-      .channel(`chat-club-${club.id}`)
+    const client = supabaseClient.current
+    const channel = client
+      .channel(`chat-club-${clubId}`)
       .on(
         'postgres_changes',
         {
           event: 'INSERT',
           schema: 'public',
           table: 'chat_messages',
-          filter: `club_id=eq.${club.id}`,
+          filter: `club_id=eq.${clubId}`,
         },
         (payload) => {
           const row = payload.new as {
@@ -141,12 +145,91 @@ export default function ChatPage() {
           })
         }
       )
+      .on(
+        'postgres_changes',
+        {
+          event: 'DELETE',
+          schema: 'public',
+          table: 'chat_messages',
+          filter: `club_id=eq.${clubId}`,
+        },
+        (payload) => {
+          const row = payload.old as Partial<{ id: number }>
+          if (!row.id) return
+          setMessages((prev) => prev.filter((m) => m.id !== row.id))
+        }
+      )
       .subscribe()
 
     return () => {
-      supabaseClient.current.removeChannel(channel)
+      client.removeChannel(channel)
     }
-  }, [club?.id])
+  }, [clubId])
+
+  // Fallback sync for cases when Realtime socket is blocked/reconnecting.
+  useEffect(() => {
+    if (!clubId) return
+
+    let cancelled = false
+
+    async function syncMessages() {
+      try {
+        const res = await fetch('/api/chat/messages', { cache: 'no-store' })
+        if (!res.ok) return
+        const data = await res.json()
+        if (cancelled || !Array.isArray(data.messages)) return
+
+        setMessages((prev) => {
+          const next = [...prev]
+          const incomingIds = new Set<number>()
+          for (const incoming of data.messages as Message[]) {
+            incomingIds.add(incoming.id)
+            const existingById = next.findIndex((m) => m.id === incoming.id)
+            if (existingById !== -1) {
+              next[existingById] = incoming
+              continue
+            }
+
+            const optimisticIndex = next.findIndex(
+              (m) =>
+                m.id > 1_000_000_000_000 &&
+                m.user_id === incoming.user_id &&
+                m.message === incoming.message &&
+                Math.abs(new Date(m.created_at).getTime() - new Date(incoming.created_at).getTime()) < 30_000
+            )
+
+            if (optimisticIndex !== -1) {
+              next[optimisticIndex] = incoming
+            } else {
+              next.push(incoming)
+            }
+          }
+
+          const reconciled = next.filter(
+            (m) => m.id > 1_000_000_000_000 || incomingIds.has(m.id)
+          )
+
+          reconciled.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
+          return reconciled
+        })
+      } catch {
+        // ignore network errors; realtime can still deliver updates
+      }
+    }
+
+    const intervalId = window.setInterval(syncMessages, 7000)
+    const onFocus = () => {
+      void syncMessages()
+    }
+
+    window.addEventListener('focus', onFocus)
+
+    return () => {
+      cancelled = true
+      window.clearInterval(intervalId)
+      window.removeEventListener('focus', onFocus)
+    }
+  }, [clubId])
 
   async function sendMessage(e: React.FormEvent) {
     e.preventDefault()
@@ -189,6 +272,33 @@ export default function ChatPage() {
       setErrorMsg('Nepodařilo se odeslat zprávu.')
     } finally {
       setSending(false)
+    }
+  }
+
+  async function deleteMessage(id: number) {
+    if (!user || deletingMessageId) return
+
+    const previous = messages
+    setDeletingMessageId(id)
+    setMessages((prev) => prev.filter((m) => m.id !== id))
+
+    try {
+      const res = await fetch('/api/chat/messages', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id }),
+      })
+
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        setMessages(previous)
+        setErrorMsg(data.error ?? 'Nepodařilo se smazat zprávu.')
+      }
+    } catch {
+      setMessages(previous)
+      setErrorMsg('Nepodařilo se smazat zprávu.')
+    } finally {
+      setDeletingMessageId(null)
     }
   }
 
@@ -272,6 +382,7 @@ export default function ChatPage() {
             >
               {messages.map((msg) => {
                 const isOwn = msg.user_id === layoutUser.id
+                const canDelete = isOwn || isManager
                 const ini = (msg.first_name?.[0] ?? '').toUpperCase() + (msg.last_name?.[0] ?? '').toUpperCase()
 
                 return (
@@ -299,8 +410,40 @@ export default function ChatPage() {
                       }}>
                         {msg.message}
                       </div>
-                      <div style={{ fontSize: 11, color: 'var(--text-dimmer)', marginTop: 4, textAlign: isOwn ? 'right' : 'left' }}>
-                        {formatTime(msg.created_at)}
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: isOwn ? 'flex-end' : 'space-between', gap: 8, marginTop: 4 }}>
+                        <div style={{ fontSize: 11, color: 'var(--text-dimmer)', textAlign: isOwn ? 'right' : 'left' }}>
+                          {formatTime(msg.created_at)}
+                        </div>
+                        {canDelete && (
+                          <button
+                            type="button"
+                            onClick={() => setConfirmDeleteId(msg.id)}
+                            disabled={deletingMessageId === msg.id}
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              width: 24,
+                              height: 24,
+                              borderRadius: 6,
+                              border: '1px solid var(--border)',
+                              background: 'transparent',
+                              color: 'var(--text-dimmer)',
+                              cursor: deletingMessageId === msg.id ? 'default' : 'pointer',
+                              opacity: deletingMessageId === msg.id ? 0.6 : 1,
+                            }}
+                            aria-label="Smazat zprávu"
+                            title="Smazat zprávu"
+                          >
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <polyline points="3 6 5 6 21 6" />
+                              <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                              <path d="M10 11v6" />
+                              <path d="M14 11v6" />
+                              <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+                            </svg>
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -339,6 +482,69 @@ export default function ChatPage() {
         </div>
         )}
       </div>
+
+      {confirmDeleteId !== null && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 10000,
+            background: 'rgba(0, 0, 0, 0.72)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 16,
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget && deletingMessageId === null) {
+              setConfirmDeleteId(null)
+            }
+          }}
+        >
+          <div
+            style={{
+              width: '100%',
+              maxWidth: 420,
+              borderRadius: 12,
+              border: '1px solid var(--border)',
+              background: 'var(--bg-elevated)',
+              padding: 18,
+              boxShadow: '0 20px 48px rgba(0, 0, 0, 0.45)',
+            }}
+          >
+            <div style={{ fontSize: 17, fontWeight: 700, color: 'var(--text)', marginBottom: 8 }}>
+              Smazat zprávu?
+            </div>
+            <div style={{ fontSize: 13, color: 'var(--text-dimmer)', lineHeight: 1.5, marginBottom: 16 }}>
+              Tato akce je nevratná. Po smazání se odstraní také související notifikace.
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
+              <button
+                type="button"
+                className="btn"
+                style={{ width: 'auto', padding: '10px 14px' }}
+                onClick={() => setConfirmDeleteId(null)}
+                disabled={deletingMessageId !== null}
+              >
+                Zrušit
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary"
+                style={{ width: 'auto', padding: '10px 14px' }}
+                onClick={() => {
+                  if (confirmDeleteId === null) return
+                  setConfirmDeleteId(null)
+                  void deleteMessage(confirmDeleteId)
+                }}
+                disabled={deletingMessageId !== null}
+              >
+                {deletingMessageId !== null ? 'Mazání…' : 'Ano, smazat'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </DashboardLayout>
   )
 }

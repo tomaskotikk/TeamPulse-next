@@ -35,9 +35,12 @@ export default function ProfilePage() {
   const [uploadingPicture, setUploadingPicture] = useState(false)
   const [cropImageSrc, setCropImageSrc] = useState<string>('')
   const [isUploadingCrop, setIsUploadingCrop] = useState(false)
+  const [zoom, setZoom] = useState(1)
+  const [rotation, setRotation] = useState(0)
   const imageRef = useRef<HTMLImageElement | null>(null)
   const cropperRef = useRef<Cropper | null>(null)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
+  const objectUrlRef = useRef<string | null>(null)
 
   useEffect(() => {
     let mounted = true
@@ -136,6 +139,10 @@ export default function ProfilePage() {
       background: true,
       minContainerWidth: 200,
       minContainerHeight: 200,
+      ready() {
+        setZoom(1)
+        setRotation(0)
+      },
     })
 
     cropperRef.current = cropper
@@ -152,6 +159,14 @@ export default function ProfilePage() {
     cropperRef.current = null
     setShowCropModal(false)
     setCropImageSrc('')
+    setZoom(1)
+    setRotation(0)
+
+    if (objectUrlRef.current) {
+      URL.revokeObjectURL(objectUrlRef.current)
+      objectUrlRef.current = null
+    }
+
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
     }
@@ -173,7 +188,12 @@ export default function ProfilePage() {
     }
 
     setErrorMsg(null)
+    setSuccessMsg(null)
+    if (objectUrlRef.current) {
+      URL.revokeObjectURL(objectUrlRef.current)
+    }
     const objectUrl = URL.createObjectURL(file)
+    objectUrlRef.current = objectUrl
     setCropImageSrc(objectUrl)
     setShowCropModal(true)
   }
@@ -232,24 +252,47 @@ export default function ProfilePage() {
 
     switch (action) {
       case 'zoom-in':
-        cropper.zoom(0.1)
+        setZoom((prev) => {
+          const next = Math.min(3, Number((prev + 0.1).toFixed(1)))
+          cropper.zoomTo(next)
+          return next
+        })
         break
       case 'zoom-out':
-        cropper.zoom(-0.1)
+        setZoom((prev) => {
+          const next = Math.max(0.2, Number((prev - 0.1).toFixed(1)))
+          cropper.zoomTo(next)
+          return next
+        })
         break
       case 'rotate-left':
-        cropper.rotate(-90)
+        setRotation((prev) => {
+          const next = prev - 90
+          cropper.rotateTo(next)
+          return next
+        })
         break
       case 'rotate-right':
-        cropper.rotate(90)
+        setRotation((prev) => {
+          const next = prev + 90
+          cropper.rotateTo(next)
+          return next
+        })
         break
       case 'flip-horizontal': {
-        const data = cropper.getData()
-        cropper.scaleX(-(data.scaleX || 1))
+        const imageData = cropper.getImageData()
+        cropper.scaleX(-(imageData.scaleX || 1))
+        break
+      }
+      case 'flip-vertical': {
+        const imageData = cropper.getImageData()
+        cropper.scaleY(-(imageData.scaleY || 1))
         break
       }
       case 'reset':
         cropper.reset()
+        setZoom(1)
+        setRotation(0)
         break
       default:
         break
@@ -465,7 +508,45 @@ export default function ProfilePage() {
                 <button type="button" className="crop-btn" onClick={() => handleCropAction('rotate-left')} title="Otočit vlevo">↺</button>
                 <button type="button" className="crop-btn" onClick={() => handleCropAction('rotate-right')} title="Otočit vpravo">↻</button>
                 <button type="button" className="crop-btn" onClick={() => handleCropAction('flip-horizontal')} title="Překlopit">⇋</button>
+                <button type="button" className="crop-btn" onClick={() => handleCropAction('flip-vertical')} title="Překlopit svisle">⇅</button>
                 <button type="button" className="crop-btn" onClick={() => handleCropAction('reset')} title="Reset">⟲</button>
+              </div>
+
+              <div style={{ display: 'grid', gap: 10, marginTop: 10 }}>
+                <label style={{ display: 'grid', gap: 6, color: 'var(--text)', fontSize: 13 }}>
+                  Přiblížení: {zoom.toFixed(1)}x
+                  <input
+                    type="range"
+                    min={0.2}
+                    max={3}
+                    step={0.1}
+                    value={zoom}
+                    onChange={(e) => {
+                      const cropper = cropperRef.current
+                      if (!cropper) return
+                      const next = Number(e.target.value)
+                      setZoom(next)
+                      cropper.zoomTo(next)
+                    }}
+                  />
+                </label>
+                <label style={{ display: 'grid', gap: 6, color: 'var(--text)', fontSize: 13 }}>
+                  Rotace: {rotation}°
+                  <input
+                    type="range"
+                    min={-180}
+                    max={180}
+                    step={1}
+                    value={rotation}
+                    onChange={(e) => {
+                      const cropper = cropperRef.current
+                      if (!cropper) return
+                      const next = Number(e.target.value)
+                      setRotation(next)
+                      cropper.rotateTo(next)
+                    }}
+                  />
+                </label>
               </div>
             </div>
 

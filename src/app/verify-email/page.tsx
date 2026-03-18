@@ -39,7 +39,7 @@ function VerifyEmailContent() {
         }
 
         setStatus('success')
-        setMessage('E-mail byl úspěšně ověřen. Klub je aktivní, přesměrováváme vás do aplikace…')
+        setMessage('E-mail byl úspěšně ověřen. Žádost o klub nyní čeká na schválení administrátorem. Přesměrováváme vás…')
 
         window.setTimeout(() => {
           window.location.href = '/dashboard'

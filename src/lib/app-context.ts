@@ -10,6 +10,9 @@ export type AppUser = {
   profile_picture: string | null
   role: string
   organization: string | null
+  banned?: boolean
+  banned_at?: string | null
+  ban_reason?: string | null
   two_factor_enabled?: boolean | null
   created_at?: string
 }
@@ -17,6 +20,9 @@ export type AppUser = {
 export type AppClub = {
   id: number
   owner_user_id: number
+  approved: boolean
+  rejected_at?: string | null
+  rejection_reason?: string | null
   name: string
   sport: string
   city: string
@@ -89,7 +95,7 @@ export async function getCurrentAppUser() {
   const supabase = await createAdminClient()
   const { data } = await supabase
     .from('users')
-    .select('id, first_name, last_name, email, phone, profile_picture, role, organization, two_factor_enabled, created_at')
+    .select('id, first_name, last_name, email, phone, profile_picture, role, organization, banned, banned_at, ban_reason, two_factor_enabled, created_at')
     .eq('id', session.userId)
     .single()
 
@@ -102,7 +108,7 @@ export async function getClubForUser(user: AppUser) {
   if (user.role === 'manažer') {
     const { data } = await supabase
       .from('clubs')
-      .select('id, owner_user_id, name, sport, city, logo, address, ico, dic, website, club_email, club_phone, primary_color, secondary_color, accent_color, created_at')
+      .select('id, owner_user_id, approved, rejected_at, rejection_reason, name, sport, city, logo, address, ico, dic, website, club_email, club_phone, primary_color, secondary_color, accent_color, created_at')
       .eq('owner_user_id', user.id)
       .order('id', { ascending: false })
       .limit(1)
@@ -115,7 +121,7 @@ export async function getClubForUser(user: AppUser) {
 
   const { data } = await supabase
     .from('clubs')
-    .select('id, owner_user_id, name, sport, city, logo, address, ico, dic, website, club_email, club_phone, primary_color, secondary_color, accent_color, created_at')
+    .select('id, owner_user_id, approved, rejected_at, rejection_reason, name, sport, city, logo, address, ico, dic, website, club_email, club_phone, primary_color, secondary_color, accent_color, created_at')
     .eq('name', user.organization)
     .limit(1)
     .maybeSingle()

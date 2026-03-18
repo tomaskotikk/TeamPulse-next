@@ -25,6 +25,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'K vašemu účtu se nepodařilo najít spravovaný klub.' }, { status: 400 })
     }
 
+    if (!club.approved) {
+      return NextResponse.json({ error: 'Klub zatím čeká na schválení administrátorem.' }, { status: 403 })
+    }
+
     const body = await request.json()
     const email = String(body.email || '').trim().toLowerCase()
     const role = String(body.role || '').trim()
@@ -46,7 +50,7 @@ export async function POST(request: NextRequest) {
     const { data: existingUser } = await supabase
       .from('users')
       .select('id')
-      .eq('email', email)
+      .ilike('email', email)
       .maybeSingle()
 
     if (existingUser) {

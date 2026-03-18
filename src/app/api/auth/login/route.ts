@@ -10,8 +10,9 @@ import { EmailSendError, sendTransactionalEmail } from '@/lib/email/send'
 export async function POST(request: NextRequest) {
   try {
     const { email, password, rememberMe } = await request.json()
+    const safeEmail = String(email || '').trim().toLowerCase()
 
-    if (!email || !password) {
+    if (!safeEmail || !password) {
       return NextResponse.json({ error: 'Vyplňte e-mail i heslo.' }, { status: 400 })
     }
 
@@ -19,8 +20,8 @@ export async function POST(request: NextRequest) {
 
     const { data: profile } = await supabase
       .from('users')
-      .select('id, email, role, password_hash, two_factor_enabled, first_name')
-      .eq('email', email)
+      .select('id, email, role, banned, ban_reason, password_hash, two_factor_enabled, first_name')
+      .ilike('email', safeEmail)
       .single()
 
     if (!profile) {
@@ -35,6 +36,17 @@ export async function POST(request: NextRequest) {
 
     if (!passwordOk) {
       return NextResponse.json({ error: 'Neplatný e-mail nebo heslo.' }, { status: 401 })
+    }
+
+    if (profile.banned) {
+      return NextResponse.json(
+        {
+          error: profile.ban_reason
+            ? `Účet byl zablokován. Důvod: ${profile.ban_reason}`
+            : 'Účet byl zablokován administrátorem.',
+        },
+        { status: 403 }
+      )
     }
 
     if (profile?.two_factor_enabled) {

@@ -14,6 +14,8 @@ function normalizeWebsite(value: string) {
 
 export async function POST(request: NextRequest) {
   try {
+    const supabase = await createAdminClient()
+
     const body = await request.json()
 
     const clubName = String(body.club_name || '').trim()
@@ -66,8 +68,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Musíte souhlasit se zpracováním osobních údajů.' }, { status: 400 })
     }
 
-    const supabase = await createAdminClient()
-
     const { data: existingUser } = await supabase
       .from('users')
       .select('id')
@@ -76,6 +76,41 @@ export async function POST(request: NextRequest) {
 
     if (existingUser) {
       return NextResponse.json({ error: 'Účet s tímto e-mailem už existuje.' }, { status: 409 })
+    }
+
+    const nowIso = new Date().toISOString()
+
+    const { data: existingPending } = await supabase
+      .from('pending_registrations')
+      .select('id')
+      .ilike('email', email)
+      .gt('expires_at', nowIso)
+      .maybeSingle()
+
+    if (existingPending) {
+      return NextResponse.json({ error: 'Pro tento e-mail už existuje rozpracovaná žádost.' }, { status: 409 })
+    }
+
+    const { data: existingInvite } = await supabase
+      .from('team_invitations')
+      .select('id')
+      .ilike('email', email)
+      .eq('used', false)
+      .gt('expires_at', nowIso)
+      .maybeSingle()
+
+    if (existingInvite) {
+      return NextResponse.json({ error: 'Tento e-mail už má aktivní pozvánku do klubu.' }, { status: 409 })
+    }
+
+    const { data: existingClubByEmail } = await supabase
+      .from('clubs')
+      .select('id')
+      .ilike('club_email', clubEmail)
+      .maybeSingle()
+
+    if (existingClubByEmail) {
+      return NextResponse.json({ error: 'Klub s tímto klubovým e-mailem už existuje.' }, { status: 409 })
     }
 
     const verificationToken = randomBytes(32).toString('hex')
@@ -134,7 +169,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message:
-        'Registrace byla odeslána. Na e-mail jsme poslali ověřovací odkaz. Po jeho potvrzení bude klub aktivní.',
+        'Registrace byla odeslána. Na e-mail jsme poslali ověřovací odkaz. Po potvrzení bude žádost čekat na schválení administrátorem.',
     })
   } catch (err) {
     console.error('Club register error:', err)

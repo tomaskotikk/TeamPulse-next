@@ -1,39 +1,77 @@
 'use client'
 
 import Link from 'next/link'
-import { FormEvent, MouseEvent, useState } from 'react'
+import { FormEvent, useState } from 'react'
 import PublicNavbar from '@/components/PublicNavbar'
+
+type RegisterFormState = {
+  club_name: string
+  sport: string
+  city: string
+  address: string
+  ico: string
+  dic: string
+  website: string
+  club_email: string
+  club_phone: string
+  first_name: string
+  last_name: string
+  email: string
+  phone: string
+  password: string
+  password_confirm: string
+  terms: boolean
+}
+
+const INITIAL_FORM: RegisterFormState = {
+  club_name: '',
+  sport: '',
+  city: '',
+  address: '',
+  ico: '',
+  dic: '',
+  website: '',
+  club_email: '',
+  club_phone: '',
+  first_name: '',
+  last_name: '',
+  email: '',
+  phone: '',
+  password: '',
+  password_confirm: '',
+  terms: false,
+}
 
 export default function CreateClubPage() {
   const [step, setStep] = useState<1 | 2>(1)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+  const [formState, setFormState] = useState<RegisterFormState>(INITIAL_FORM)
+
+  function updateField<K extends keyof RegisterFormState>(key: K, value: RegisterFormState[K]) {
+    setFormState((prev) => ({ ...prev, [key]: value }))
+  }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (loading) return
 
-    const form = e.currentTarget
-    const fd = new FormData(form)
-
     const payload = {
-      club_name: String(fd.get('club_name') || ''),
-      sport: String(fd.get('sport') || ''),
-      city: String(fd.get('city') || ''),
-      address: String(fd.get('address') || ''),
-      ico: String(fd.get('ico') || ''),
-      dic: String(fd.get('dic') || ''),
-      website: String(fd.get('website') || ''),
-      club_email: String(fd.get('club_email') || ''),
-      club_phone: String(fd.get('club_phone') || ''),
-      first_name: String(fd.get('first_name') || ''),
-      last_name: String(fd.get('last_name') || ''),
-      email: String(fd.get('email') || ''),
-      phone: String(fd.get('phone') || ''),
-      password: String(fd.get('password') || ''),
-      password_confirm: String(fd.get('password_confirm') || ''),
-      terms: fd.get('terms') === 'on',
+      ...formState,
+      club_name: formState.club_name.trim(),
+      sport: formState.sport.trim(),
+      city: formState.city.trim(),
+      address: formState.address.trim(),
+      ico: formState.ico.trim(),
+      dic: formState.dic.trim(),
+      website: formState.website.trim(),
+      club_email: formState.club_email.trim(),
+      club_phone: formState.club_phone.trim(),
+      first_name: formState.first_name.trim(),
+      last_name: formState.last_name.trim(),
+      email: formState.email.trim(),
+      phone: formState.phone.trim(),
     }
 
     setLoading(true)
@@ -57,7 +95,7 @@ export default function CreateClubPage() {
         data.message ||
           'Registrace byla odeslána. Na e-mail jsme poslali ověřovací odkaz pro aktivaci klubu.'
       )
-      form.reset()
+      setFormState(INITIAL_FORM)
       setStep(1)
     } catch {
       setError('Nastala chyba serveru. Zkuste to prosím znovu.')
@@ -69,14 +107,23 @@ export default function CreateClubPage() {
   const isCompleted = Boolean(success)
   const phase = isCompleted ? 3 : step
 
-  function handleContinueToAdmin(e: MouseEvent<HTMLButtonElement>) {
-    const form = e.currentTarget.form
-    if (!form) return
-
-    if (!form.reportValidity()) {
+  function handleContinueToAdmin() {
+    if (
+      !formState.club_name.trim() ||
+      !formState.sport.trim() ||
+      !formState.city.trim() ||
+      !formState.address.trim() ||
+      !formState.ico.trim() ||
+      !formState.dic.trim() ||
+      !formState.website.trim() ||
+      !formState.club_email.trim() ||
+      !formState.club_phone.trim()
+    ) {
+      setError('Vyplňte prosím všechny povinné údaje v detailu klubu.')
       return
     }
 
+    setError(null)
     setStep(2)
   }
 
@@ -143,49 +190,114 @@ export default function CreateClubPage() {
 
                   <div className="club-create-field">
                     <label htmlFor="club_name">Název klubu *</label>
-                    <input id="club_name" name="club_name" className="form-input" required />
+                    <input
+                      id="club_name"
+                      name="club_name"
+                      className="form-input"
+                      required
+                      value={formState.club_name}
+                      onChange={(e) => updateField('club_name', e.target.value)}
+                    />
                   </div>
 
                   <div className="club-create-row">
                     <div className="club-create-field">
                       <label htmlFor="sport">Sport *</label>
-                      <input id="sport" name="sport" className="form-input" required />
+                      <input
+                        id="sport"
+                        name="sport"
+                        className="form-input"
+                        required
+                        value={formState.sport}
+                        onChange={(e) => updateField('sport', e.target.value)}
+                      />
                     </div>
                     <div className="club-create-field">
                       <label htmlFor="city">Město *</label>
-                      <input id="city" name="city" className="form-input" required />
+                      <input
+                        id="city"
+                        name="city"
+                        className="form-input"
+                        required
+                        value={formState.city}
+                        onChange={(e) => updateField('city', e.target.value)}
+                      />
                     </div>
                   </div>
 
                   <div className="club-create-field">
                     <label htmlFor="address">Adresa *</label>
-                    <input id="address" name="address" className="form-input" required />
+                    <input
+                      id="address"
+                      name="address"
+                      className="form-input"
+                      required
+                      value={formState.address}
+                      onChange={(e) => updateField('address', e.target.value)}
+                    />
                   </div>
 
                   <div className="club-create-row">
                     <div className="club-create-field">
                       <label htmlFor="ico">IČO *</label>
-                      <input id="ico" name="ico" className="form-input" required />
+                      <input
+                        id="ico"
+                        name="ico"
+                        className="form-input"
+                        required
+                        value={formState.ico}
+                        onChange={(e) => updateField('ico', e.target.value)}
+                      />
                     </div>
                     <div className="club-create-field">
                       <label htmlFor="dic">DIČ *</label>
-                      <input id="dic" name="dic" className="form-input" required />
+                      <input
+                        id="dic"
+                        name="dic"
+                        className="form-input"
+                        required
+                        value={formState.dic}
+                        onChange={(e) => updateField('dic', e.target.value)}
+                      />
                     </div>
                   </div>
 
                   <div className="club-create-field">
                     <label htmlFor="website">Web *</label>
-                    <input id="website" name="website" className="form-input" placeholder="https://..." required />
+                    <input
+                      id="website"
+                      name="website"
+                      className="form-input"
+                      placeholder="https://..."
+                      required
+                      value={formState.website}
+                      onChange={(e) => updateField('website', e.target.value)}
+                    />
                   </div>
 
                   <div className="club-create-row">
                     <div className="club-create-field">
                       <label htmlFor="club_email">Klubový e-mail *</label>
-                      <input id="club_email" name="club_email" type="email" className="form-input" required />
+                      <input
+                        id="club_email"
+                        name="club_email"
+                        type="email"
+                        className="form-input"
+                        required
+                        value={formState.club_email}
+                        onChange={(e) => updateField('club_email', e.target.value)}
+                      />
                     </div>
                     <div className="club-create-field">
                       <label htmlFor="club_phone">Klubový telefon *</label>
-                      <input id="club_phone" name="club_phone" className="form-input" required />
+                      <input
+                        id="club_phone"
+                        name="club_phone"
+                        className="form-input"
+                        required
+                        value={formState.club_phone}
+                        onChange={(e) => updateField('club_phone', e.target.value)}
+                      />
                     </div>
                   </div>
 
@@ -205,29 +317,66 @@ export default function CreateClubPage() {
                   <div className="club-create-row">
                     <div className="club-create-field">
                       <label htmlFor="first_name">Jméno správce *</label>
-                      <input id="first_name" name="first_name" className="form-input" required />
+                      <input
+                        id="first_name"
+                        name="first_name"
+                        className="form-input"
+                        required
+                        value={formState.first_name}
+                        onChange={(e) => updateField('first_name', e.target.value)}
+                      />
                     </div>
                     <div className="club-create-field">
                       <label htmlFor="last_name">Příjmení správce *</label>
-                      <input id="last_name" name="last_name" className="form-input" required />
+                      <input
+                        id="last_name"
+                        name="last_name"
+                        className="form-input"
+                        required
+                        value={formState.last_name}
+                        onChange={(e) => updateField('last_name', e.target.value)}
+                      />
                     </div>
                   </div>
 
                   <div className="club-create-row">
                     <div className="club-create-field">
                       <label htmlFor="email">Přihlašovací e-mail *</label>
-                      <input id="email" name="email" type="email" className="form-input" required />
+                      <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        className="form-input"
+                        required
+                        value={formState.email}
+                        onChange={(e) => updateField('email', e.target.value)}
+                      />
                     </div>
                     <div className="club-create-field">
                       <label htmlFor="phone">Telefon</label>
-                      <input id="phone" name="phone" className="form-input" />
+                      <input
+                        id="phone"
+                        name="phone"
+                        className="form-input"
+                        value={formState.phone}
+                        onChange={(e) => updateField('phone', e.target.value)}
+                      />
                     </div>
                   </div>
 
                   <div className="club-create-row">
                     <div className="club-create-field">
                       <label htmlFor="password">Heslo *</label>
-                      <input id="password" name="password" type="password" className="form-input" minLength={6} required />
+                      <input
+                        id="password"
+                        name="password"
+                        type="password"
+                        className="form-input"
+                        minLength={6}
+                        required
+                        value={formState.password}
+                        onChange={(e) => updateField('password', e.target.value)}
+                      />
                     </div>
                     <div className="club-create-field">
                       <label htmlFor="password_confirm">Potvrzení hesla *</label>
@@ -238,12 +387,21 @@ export default function CreateClubPage() {
                         className="form-input"
                         minLength={6}
                         required
+                        value={formState.password_confirm}
+                        onChange={(e) => updateField('password_confirm', e.target.value)}
                       />
                     </div>
                   </div>
 
                   <label className="club-create-terms">
-                    <input id="terms" name="terms" type="checkbox" required />
+                    <input
+                      id="terms"
+                      name="terms"
+                      type="checkbox"
+                      required
+                      checked={formState.terms}
+                      onChange={(e) => updateField('terms', e.target.checked)}
+                    />
                     Souhlasím se zpracováním osobních údajů.
                   </label>
 

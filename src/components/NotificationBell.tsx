@@ -48,6 +48,18 @@ export default function NotificationBell() {
   const panelRef = useRef<HTMLDivElement>(null)
   const supabase = useRef(createClient())
 
+  function upsertNotification(row: Notification) {
+    setNotifications((prev) => {
+      const idx = prev.findIndex((n) => n.id === row.id)
+      if (idx !== -1) {
+        const next = [...prev]
+        next[idx] = row
+        return next
+      }
+      return [row, ...prev].slice(0, 40)
+    })
+  }
+
   const fetchNotifications = useCallback(async () => {
     try {
       const res = await fetch('/api/notifications')
@@ -68,11 +80,16 @@ export default function NotificationBell() {
     fetchNotifications()
   }, [fetchNotifications])
 
+  useEffect(() => {
+    setUnread(notifications.filter((n) => !n.read_at).length)
+  }, [notifications])
+
   // Supabase Realtime subscription – fires when a new row is inserted for this user
   useEffect(() => {
     if (!userId) return
 
-    const channel = supabase.current
+    const client = supabase.current
+    const channel = client
       .channel(`notif-user-${userId}`)
       .on(
         'postgres_changes',
@@ -86,16 +103,63 @@ export default function NotificationBell() {
           const row = payload.new as Notification
           // guard: only process rows that belong to this user
           if (row.user_id !== userId) return
-          setNotifications((prev) => [row, ...prev].slice(0, 40))
-          setUnread((c) => c + 1)
+          upsertNotification(row)
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'notifications',
+          filter: `user_id=eq.${userId}`,
+        },
+        (payload) => {
+          const row = payload.new as Notification
+          if (row.user_id !== userId) return
+          upsertNotification(row)
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'DELETE',
+          schema: 'public',
+          table: 'notifications',
+          filter: `user_id=eq.${userId}`,
+        },
+        (payload) => {
+          const oldRow = payload.old as Partial<Notification>
+          if (!oldRow.id) return
+          setNotifications((prev) => prev.filter((n) => n.id !== oldRow.id))
         }
       )
       .subscribe()
 
     return () => {
-      supabase.current.removeChannel(channel)
+      client.removeChannel(channel)
     }
   }, [userId])
+
+  // Fallback periodic refresh + focus refresh for reliability.
+  useEffect(() => {
+    if (!userId) return
+
+    const intervalId = window.setInterval(() => {
+      void fetchNotifications()
+    }, 12000)
+
+    const onFocus = () => {
+      void fetchNotifications()
+    }
+
+    window.addEventListener('focus', onFocus)
+
+    return () => {
+      window.clearInterval(intervalId)
+      window.removeEventListener('focus', onFocus)
+    }
+  }, [fetchNotifications, userId])
 
   // Close panel when clicking outside
   useEffect(() => {

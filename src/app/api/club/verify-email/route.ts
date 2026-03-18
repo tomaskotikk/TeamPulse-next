@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/server'
 import { attachSessionCookie } from '@/lib/auth/session'
-import { buildClubCreatedClubEmail, buildClubCreatedOwnerEmail } from '@/lib/email/templates'
+import {
+  buildClubCreatedClubEmail,
+  buildClubPendingApprovalOwnerEmail,
+} from '@/lib/email/templates'
 import { getAppBaseUrl } from '@/lib/email/config'
 import { sendTransactionalEmail } from '@/lib/email/send'
 
@@ -87,6 +90,7 @@ export async function POST(request: NextRequest) {
       .from('clubs')
       .insert({
         owner_user_id: createdUser.id,
+        approved: false,
         name: pending.club_name,
         sport: pending.sport,
         city: pending.city,
@@ -110,7 +114,7 @@ export async function POST(request: NextRequest) {
     const loginUrl = `${getAppBaseUrl()}/login`
 
     try {
-      const ownerMail = buildClubCreatedOwnerEmail({
+      const ownerMail = buildClubPendingApprovalOwnerEmail({
         fullName: `${pending.first_name} ${pending.last_name}`,
         clubName: pending.club_name,
         clubId: createdClub.id,

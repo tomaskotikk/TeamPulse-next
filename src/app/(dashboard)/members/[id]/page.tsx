@@ -7,6 +7,7 @@ import {
   getMembersForClub,
   getThemeVars,
 } from '@/lib/app-context'
+import RemoveMemberButton from '@/components/RemoveMemberButton'
 
 export default async function MemberDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -133,12 +134,11 @@ export default async function MemberDetailPage({ params }: { params: Promise<{ i
               <p className="section-description">Akce dostupné pro manažera</p>
             </div>
             <div className="section-content" style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-              <button className="btn btn-danger">
-                <svg style={{ width: 16, height: 16 }} viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7a4 4 0 11-8 0 4 4 0 018 0zM9 14a6 6 0 00-6 6v1h12v-1a6 6 0 00-6-6zM21 12h-6" />
-                </svg>
-                Odebrat z klubu
-              </button>
+              <RemoveMemberButton
+                memberId={member.id}
+                memberName={`${member.first_name} ${member.last_name}`}
+                disabled={member.role === 'manažer'}
+              />
             </div>
           </div>
         )}

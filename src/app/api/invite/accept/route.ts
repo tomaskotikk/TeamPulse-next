@@ -133,7 +133,7 @@ export async function POST(request: NextRequest) {
     const { data: existing } = await supabase
       .from('users')
       .select('id')
-      .ilike('email', invitation.email)
+      .ilike('email', invitation.email.toLowerCase())
       .maybeSingle()
 
     if (existing) {

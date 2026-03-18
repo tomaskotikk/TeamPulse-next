@@ -65,6 +65,18 @@ export default function NotificationsPage() {
   const [loading, setLoading] = useState(true)
   const supabaseClient = useRef(createClient())
 
+  function upsertNotification(row: Notification) {
+    setNotifications((prev) => {
+      const idx = prev.findIndex((n) => n.id === row.id)
+      if (idx !== -1) {
+        const next = [...prev]
+        next[idx] = row
+        return next
+      }
+      return [row, ...prev]
+    })
+  }
+
   const fetchNotifications = useCallback(async () => {
     try {
       const [ctxRes, notifRes] = await Promise.all([
@@ -92,7 +104,8 @@ export default function NotificationsPage() {
   // Supabase Realtime – live updates
   useEffect(() => {
     if (!userId) return
-    const channel = supabaseClient.current
+    const client = supabaseClient.current
+    const channel = client
       .channel(`notif-page-${userId}`)
       .on(
         'postgres_changes',
@@ -105,12 +118,63 @@ export default function NotificationsPage() {
         (payload) => {
           const row = payload.new as Notification
           if (row.user_id !== userId) return
-          setNotifications((prev) => [row, ...prev])
+          upsertNotification(row)
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'notifications',
+          filter: `user_id=eq.${userId}`,
+        },
+        (payload) => {
+          const row = payload.new as Notification
+          if (row.user_id !== userId) return
+          upsertNotification(row)
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'DELETE',
+          schema: 'public',
+          table: 'notifications',
+          filter: `user_id=eq.${userId}`,
+        },
+        (payload) => {
+          const row = payload.old as Partial<Notification>
+          if (!row.id) return
+          setNotifications((prev) => prev.filter((n) => n.id !== row.id))
         }
       )
       .subscribe()
-    return () => { supabaseClient.current.removeChannel(channel) }
+
+    return () => {
+      client.removeChannel(channel)
+    }
   }, [userId])
+
+  // Fallback sync when realtime connection is interrupted.
+  useEffect(() => {
+    if (!userId) return
+
+    const intervalId = window.setInterval(() => {
+      void fetchNotifications()
+    }, 12000)
+
+    const onFocus = () => {
+      void fetchNotifications()
+    }
+
+    window.addEventListener('focus', onFocus)
+
+    return () => {
+      window.clearInterval(intervalId)
+      window.removeEventListener('focus', onFocus)
+    }
+  }, [fetchNotifications, userId])
 
   async function dismiss(id: number) {
     setNotifications((prev) => prev.filter((n) => n.id !== id))

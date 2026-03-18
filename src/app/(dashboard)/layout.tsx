@@ -19,12 +19,20 @@ export default async function DashboardRootLayout({
   // Inject theme CSS variables before any React hydration so there is no color flash
   const appUser = await getCurrentAppUser()
   const club = appUser ? await getClubForUser(appUser) : null
+
+  if (appUser?.banned) {
+    redirect('/api/auth/logout')
+  }
+
+  if (appUser?.role === 'manažer' && club && !club.approved) {
+    redirect('/awaiting-approval')
+  }
+
   const themeVars = getThemeVars(club)
   const themeCss = `.app-layout{${Object.entries(themeVars).map(([k, v]) => `${k}:${v}`).join(';')}}`
 
   return (
     <>
-      {/* eslint-disable-next-line react/no-danger */}
       <style dangerouslySetInnerHTML={{ __html: themeCss }} />
       {children}
     </>

@@ -190,7 +190,7 @@ export function buildRegistrationVerificationEmail(input: {
       `
         <h2 style="margin:0 0 16px;font-size:24px;color:#1d1d1f;">Ověř svůj email</h2>
         <p style="margin:0 0 16px;color:#4a4a4a;font-size:16px;line-height:1.7;">Ahoj ${safeFullName},</p>
-        <p style="margin:0 0 24px;color:#4a4a4a;font-size:16px;line-height:1.7;">Děkujeme za registraci klubu <strong style="color:#E43432;">${safeClubName}</strong>. Pro dokončení registrace ověř svůj email.</p>
+        <p style="margin:0 0 24px;color:#4a4a4a;font-size:16px;line-height:1.7;">Děkujeme za registraci klubu <strong style="color:#E43432;">${safeClubName}</strong>. Pro dokončení registrace ověř svůj email. Po ověření bude žádost čekat na schválení administrátorem.</p>
         <div style="text-align:center;margin:0 0 24px;">
           <a href="${safeVerificationUrl}" style="display:inline-block;padding:15px 32px;background:#E43432;color:#ffffff;text-decoration:none;border-radius:10px;font-weight:600;font-size:16px;">Ověřit email</a>
         </div>
@@ -200,6 +200,7 @@ export function buildRegistrationVerificationEmail(input: {
     text: joinText([
       `Ahoj ${input.fullName},`,
       `pro dokončení registrace klubu ${input.clubName} ověř email zde: ${input.verificationUrl}`,
+      'Po ověření bude žádost čekat na schválení administrátorem.',
       `Odkaz vyprší za ${input.expiresHours} hodin.`,
     ]),
   }
@@ -245,6 +246,151 @@ export function buildClubCreatedOwnerEmail(input: {
       `tvůj klub ${input.clubName} byl založen.`,
       `ID klubu: ${input.clubId}, sport: ${input.sport}, město: ${input.city}.`,
       `Přihlášení: ${input.loginUrl}`,
+    ]),
+  }
+}
+
+export function buildClubPendingApprovalOwnerEmail(input: {
+  fullName: string
+  clubName: string
+  clubId: number
+  sport: string
+  city: string
+  loginUrl: string
+  email: string
+}): EmailContent {
+  const safeFullName = escapeHtml(input.fullName)
+  const safeClubName = escapeHtml(input.clubName)
+  const safeLoginUrl = escapeHtml(input.loginUrl)
+  const safeEmail = escapeHtml(input.email)
+  const safeSport = escapeHtml(input.sport)
+  const safeCity = escapeHtml(input.city)
+
+  return {
+    subject: 'Žádost o klub čeká na schválení – TeamPulse',
+    html: renderEmailLayout(
+      'Žádost čeká na schválení',
+      `Žádost o klub ${input.clubName} čeká na schválení administrátorem`,
+      `
+        <h2 style="margin:0 0 16px;font-size:24px;color:#1d1d1f;">Žádost čeká na schválení</h2>
+        <p style="margin:0 0 16px;color:#4a4a4a;font-size:16px;line-height:1.7;">Ahoj ${safeFullName}, děkujeme za ověření e-mailu.</p>
+        <p style="margin:0 0 16px;color:#4a4a4a;font-size:16px;line-height:1.7;">Žádost o klub <strong style="color:#E43432;">${safeClubName}</strong> byla přijata a nyní čeká na schválení administrátorem.</p>
+        <div style="margin:0 0 24px;padding:18px 20px;background:#f5f5f7;border-radius:10px;color:#1d1d1f;font-size:14px;line-height:1.7;">
+          <strong>ID klubu:</strong> ${input.clubId}<br />
+          <strong>Sport:</strong> ${safeSport}<br />
+          <strong>Město:</strong> ${safeCity}<br />
+          <strong>Přihlašovací email:</strong> ${safeEmail}
+        </div>
+        <p style="margin:0 0 20px;color:#6e6e73;font-size:14px;line-height:1.6;">Po schválení budete mít okamžitý přístup do celé aplikace.</p>
+        <div style="text-align:center;">
+          <a href="${safeLoginUrl}" style="display:inline-block;padding:15px 32px;background:#E43432;color:#ffffff;text-decoration:none;border-radius:10px;font-weight:600;font-size:16px;">Přejít na přihlášení</a>
+        </div>
+      `
+    ),
+    text: joinText([
+      `Ahoj ${input.fullName},`,
+      `žádost o klub ${input.clubName} čeká na schválení administrátorem.`,
+      `ID klubu: ${input.clubId}, sport: ${input.sport}, město: ${input.city}.`,
+      `Přihlášení: ${input.loginUrl}`,
+    ]),
+  }
+}
+
+export function buildClubApprovedOwnerEmail(input: {
+  fullName: string
+  clubName: string
+  loginUrl: string
+}): EmailContent {
+  const safeFullName = escapeHtml(input.fullName)
+  const safeClubName = escapeHtml(input.clubName)
+  const safeLoginUrl = escapeHtml(input.loginUrl)
+
+  return {
+    subject: 'Klub byl schválen – TeamPulse',
+    html: renderEmailLayout(
+      'Klub schválen',
+      `Klub ${input.clubName} byl schválen a je aktivní`,
+      `
+        <h2 style="margin:0 0 16px;font-size:24px;color:#1d1d1f;">Klub byl schválen</h2>
+        <p style="margin:0 0 16px;color:#4a4a4a;font-size:16px;line-height:1.7;">Ahoj ${safeFullName}, dobrá zpráva - klub <strong style="color:#E43432;">${safeClubName}</strong> byl schválen administrátorem.</p>
+        <p style="margin:0 0 24px;color:#4a4a4a;font-size:16px;line-height:1.7;">Nyní se můžeš přihlásit a začít plně používat TeamPulse.</p>
+        <div style="text-align:center;">
+          <a href="${safeLoginUrl}" style="display:inline-block;padding:15px 32px;background:#E43432;color:#ffffff;text-decoration:none;border-radius:10px;font-weight:600;font-size:16px;">Přihlásit se</a>
+        </div>
+      `
+    ),
+    text: joinText([
+      `Ahoj ${input.fullName},`,
+      `klub ${input.clubName} byl schválen a je aktivní.`,
+      `Přihlášení: ${input.loginUrl}`,
+    ]),
+  }
+}
+
+export function buildClubRejectedOwnerEmail(input: {
+  fullName: string
+  clubName: string
+  loginUrl: string
+  reason?: string | null
+}): EmailContent {
+  const safeFullName = escapeHtml(input.fullName)
+  const safeClubName = escapeHtml(input.clubName)
+  const safeLoginUrl = escapeHtml(input.loginUrl)
+  const safeReason = input.reason ? escapeHtml(input.reason) : ''
+
+  return {
+    subject: 'Žádost o klub nebyla schválena – TeamPulse',
+    html: renderEmailLayout(
+      'Žádost zamítnuta',
+      `Žádost o klub ${input.clubName} nebyla schválena`,
+      `
+        <h2 style="margin:0 0 16px;font-size:24px;color:#1d1d1f;">Žádost nebyla schválena</h2>
+        <p style="margin:0 0 16px;color:#4a4a4a;font-size:16px;line-height:1.7;">Ahoj ${safeFullName}, žádost o klub <strong style="color:#E43432;">${safeClubName}</strong> nebyla v této podobě schválena.</p>
+        ${safeReason ? `<div style="margin:0 0 20px;padding:14px 16px;background:#fff4f4;border:1px solid #f4caca;border-radius:10px;color:#7b2020;font-size:14px;line-height:1.6;"><strong>Důvod:</strong><br />${safeReason}</div>` : ''}
+        <p style="margin:0 0 20px;color:#4a4a4a;font-size:15px;line-height:1.7;">Po úpravě údajů můžeš podat novou žádost.</p>
+        <div style="text-align:center;">
+          <a href="${safeLoginUrl}" style="display:inline-block;padding:15px 32px;background:#E43432;color:#ffffff;text-decoration:none;border-radius:10px;font-weight:600;font-size:16px;">Přejít na přihlášení</a>
+        </div>
+      `
+    ),
+    text: joinText([
+      `Ahoj ${input.fullName},`,
+      `žádost o klub ${input.clubName} nebyla schválena.`,
+      input.reason ? `Důvod: ${input.reason}` : undefined,
+      `Přihlášení: ${input.loginUrl}`,
+    ]),
+  }
+}
+
+export function buildAccountDeletedByAdminEmail(input: {
+  fullName: string
+  reason: string
+  supportEmail: string
+}): EmailContent {
+  const safeFullName = escapeHtml(input.fullName)
+  const safeReason = escapeHtml(input.reason)
+  const safeSupportEmail = escapeHtml(input.supportEmail)
+
+  return {
+    subject: 'Váš účet byl smazán administrátorem – TeamPulse',
+    html: renderEmailLayout(
+      'Účet byl smazán',
+      'Administrátor smazal váš účet v TeamPulse',
+      `
+        <h2 style="margin:0 0 16px;font-size:24px;color:#1d1d1f;">Účet byl smazán</h2>
+        <p style="margin:0 0 16px;color:#4a4a4a;font-size:16px;line-height:1.7;">Ahoj ${safeFullName},</p>
+        <p style="margin:0 0 16px;color:#4a4a4a;font-size:16px;line-height:1.7;">Tvůj účet v TeamPulse byl smazán administrátorem.</p>
+        <div style="margin:0 0 20px;padding:14px 16px;background:#fff4f4;border:1px solid #f4caca;border-radius:10px;color:#7b2020;font-size:14px;line-height:1.6;">
+          <strong>Důvod smazání:</strong><br />${safeReason}
+        </div>
+        <p style="margin:0;color:#6e6e73;font-size:14px;line-height:1.6;">V případě nejasností kontaktuj podporu: <a href="mailto:${safeSupportEmail}" style="color:#E43432;text-decoration:none;">${safeSupportEmail}</a>.</p>
+      `
+    ),
+    text: joinText([
+      `Ahoj ${input.fullName},`,
+      'tvůj účet v TeamPulse byl smazán administrátorem.',
+      `Důvod smazání: ${input.reason}`,
+      `Podpora: ${input.supportEmail}`,
     ]),
   }
 }
