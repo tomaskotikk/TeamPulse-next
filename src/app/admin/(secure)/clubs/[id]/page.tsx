@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import ClubApprovalActions from '@/components/ClubApprovalActions'
-import DeleteClubButton from '@/components/DeleteClubButton'
 import { requireAdminUser } from '@/lib/auth/admin-page'
 import { createAdminClient } from '@/lib/supabase/server'
 import styles from '@/app/admin/(secure)/detail.module.css'
@@ -68,7 +67,6 @@ export default async function AdminClubDetailPage({ params }: { params: Promise<
 
           <div style={{ display: 'flex', gap: 10, marginTop: 14, flexWrap: 'wrap' }}>
             {!club.approved && !club.rejected_at && <ClubApprovalActions clubId={club.id} />}
-            <DeleteClubButton clubId={club.id} clubName={club.name} />
           </div>
         </section>
 

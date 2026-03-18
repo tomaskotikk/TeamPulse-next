@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server'
+import fs from 'node:fs/promises'
+import path from 'node:path'
 import { createAdminClient } from '@/lib/supabase/server'
 import { getCurrentAdminUser } from '@/lib/auth/admin'
 import { buildClubRejectedOwnerEmail } from '@/lib/email/templates'
@@ -29,7 +31,7 @@ export async function POST(
 
     const { data: club, error: clubError } = await supabase
       .from('clubs')
-      .select('id, approved, name, owner_user_id, rejected_at')
+      .select('id, approved, name, owner_user_id, logo')
       .eq('id', clubId)
       .maybeSingle()
 
@@ -45,24 +47,16 @@ export async function POST(
       return NextResponse.json({ error: 'Schválený klub nelze zamítnout.' }, { status: 400 })
     }
 
-    const { error: updateError } = await supabase
-      .from('clubs')
-      .update({
-        approved: false,
-        rejected_at: new Date().toISOString(),
-        rejection_reason: reason || null,
-      })
-      .eq('id', clubId)
-
-    if (updateError) {
-      return NextResponse.json({ error: 'Nepodařilo se zamítnout žádost.' }, { status: 500 })
-    }
-
     const { data: owner } = await supabase
       .from('users')
-      .select('first_name, last_name, email')
+      .select('id, first_name, last_name, email, profile_picture')
       .eq('id', club.owner_user_id)
       .maybeSingle()
+
+    const { data: usersInOrganization } = await supabase
+      .from('users')
+      .select('id, admin, profile_picture')
+      .eq('organization', club.name)
 
     if (owner?.email) {
       try {
@@ -82,6 +76,53 @@ export async function POST(
       } catch (mailErr) {
         console.error('Club rejected email error:', mailErr)
       }
+    }
+
+    const { error: deleteClubError } = await supabase
+      .from('clubs')
+      .delete()
+      .eq('id', club.id)
+
+    if (deleteClubError) {
+      return NextResponse.json({ error: 'Nepodařilo se odstranit zamítnutý klub.' }, { status: 500 })
+    }
+
+    const candidateUsers = usersInOrganization ?? []
+    const nonAdminUserIds = candidateUsers.filter((u) => !u.admin).map((u) => u.id)
+    const ownerId = owner?.id ?? null
+
+    const userIdsToDelete = Array.from(new Set([
+      ...nonAdminUserIds,
+      ...(ownerId ? [ownerId] : []),
+    ]))
+
+    if (userIdsToDelete.length > 0) {
+      const { error: deleteUsersError } = await supabase
+        .from('users')
+        .delete()
+        .in('id', userIdsToDelete)
+
+      if (deleteUsersError) {
+        return NextResponse.json({ error: 'Klub byl zamítnut, ale nepodařilo se odstranit související uživatele.' }, { status: 500 })
+      }
+    }
+
+    const profileDir = path.join(process.cwd(), 'public', 'uploads', 'profiles')
+    const usersForFileCleanup = [
+      ...(candidateUsers ?? []).map((u) => u.profile_picture),
+      owner?.profile_picture ?? null,
+    ]
+      .filter((name): name is string => Boolean(name))
+
+    await Promise.all(
+      usersForFileCleanup.map((fileName) =>
+        fs.rm(path.join(profileDir, path.basename(fileName)), { force: true })
+      )
+    )
+
+    if (club.logo) {
+      const clubLogoPath = path.join(process.cwd(), 'public', 'uploads', 'clubs', path.basename(club.logo))
+      await fs.rm(clubLogoPath, { force: true })
     }
 
     return NextResponse.json({ success: true })

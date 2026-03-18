@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { useMemo, useState } from 'react'
 import ClubApprovalActions from '@/components/ClubApprovalActions'
 import UserModerationActions from '@/components/UserModerationActions'
-import DeleteClubButton from '@/components/DeleteClubButton'
 import styles from '@/components/admin-panel.module.css'
 
 type ClubRow = {
@@ -202,13 +201,13 @@ export default function AdminPanelClient({ admin, clubs, users }: AdminPanelClie
             <div className={styles.sectionHeader}>
               <div>
                 <h2 className={styles.sectionTitle}>Kluby</h2>
-                <p className={styles.sectionSub}>Rozklik pro detail, správu a zrušení celého týmu.</p>
+                <p className={styles.sectionSub}>Rozklik pro detail klubu a stav schválení.</p>
               </div>
             </div>
             <div className={styles.sectionBody}>
               <div className={styles.tableWrap}>
                 <table className={styles.table}>
-                  <thead><tr><th>ID</th><th>Název</th><th>Sport</th><th>Město</th><th>Stav</th><th>Správce</th><th>Akce</th></tr></thead>
+                  <thead><tr><th>ID</th><th>Název</th><th>Sport</th><th>Město</th><th>Stav</th><th>Správce</th></tr></thead>
                   <tbody>
                     {filteredClubs.map((club) => {
                       const owner = ownerById.get(club.owner_user_id)
@@ -224,7 +223,6 @@ export default function AdminPanelClient({ admin, clubs, users }: AdminPanelClie
                             {statusOf(club) === 'rejected' && <span className={`${styles.badge} ${styles.rejected}`}>Zamítnuto</span>}
                           </td>
                           <td>{owner ? `${owner.first_name} ${owner.last_name}` : '-'}</td>
-                          <td><DeleteClubButton clubId={club.id} clubName={club.name} compact /></td>
                         </tr>
                       )
                     })}

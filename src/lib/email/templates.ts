@@ -339,25 +339,26 @@ export function buildClubRejectedOwnerEmail(input: {
   const safeReason = input.reason ? escapeHtml(input.reason) : ''
 
   return {
-    subject: 'Žádost o klub nebyla schválena – TeamPulse',
+    subject: 'Žádost o klub byla zamítnuta – TeamPulse',
     html: renderEmailLayout(
       'Žádost zamítnuta',
-      `Žádost o klub ${input.clubName} nebyla schválena`,
+      `Žádost o klub ${input.clubName} byla zamítnuta`,
       `
         <h2 style="margin:0 0 16px;font-size:24px;color:#1d1d1f;">Žádost nebyla schválena</h2>
-        <p style="margin:0 0 16px;color:#4a4a4a;font-size:16px;line-height:1.7;">Ahoj ${safeFullName}, žádost o klub <strong style="color:#E43432;">${safeClubName}</strong> nebyla v této podobě schválena.</p>
+        <p style="margin:0 0 16px;color:#4a4a4a;font-size:16px;line-height:1.7;">Ahoj ${safeFullName}, žádost o klub <strong style="color:#E43432;">${safeClubName}</strong> byla zamítnuta.</p>
         ${safeReason ? `<div style="margin:0 0 20px;padding:14px 16px;background:#fff4f4;border:1px solid #f4caca;border-radius:10px;color:#7b2020;font-size:14px;line-height:1.6;"><strong>Důvod:</strong><br />${safeReason}</div>` : ''}
-        <p style="margin:0 0 20px;color:#4a4a4a;font-size:15px;line-height:1.7;">Po úpravě údajů můžeš podat novou žádost.</p>
+        <p style="margin:0 0 20px;color:#4a4a4a;font-size:15px;line-height:1.7;">V rámci zamítnutí byla odstraněna registrace klubu i účet správce. Pokud chceš pokračovat, založ novou registraci.</p>
         <div style="text-align:center;">
-          <a href="${safeLoginUrl}" style="display:inline-block;padding:15px 32px;background:#E43432;color:#ffffff;text-decoration:none;border-radius:10px;font-weight:600;font-size:16px;">Přejít na přihlášení</a>
+          <a href="${safeLoginUrl}" style="display:inline-block;padding:15px 32px;background:#E43432;color:#ffffff;text-decoration:none;border-radius:10px;font-weight:600;font-size:16px;">Přejít na TeamPulse</a>
         </div>
       `
     ),
     text: joinText([
       `Ahoj ${input.fullName},`,
-      `žádost o klub ${input.clubName} nebyla schválena.`,
+      `žádost o klub ${input.clubName} byla zamítnuta.`,
       input.reason ? `Důvod: ${input.reason}` : undefined,
-      `Přihlášení: ${input.loginUrl}`,
+      'V rámci zamítnutí byla odstraněna registrace klubu i účet správce.',
+      `TeamPulse: ${input.loginUrl}`,
     ]),
   }
 }
