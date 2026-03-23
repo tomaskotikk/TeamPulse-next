@@ -130,6 +130,20 @@ export default function Sidebar({ user, isManager }: SidebarProps) {
             <div className="user-role">{user.role}</div>
           </div>
         </Link>
+
+        <a href="/api/auth/logout" className="sidebar-logout-btn">
+          <span className="sidebar-logout-icon-wrap" aria-hidden="true">
+            <svg className="sidebar-logout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H9m8 7v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h8a3 3 0 013 3v1" />
+            </svg>
+          </span>
+          <span className="sidebar-logout-texts">
+            <span className="sidebar-logout-title">Odhlásit se</span>
+          </span>
+          <svg className="sidebar-logout-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 6l6 6-6 6" />
+          </svg>
+        </a>
       </div>
     </aside>
   )
