@@ -1105,6 +1105,7 @@ body {
   color: var(--text);
   padding: 0 12px 0 38px;
   font-size: 14px;
+  font-family: inherit;
   outline: none;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
@@ -1127,6 +1128,7 @@ body {
   color: var(--text);
   padding: 0 12px;
   font-size: 14px;
+  font-family: inherit;
   outline: none;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
@@ -1158,6 +1160,7 @@ body {
   padding: 0 12px;
   border-radius: 8px;
   font-size: 12px;
+  font-family: inherit;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -1186,9 +1189,16 @@ body {
   align-items: center;
   gap: 8px;
   font-size: 12px;
+  font-family: inherit;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
+}
+
+@media (max-width: 1024px) {
+  .members-toolbar {
+    grid-template-columns: 1fr;
+  }
 }
 
 .members-filter-pill:hover {
@@ -1980,6 +1990,25 @@ body {
     gap: 10px;
   }
 
+  .members-filter-pills {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .members-filter-pills::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .members-filter-pills::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 999px;
+  }
+
+  .members-filter-pill {
+    flex-shrink: 0;
+  }
+
   .members-role-select,
   .members-search-input {
     font-size: 16px;
@@ -1994,6 +2023,35 @@ body {
   .members-clear-btn {
     width: auto;
     min-height: 34px;
+  }
+
+  .member-item {
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    align-items: start;
+    gap: 10px;
+    padding: 14px;
+  }
+
+  .member-avatar,
+  .member-avatar-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 9px;
+  }
+
+  .member-name {
+    font-size: 14px;
+  }
+
+  .member-contact {
+    word-break: break-word;
+  }
+
+  .member-badge {
+    grid-column: 2;
+    justify-self: start;
+    margin-top: 6px;
   }
 
   .section {
