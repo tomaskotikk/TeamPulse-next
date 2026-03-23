@@ -215,18 +215,18 @@ body {
 }
 
 .sidebar-logout-btn {
-  margin-top: 10px;
+  margin-top: 8px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   width: 100%;
-  padding: 10px 12px;
-  border-radius: 10px;
+  padding: 7px 10px;
+  border-radius: 8px;
   border: 1px solid var(--border);
   background: linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-elevated) 100%);
   color: var(--text);
   text-decoration: none;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
@@ -245,9 +245,9 @@ body {
 }
 
 .sidebar-logout-icon-wrap {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
   border: 1px solid var(--border);
   background: var(--bg);
   display: inline-flex;
@@ -257,8 +257,8 @@ body {
 }
 
 .sidebar-logout-icon {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   stroke-width: 2.1;
 }
 
@@ -269,14 +269,14 @@ body {
 }
 
 .sidebar-logout-title {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.15;
 }
 
 .sidebar-logout-chevron {
-  width: 15px;
-  height: 15px;
+  width: 13px;
+  height: 13px;
   margin-left: auto;
   color: var(--text-dimmer);
   transition: transform 0.2s ease, color 0.2s ease;
