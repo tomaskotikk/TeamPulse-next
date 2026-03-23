@@ -13,7 +13,9 @@ export const metadata: Metadata = {
   title: "TeamPulse",
   description: "Sportovní týmový systém",
   icons: {
-    icon: "/favicon.ico",
+    icon: "/tp-logo.png",
+    shortcut: "/tp-logo.png",
+    apple: "/tp-logo.png",
   },
 };
 
