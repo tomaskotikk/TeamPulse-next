@@ -107,7 +107,7 @@ export default function MembersDirectory({ members, currentUserId, isManager }: 
   }
 
   return (
-    <>
+    <div className="members-directory">
       <div className="members-toolbar">
         <div className="members-search-wrap">
           <svg className="members-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
@@ -207,6 +207,6 @@ export default function MembersDirectory({ members, currentUserId, isManager }: 
           })}
         </div>
       )}
-    </>
+    </div>
   )
 }

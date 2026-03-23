@@ -1074,6 +1074,10 @@ body {
    MEMBER LIST
    ==================================== */
 
+.members-directory {
+  padding: 0 18px 18px;
+}
+
 .members-toolbar {
   display: grid;
   grid-template-columns: 1fr 220px;
@@ -1988,6 +1992,10 @@ body {
   .members-toolbar {
     grid-template-columns: 1fr;
     gap: 10px;
+  }
+
+  .members-directory {
+    padding: 0 12px 12px;
   }
 
   .members-filter-pills {
