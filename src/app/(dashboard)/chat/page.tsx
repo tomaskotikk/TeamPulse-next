@@ -43,6 +43,7 @@ export default function ChatPage() {
   const [sending, setSending] = useState(false)
   const [deletingMessageId, setDeletingMessageId] = useState<number | null>(null)
   const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null)
+  const [showMembersMobile, setShowMembersMobile] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const membersRef = useRef<AppUser[]>([])
@@ -334,84 +335,81 @@ export default function ChatPage() {
           <div className="section"><div className="section-content">Načítání chatu…</div></div>
         ) : (
 
-        <div style={{ display: 'flex', gap: 20, height: 'calc(100vh - 240px)', minHeight: 500 }} id="chatContainer">
+        <div className="chat-container" id="chatContainer">
+          <div
+            className={`chat-members-overlay ${showMembersMobile ? 'active' : ''}`}
+            onClick={() => setShowMembersMobile(false)}
+            aria-hidden="true"
+          />
+
           {/* PANEL ČLENŮ */}
-          <div style={{
-            width: 280,
-            background: 'var(--bg-elevated)',
-            border: '1px solid var(--border)',
-            borderRadius: 8,
-            overflow: 'hidden',
-            display: 'flex',
-            flexDirection: 'column',
-            flexShrink: 0,
-          }} id="membersPanel">
-            <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)' }}>
-              <div style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, color: 'var(--text-dimmer)' }}>
-                Členové ({members.length})
-              </div>
+          <aside className={`chat-members-panel ${showMembersMobile ? 'mobile-open' : ''}`} id="membersPanel">
+            <div className="chat-members-header">
+              <div className="chat-members-header-title">Členové ({members.length})</div>
+              <button
+                type="button"
+                className="chat-mobile-close"
+                onClick={() => setShowMembersMobile(false)}
+                aria-label="Zavřít seznam členů"
+              >
+                ×
+              </button>
             </div>
-            <div style={{ flex: 1, overflowY: 'auto', padding: '12px 0' }}>
+            <div className="chat-members-list">
               {members.map((m) => {
                 const ini = (m.first_name?.[0] ?? '').toUpperCase() + (m.last_name?.[0] ?? '').toUpperCase()
                 return (
-                  <div key={m.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 16px' }}>
+                  <div key={m.id} className="chat-member-item">
                     {m.profile_picture ? (
-                      <img src={`/uploads/profiles/${m.profile_picture}`} alt="" style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover' }} />
+                      <img src={`/uploads/profiles/${m.profile_picture}`} alt="" className="chat-member-avatar-img" />
                     ) : (
-                      <div className="user-avatar" style={{ width: 32, height: 32, fontSize: 12 }}>{ini}</div>
+                      <div className="chat-member-avatar-fallback">{ini}</div>
                     )}
-                    <div>
-                      <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)' }}>
+                    <div className="chat-member-meta">
+                      <div className="chat-member-name">
                         {m.first_name} {m.last_name}
                       </div>
-                      <div style={{ fontSize: 11, color: 'var(--text-dimmer)' }}>{m.role}</div>
+                      <div className="chat-member-role">{m.role}</div>
                     </div>
                   </div>
                 )
               })}
             </div>
-          </div>
+          </aside>
 
           {/* CHAT OBLAST */}
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: 8, overflow: 'hidden' }}>
+          <div className="chat-area">
+            <div className="chat-mobile-toolbar">
+              <button type="button" className="chat-mobile-members-btn" onClick={() => setShowMembersMobile(true)}>
+                Členové ({members.length})
+              </button>
+            </div>
+
             {/* Zprávy */}
-            <div
-              id="messagesContainer"
-              style={{ flex: 1, overflowY: 'auto', padding: 20, display: 'flex', flexDirection: 'column', gap: 12 }}
-            >
+            <div id="messagesContainer" className="chat-messages-container">
               {messages.map((msg) => {
                 const isOwn = msg.user_id === layoutUser.id
                 const canDelete = isOwn || isManager
                 const ini = (msg.first_name?.[0] ?? '').toUpperCase() + (msg.last_name?.[0] ?? '').toUpperCase()
 
                 return (
-                  <div key={msg.id} style={{ display: 'flex', gap: 10, flexDirection: isOwn ? 'row-reverse' : 'row', alignItems: 'flex-start' }}>
+                  <div key={msg.id} className={`chat-message ${isOwn ? 'own' : ''}`}>
                     {msg.profile_picture ? (
-                      <img src={`/uploads/profiles/${msg.profile_picture}`} alt="" style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
+                      <img src={`/uploads/profiles/${msg.profile_picture}`} alt="" className="chat-message-user-img" />
                     ) : (
-                      <div className="user-avatar" style={{ width: 36, height: 36, fontSize: 13, flexShrink: 0 }}>{ini}</div>
+                      <div className="chat-message-avatar">{ini}</div>
                     )}
-                    <div style={{ maxWidth: '70%' }}>
+                    <div className="chat-message-content">
                       {!isOwn && (
-                        <div style={{ fontSize: 12, color: 'var(--text-dimmer)', marginBottom: 4 }}>
+                        <div className="chat-message-sender">
                           {msg.first_name} {msg.last_name} · {msg.role}
                         </div>
                       )}
-                      <div style={{
-                        background: isOwn ? 'var(--red)' : 'var(--bg-surface)',
-                        color: isOwn ? 'var(--red-text)' : 'var(--text)',
-                        borderRadius: isOwn ? '12px 12px 2px 12px' : '12px 12px 12px 2px',
-                        padding: '10px 14px',
-                        fontSize: 14,
-                        lineHeight: 1.5,
-                        border: isOwn ? 'none' : '1px solid var(--border)',
-                        wordBreak: 'break-word',
-                      }}>
+                      <div className={`chat-message-bubble ${isOwn ? 'own' : 'other'}`}>
                         {msg.message}
                       </div>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: isOwn ? 'flex-end' : 'space-between', gap: 8, marginTop: 4 }}>
-                        <div style={{ fontSize: 11, color: 'var(--text-dimmer)', textAlign: isOwn ? 'right' : 'left' }}>
+                      <div className={`chat-message-actions ${isOwn ? 'own' : 'other'}`}>
+                        <div className="chat-message-time">
                           {formatTime(msg.created_at)}
                         </div>
                         {canDelete && (
@@ -453,22 +451,20 @@ export default function ChatPage() {
             </div>
 
             {/* Input */}
-            <div style={{ padding: '12px 16px', borderTop: '1px solid var(--border)' }}>
-              <form onSubmit={sendMessage} style={{ display: 'flex', gap: 10 }}>
+            <div className="chat-input-area">
+              <form onSubmit={sendMessage} className="chat-input-form">
                 <input
                   type="text"
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                   placeholder="Napište zprávu…"
-                  className="form-input"
-                  style={{ flex: 1 }}
+                  className="chat-text-input"
                   id="messageInput"
                 />
                 <button
                   type="submit"
-                  className="btn btn-primary"
+                  className="chat-send-btn"
                   disabled={!newMessage.trim() || sending || !user}
-                  style={{ width: 'auto', padding: '10px 20px' }}
                   id="sendBtn"
                 >
                   <svg style={{ width: 16, height: 16 }} viewBox="0 0 24 24" fill="none" stroke="currentColor">

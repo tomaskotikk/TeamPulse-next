@@ -1,6 +1,7 @@
 'use client'
 
 import Sidebar from './Sidebar'
+import MobileBottomBar from './MobileBottomBar'
 import type { CSSProperties } from 'react'
 
 interface DashboardLayoutProps {
@@ -38,6 +39,8 @@ export default function DashboardLayout({ children, user, isManager, themeVars }
       <main className="app-main">
         {children}
       </main>
+
+      <MobileBottomBar user={user} />
     </div>
   )
 }

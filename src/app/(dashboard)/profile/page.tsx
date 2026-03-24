@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import Cropper from 'cropperjs'
 import DashboardLayout from '@/components/DashboardLayout'
 import Topbar from '@/components/Topbar'
+import Link from 'next/link'
 
 type AppUser = {
   id: number
@@ -324,6 +325,49 @@ export default function ProfilePage() {
         <div className="content-header">
           <h2 className="content-title">Váš profil</h2>
           <p className="content-subtitle">Spravujte své osobní údaje a nastavení</p>
+        </div>
+
+        <div className="profile-mobile-hub">
+          <div className="profile-mobile-hub-header">
+            {layoutUser.profile_picture ? (
+              <img src={`/uploads/profiles/${layoutUser.profile_picture}`} alt="Profil" className="profile-mobile-hub-avatar" />
+            ) : (
+              <div className="profile-mobile-hub-avatar-fallback">{initials || 'U'}</div>
+            )}
+            <div className="profile-mobile-hub-info">
+              <div className="profile-mobile-hub-name">{layoutUser.first_name} {layoutUser.last_name}</div>
+              <div className="profile-mobile-hub-meta">{layoutUser.role} • {user?.organization ?? 'Bez klubu'}</div>
+            </div>
+          </div>
+
+          <div className="profile-mobile-shortcuts">
+            <Link href="/dashboard" className="profile-mobile-shortcut-item">
+              <span>Přehled klubu</span>
+              <span aria-hidden="true">›</span>
+            </Link>
+            <Link href="/members" className="profile-mobile-shortcut-item">
+              <span>Členové</span>
+              <span aria-hidden="true">›</span>
+            </Link>
+            <Link href="/chat" className="profile-mobile-shortcut-item">
+              <span>Klubová zeď</span>
+              <span aria-hidden="true">›</span>
+            </Link>
+            <Link href="/notifications" className="profile-mobile-shortcut-item">
+              <span>Inbox</span>
+              <span aria-hidden="true">›</span>
+            </Link>
+            <Link href="/settings" className="profile-mobile-shortcut-item">
+              <span>Nastavení aplikace</span>
+              <span aria-hidden="true">›</span>
+            </Link>
+            {isManager && (
+              <Link href="/invite" className="profile-mobile-shortcut-item">
+                <span>Pozvat členy</span>
+                <span aria-hidden="true">›</span>
+              </Link>
+            )}
+          </div>
         </div>
 
         {successMsg && (

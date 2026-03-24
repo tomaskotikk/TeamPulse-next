@@ -1,5 +1,6 @@
 import DashboardLayout from '@/components/DashboardLayout'
 import Topbar from '@/components/Topbar'
+import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 import {
   getClubForUser,
@@ -43,6 +44,13 @@ export default async function MemberDetailPage({ params }: { params: Promise<{ i
       <Topbar title="Profil člena" backHref="/members" backLabel="Zpět na členy" />
 
       <div className="app-content">
+        <Link href="/members" className="mobile-back-link" aria-label="Zpět na členy">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          Zpět na členy
+        </Link>
+
         <div className="content-header">
           <h2 className="content-title">
             {member.first_name} {member.last_name}
