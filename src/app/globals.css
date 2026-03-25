@@ -3668,6 +3668,73 @@ body {
   color: #166b3f;
 }
 
+.club-create-verify-screen {
+  min-height: 560px;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 12px;
+  border-radius: 14px;
+  border: 1px solid #b7ebca;
+  background: linear-gradient(160deg, #eefff5 0%, #e4f9ed 100%);
+  text-align: center;
+  padding: 24px;
+}
+
+.club-create-verify-icon {
+  width: 62px;
+  height: 62px;
+  border-radius: 999px;
+  background: #1ea76f;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 800;
+  box-shadow: 0 10px 24px rgba(30, 167, 111, 0.3);
+}
+
+.club-create-verify-screen h2 {
+  margin: 0;
+  font-size: clamp(24px, 3.5vw, 40px);
+  color: #0f3d28;
+  line-height: 1.1;
+}
+
+.club-create-verify-main {
+  margin: 0;
+  font-size: 16px;
+  color: #145133;
+  max-width: 680px;
+}
+
+.club-create-verify-sub {
+  margin: 0;
+  font-size: 14px;
+  color: #2a6547;
+  max-width: 720px;
+}
+
+.club-create-verify-status {
+  margin-top: 4px;
+  border-radius: 10px;
+  background: rgba(17, 91, 57, 0.09);
+  border: 1px solid rgba(17, 91, 57, 0.15);
+  color: #0d5939;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.club-create-verify-actions {
+  margin-top: 6px;
+}
+
+.club-create-verify-actions .club-create-btn {
+  text-decoration: none;
+}
+
 .club-create-login-link {
   margin-top: 12px;
   font-size: 13px;
@@ -3730,6 +3797,11 @@ body {
   .club-create-row {
     grid-template-columns: 1fr;
     gap: 0;
+  }
+
+  .club-create-verify-screen {
+    min-height: 430px;
+    padding: 20px 14px;
   }
 }
 

@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { FormEvent, useState } from 'react'
+import { FormEvent, useEffect, useRef, useState } from 'react'
 import PublicNavbar from '@/components/PublicNavbar'
 
 type RegisterFormState = {
@@ -42,12 +42,119 @@ const INITIAL_FORM: RegisterFormState = {
   terms: false,
 }
 
+type VerificationWatchState = {
+  pendingId: number
+  managerEmail: string
+  managerPassword: string
+  clubName: string
+}
+
 export default function CreateClubPage() {
   const [step, setStep] = useState<1 | 2>(1)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
   const [formState, setFormState] = useState<RegisterFormState>(INITIAL_FORM)
+  const [verificationWatch, setVerificationWatch] = useState<VerificationWatchState | null>(null)
+  const [verificationInfo, setVerificationInfo] = useState<string>('Čekáme na potvrzení e-mailu…')
+  const [verifyingRedirect, setVerifyingRedirect] = useState(false)
+  const redirectTriggeredRef = useRef(false)
+
+  const isVerificationPending = Boolean(verificationWatch)
+
+  useEffect(() => {
+    if (!verificationWatch) return
+    const watch: VerificationWatchState = verificationWatch
+
+    let cancelled = false
+    let timerId: number | null = null
+
+    async function checkStatus() {
+      if (cancelled || redirectTriggeredRef.current) return
+
+      try {
+        const res = await fetch('/api/club/registration-status', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            pendingId: watch.pendingId,
+            email: watch.managerEmail,
+          }),
+        })
+
+        const data = await res.json().catch(() => ({}))
+        if (!res.ok || cancelled) return
+
+        if (data.status === 'pending') {
+          setVerificationInfo('Čekáme na potvrzení e-mailu. Jakmile kliknete na odkaz v telefonu, stránka se dokončí automaticky.')
+          return
+        }
+
+        if (data.status === 'verified') {
+          redirectTriggeredRef.current = true
+          setVerifyingRedirect(true)
+          setVerificationInfo('E-mail je ověřený. Přihlašujeme vás a přesměrováváme na čekací stránku…')
+
+          const loginRes = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: watch.managerEmail,
+              password: watch.managerPassword,
+              rememberMe: false,
+            }),
+          })
+
+          const loginData = await loginRes.json().catch(() => ({}))
+
+          if (!loginRes.ok || loginData?.requires2FA) {
+            setVerifyingRedirect(false)
+            setVerificationInfo('E-mail je ověřen, ale nepodařilo se vás automaticky přihlásit. Pokračujte prosím ručně přes přihlášení.')
+            return
+          }
+
+          window.location.href = '/awaiting-approval'
+          return
+        }
+
+        if (data.status === 'expired') {
+          setVerificationWatch(null)
+          setSuccess(null)
+          setVerificationInfo('Verifikační odkaz vypršel. Vyplňte prosím formulář znovu.')
+          setError('Verifikační odkaz vypršel. Vyplňte prosím formulář znovu.')
+          return
+        }
+
+        setVerificationInfo('Dokončujeme kontrolu registrace…')
+      } catch {
+        // Ignore transient polling errors.
+      }
+    }
+
+    void checkStatus()
+    timerId = window.setInterval(checkStatus, 3500)
+
+    const onVisibility = () => {
+      if (!document.hidden) {
+        void checkStatus()
+      }
+    }
+
+    const onFocus = () => {
+      void checkStatus()
+    }
+
+    window.addEventListener('focus', onFocus)
+    document.addEventListener('visibilitychange', onVisibility)
+
+    return () => {
+      cancelled = true
+      if (timerId) window.clearInterval(timerId)
+      window.removeEventListener('focus', onFocus)
+      document.removeEventListener('visibilitychange', onVisibility)
+      redirectTriggeredRef.current = false
+    }
+  }, [verificationWatch])
 
   function updateField<K extends keyof RegisterFormState>(key: K, value: RegisterFormState[K]) {
     setFormState((prev) => ({ ...prev, [key]: value }))
@@ -91,12 +198,14 @@ export default function CreateClubPage() {
         return
       }
 
-      setSuccess(
-        data.message ||
-          'Registrace byla odeslána. Na e-mail jsme poslali ověřovací odkaz pro aktivaci klubu.'
-      )
-      setFormState(INITIAL_FORM)
-      setStep(1)
+      setSuccess(data.message || 'Registrace byla odeslána.')
+      setVerificationWatch({
+        pendingId: Number(data.pendingId),
+        managerEmail: String(data.managerEmail || payload.email),
+        managerPassword: payload.password,
+        clubName: String(data.clubName || payload.club_name),
+      })
+      setVerificationInfo('Ověřte e-mail správce. Po potvrzení vás automaticky přesměrujeme na čekací stránku.')
     } catch {
       setError('Nastala chyba serveru. Zkuste to prosím znovu.')
     } finally {
@@ -104,7 +213,7 @@ export default function CreateClubPage() {
     }
   }
 
-  const isCompleted = Boolean(success)
+  const isCompleted = isVerificationPending || Boolean(success)
   const phase = isCompleted ? 3 : step
 
   function handleContinueToAdmin() {
@@ -179,10 +288,29 @@ export default function CreateClubPage() {
           </aside>
 
           <div className="club-create-card">
-            {error && !success && <div className="club-create-feedback error">{error}</div>}
-            {success && <div className="club-create-feedback success">{success}</div>}
+            {error && <div className="club-create-feedback error">{error}</div>}
+            {success && !isVerificationPending && <div className="club-create-feedback success">{success}</div>}
 
-            <form onSubmit={handleSubmit}>
+            {isVerificationPending && verificationWatch && (
+              <section className="club-create-verify-screen" aria-live="polite">
+                <div className="club-create-verify-icon" aria-hidden="true">✓</div>
+                <h2>Ověřte e-mail správce</h2>
+                <p className="club-create-verify-main">
+                  Na adresu <strong>{verificationWatch.managerEmail}</strong> jsme poslali ověřovací odkaz.
+                </p>
+                <p className="club-create-verify-sub">
+                  Jakmile odkaz potvrdíte třeba na telefonu, žádost klubu <strong>{verificationWatch.clubName}</strong> se propíše i sem a stránka vás automaticky přesměruje na čekací stav.
+                </p>
+                <div className="club-create-verify-status">
+                  {verifyingRedirect ? 'Přihlašujeme a přesměrováváme…' : verificationInfo}
+                </div>
+                <div className="club-create-verify-actions">
+                  <Link href="/login" className="club-create-btn ghost">Přejít na přihlášení</Link>
+                </div>
+              </section>
+            )}
+
+            <form onSubmit={handleSubmit} style={isVerificationPending ? { display: 'none' } : undefined}>
               {step === 1 && (
                 <div className="club-create-step" key="club-step">
                   <h2>Detail klubu</h2>

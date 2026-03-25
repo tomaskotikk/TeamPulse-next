@@ -170,6 +170,9 @@ export async function POST(request: NextRequest) {
       success: true,
       message:
         'Registrace byla odeslána. Na e-mail jsme poslali ověřovací odkaz. Po potvrzení bude žádost čekat na schválení administrátorem.',
+      pendingId: pendingRecord.id,
+      managerEmail: email,
+      clubName,
     })
   } catch (err) {
     console.error('Club register error:', err)
