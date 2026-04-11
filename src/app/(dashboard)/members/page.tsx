@@ -39,11 +39,10 @@ export default async function MembersPage() {
       />
 
       <div className="app-content">
-        <div className="content-header">
+        <div className="page-intro">
+          <div className="page-intro-meta">Soupiska klubu</div>
           <h2 className="content-title">Tým • {members.length} členů</h2>
-          <p className="content-subtitle">
-            Přehled všech registrovaných členů a jejich rolí v klubu
-          </p>
+          <p className="content-subtitle">Přehled všech registrovaných členů a jejich rolí v klubu</p>
         </div>
 
         <div className="section">

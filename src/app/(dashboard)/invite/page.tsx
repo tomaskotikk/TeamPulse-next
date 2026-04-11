@@ -134,7 +134,8 @@ export default function InvitePage() {
 
       <div className="app-content">
         {loadingContext && <div className="section"><div className="section-content">Načítání…</div></div>}
-        <div className="content-header">
+        <div className="page-intro">
+          <div className="page-intro-meta">Nábor klubu</div>
           <h2 className="content-title">Pozvat nové členy</h2>
           <p className="content-subtitle">
             Pošlete pozvánku do klubu e-mailem. Odkaz v pozvánce bude časově omezený.

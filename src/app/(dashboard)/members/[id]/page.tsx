@@ -51,7 +51,8 @@ export default async function MemberDetailPage({ params }: { params: Promise<{ i
           Zpět na členy
         </Link>
 
-        <div className="content-header">
+        <div className="page-intro">
+          <div className="page-intro-meta">Detail člena</div>
           <h2 className="content-title">
             {member.first_name} {member.last_name}
           </h2>

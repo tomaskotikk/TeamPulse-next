@@ -322,7 +322,8 @@ export default function ChatPage() {
       <Topbar title="Týmový chat" />
 
       <div className="app-content">
-        <div className="content-header">
+        <div className="page-intro">
+          <div className="page-intro-meta">Komunikace týmu</div>
           <h2 className="content-title">Týmový chat</h2>
           <p className="content-subtitle">
             {club ? `${club.name} • ${club.sport} • ${club.city}` : 'Komunikace s členy klubu'}

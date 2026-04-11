@@ -322,7 +322,8 @@ export default function ProfilePage() {
           </div>
         )}
 
-        <div className="content-header">
+        <div className="page-intro">
+          <div className="page-intro-meta">Můj účet</div>
           <h2 className="content-title">Váš profil</h2>
           <p className="content-subtitle">Spravujte své osobní údaje a nastavení</p>
         </div>

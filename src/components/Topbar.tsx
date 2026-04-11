@@ -1,6 +1,5 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
 import NotificationBell from '@/components/NotificationBell'
 
 interface TopbarProps {
@@ -11,36 +10,9 @@ interface TopbarProps {
 }
 
 export default function Topbar({ title, actions, backHref, backLabel }: TopbarProps) {
-  const btnRef = useRef<HTMLButtonElement>(null)
-
-  useEffect(() => {
-    const btn = btnRef.current
-    if (!btn) return
-
-    function toggleSidebar() {
-      const sidebar = document.getElementById('sidebar')
-      const overlay = document.getElementById('sidebarOverlay')
-      if (!sidebar || !overlay) return
-      const isOpen = sidebar.classList.toggle('mobile-open')
-      overlay.classList.toggle('active', isOpen)
-      btn!.classList.toggle('active', isOpen)
-      document.body.style.overflow = isOpen ? 'hidden' : ''
-    }
-
-    btn.addEventListener('click', toggleSidebar)
-    return () => btn.removeEventListener('click', toggleSidebar)
-  }, [])
-
   return (
     <header className="app-topbar">
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <button className="mobile-menu-btn" ref={btnRef} aria-label="Otevřít menu">
-          <div className="hamburger">
-            <span />
-            <span />
-            <span />
-          </div>
-        </button>
+      <div>
         <h1 className="topbar-title">{title}</h1>
       </div>
 

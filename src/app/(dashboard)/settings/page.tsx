@@ -142,7 +142,8 @@ export default function SettingsPage() {
           </div>
         )}
 
-        <div className="content-header">
+        <div className="page-intro">
+          <div className="page-intro-meta">Správa účtu a klubu</div>
           <h2 className="content-title">Nastavení</h2>
           <p className="content-subtitle">Spravujte nastavení účtu a aplikace</p>
         </div>

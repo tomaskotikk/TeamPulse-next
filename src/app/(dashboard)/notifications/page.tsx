@@ -204,13 +204,14 @@ export default function NotificationsPage() {
       <Topbar title="Notifikace" />
 
       <div className="app-content">
-        <div className="content-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div className="page-intro page-intro-row">
           <div>
+            <div className="page-intro-meta">Inbox klubu</div>
             <h2 className="content-title">Notifikace</h2>
             <p className="content-subtitle">Všechny vaše notifikace na jednom místě</p>
           </div>
           {notifications.length > 0 && (
-            <button className="topbar-btn" onClick={dismissAll} style={{ flexShrink: 0 }}>
+            <button className="topbar-btn page-intro-action" onClick={dismissAll}>
               <svg style={{ width: 15, height: 15 }} viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
@@ -234,56 +235,26 @@ export default function NotificationsPage() {
             </div>
           </div>
         ) : (
-          <div className="section" style={{ padding: 0, overflow: 'hidden' }}>
+          <div className="section notifications-list">
             {notifications.map((n, i) => (
-              <div
-                key={n.id}
-                style={{
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  gap: 16,
-                  padding: '16px 24px',
-                  borderBottom: i < notifications.length - 1 ? '1px solid var(--border)' : 'none',
-                  transition: 'background 0.12s',
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--bg)')}
-                onMouseLeave={(e) => (e.currentTarget.style.background = '')}
-              >
-                <div
-                  style={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: 10,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0,
-                    background: n.type === 'new_message' ? 'rgba(59,130,246,0.12)' : 'rgba(16,185,129,0.12)',
-                    color: n.type === 'new_message' ? '#3b82f6' : '#10b981',
-                  }}
-                >
+              <div key={n.id} className="notification-item" style={{ borderBottom: i < notifications.length - 1 ? '1px solid var(--border)' : 'none' }}>
+                <div className={`notification-item-icon ${n.type === 'new_message' ? 'is-message' : 'is-member'}`}>
                   {typeIcon(n.type)}
                 </div>
 
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
-                    <span style={{
-                      fontSize: 11,
-                      fontWeight: 600,
-                      textTransform: 'uppercase',
-                      letterSpacing: 0.5,
-                      color: n.type === 'new_message' ? '#3b82f6' : '#10b981',
-                    }}>
+                <div className="notification-item-content">
+                  <div className="notification-item-meta">
+                    <span className={`notification-item-type ${n.type === 'new_message' ? 'is-message' : 'is-member'}`}>
                       {typeLabel(n.type)}
                     </span>
-                    <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>·</span>
-                    <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{timeAgo(n.created_at)}</span>
+                    <span className="notification-item-dot">·</span>
+                    <span className="notification-item-time">{timeAgo(n.created_at)}</span>
                   </div>
-                  <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)', marginBottom: 2 }}>
+                  <div className="notification-item-title">
                     {n.title}
                   </div>
                   {n.body && (
-                    <div style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.5 }}>
+                    <div className="notification-item-body">
                       {n.body}
                     </div>
                   )}
@@ -291,26 +262,7 @@ export default function NotificationsPage() {
 
                 <button
                   onClick={() => dismiss(n.id)}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    padding: 6,
-                    cursor: 'pointer',
-                    color: 'var(--text-muted)',
-                    borderRadius: 6,
-                    display: 'flex',
-                    alignItems: 'center',
-                    flexShrink: 0,
-                    transition: 'color 0.15s, background 0.15s',
-                  }}
-                  onMouseEnter={(e) => {
-                    ;(e.currentTarget as HTMLButtonElement).style.color = 'var(--text)'
-                    ;(e.currentTarget as HTMLButtonElement).style.background = 'var(--bg)'
-                  }}
-                  onMouseLeave={(e) => {
-                    ;(e.currentTarget as HTMLButtonElement).style.color = 'var(--text-muted)'
-                    ;(e.currentTarget as HTMLButtonElement).style.background = 'none'
-                  }}
+                  className="notification-item-dismiss"
                   title="Smazat notifikaci"
                   aria-label="Smazat notifikaci"
                 >

@@ -8,7 +8,7 @@ import {
   getMembersForClub,
   getThemeVars,
 } from '@/lib/app-context'
-import ClubLogoUploader from '@/components/ClubLogoUploader'
+import DesktopOverview from '@/components/dashboard/DesktopOverview'
 
 export default async function DashboardPage() {
   const user = await getCurrentAppUser()
@@ -17,6 +17,7 @@ export default async function DashboardPage() {
   const club = await getClubForUser(user)
   const clubMembers = club ? await getMembersForClub(club.name) : []
   const isManager = user.role === 'manažer'
+  const canSeeAnalytics = user.role === 'manažer' || user.role === 'trenér'
   const themeVars = getThemeVars(club)
 
   const totalMembers = clubMembers.length
@@ -189,120 +190,15 @@ export default async function DashboardPage() {
         </div>
 
         <div className="dashboard-desktop-shell">
-          <div className="content-header">
-            <h2 className="content-title">Vítejte, {user.first_name}</h2>
-            <p className="content-subtitle">
-              {isManager ? 'Přehled vašeho klubu a členů' : 'Informace o vašem týmu'}
-            </p>
-          </div>
-
           {club ? (
-            <>
-              <div className="stats-grid">
-                <div className="stat-box">
-                  <div className="stat-label">Celkem členů</div>
-                  <div className="stat-value">{totalMembers}</div>
-                  <div className="stat-description">Registrovaných v klubu</div>
-                </div>
-                <div className="stat-box">
-                  <div className="stat-label">Hráčů</div>
-                  <div className="stat-value">{players}</div>
-                  <div className="stat-description">Aktivních hráčů</div>
-                </div>
-                <div className="stat-box">
-                  <div className="stat-label">Trenérů</div>
-                  <div className="stat-value">{coaches}</div>
-                  <div className="stat-description">V týmu</div>
-                </div>
-              </div>
-
-              <div className="grid-2">
-                <div className="section">
-                  <div className="section-header">
-                    <h3 className="section-title">Logo klubu</h3>
-                    <p className="section-description">
-                      {isManager ? 'Nahrajte logo vašeho klubu' : 'Logo vašeho klubu'}
-                    </p>
-                  </div>
-                  <div className="section-content">
-                    <ClubLogoUploader initialLogo={club.logo} isManager={isManager} />
-                  </div>
-                </div>
-
-                <div className="section">
-                  <div className="section-header">
-                    <h3 className="section-title">Informace o klubu</h3>
-                    <p className="section-description">Kompletní údaje o vašem klubu</p>
-                  </div>
-                  <div className="section-content">
-                    <div className="data-row">
-                      <span className="data-label">Název klubu</span>
-                      <span className="data-value">{club.name}</span>
-                    </div>
-                    <div className="data-row">
-                      <span className="data-label">Sport</span>
-                      <span className="data-value">{club.sport ?? '–'}</span>
-                    </div>
-                    <div className="data-row">
-                      <span className="data-label">Město</span>
-                      <span className="data-value">{club.city ?? '–'}</span>
-                    </div>
-                    <div className="data-row">
-                      <span className="data-label">Registrováno</span>
-                      <span className="data-value">
-                        {new Date(club.created_at).toLocaleDateString('cs-CZ')}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="section">
-                <div className="section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)' }}>
-                  <div>
-                    <h3 className="section-title">Tým • Členové klubu</h3>
-                    <p className="section-description">Všichni registrovaní hráči a personál</p>
-                  </div>
-                  {isManager && (
-                    <Link href="/invite" className="btn btn-primary">
-                      <svg style={{ width: 18, height: 18 }} viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" /></svg>
-                      Pozvat člena
-                    </Link>
-                  )}
-                </div>
-                <div className="member-list">
-                  {clubMembers.map((member) => {
-                    const mInitials =
-                      (member.first_name?.[0] ?? '').toUpperCase() +
-                      (member.last_name?.[0] ?? '').toUpperCase()
-                    const href = member.id === user.id ? '/profile' : `/members/${member.id}`
-                    return (
-                      <Link key={member.id} href={href} className="member-item">
-                        {member.profile_picture ? (
-                          <img
-                            src={`/uploads/profiles/${member.profile_picture}`}
-                            alt=""
-                            className="member-avatar-img"
-                          />
-                        ) : (
-                          <div className="member-avatar">{mInitials}</div>
-                        )}
-                        <div className="member-info">
-                          <div className="member-name">
-                            {member.first_name} {member.last_name}
-                          </div>
-                          <div className="member-role">{member.role}</div>
-                          <div className="member-contact">{member.email}</div>
-                        </div>
-                        <span className={`member-badge ${member.role === 'manažer' ? 'manager' : ''}`}>
-                          {member.role}
-                        </span>
-                      </Link>
-                    )
-                  })}
-                </div>
-              </div>
-            </>
+            <DesktopOverview
+              userName={user.first_name}
+              club={club}
+              members={clubMembers}
+              isManager={isManager}
+              currentUserId={user.id}
+              canSeeAnalytics={canSeeAnalytics}
+            />
           ) : (
             <div className="section">
               <div className="section-content">

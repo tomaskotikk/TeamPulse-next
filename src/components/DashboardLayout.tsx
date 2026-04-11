@@ -19,21 +19,6 @@ interface DashboardLayoutProps {
 export default function DashboardLayout({ children, user, isManager, themeVars }: DashboardLayoutProps) {
   return (
     <div className="app-layout" style={themeVars as CSSProperties}>
-      {/* Sidebar overlay pro mobile */}
-      <div
-        className="sidebar-overlay"
-        id="sidebarOverlay"
-        onClick={() => {
-          const sidebar = document.getElementById('sidebar')
-          const overlay = document.getElementById('sidebarOverlay')
-          const btn = document.querySelector('.mobile-menu-btn')
-          sidebar?.classList.remove('mobile-open')
-          overlay?.classList.remove('active')
-          btn?.classList.remove('active')
-          document.body.style.overflow = ''
-        }}
-      />
-
       <Sidebar user={user} isManager={isManager} />
 
       <main className="app-main">
