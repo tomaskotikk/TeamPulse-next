@@ -61,53 +61,32 @@ export default function RemoveMemberButton({ memberId, memberName, disabled = fa
       </button>
 
       {showConfirm && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 10000,
-            background: 'rgba(0, 0, 0, 0.72)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: 16,
-          }}
-          onClick={(e) => {
-            if (e.target === e.currentTarget && !submitting) {
-              setShowConfirm(false)
-            }
-          }}
-        >
-          <div
-            style={{
-              width: '100%',
-              maxWidth: 460,
-              borderRadius: 12,
-              border: '1px solid var(--border)',
-              background: 'var(--bg-elevated)',
-              padding: 18,
-              boxShadow: '0 20px 48px rgba(0, 0, 0, 0.45)',
-            }}
-          >
-            <div style={{ fontSize: 17, fontWeight: 700, color: 'var(--text)', marginBottom: 8 }}>
+        <div className="crop-modal active" onClick={(e) => {
+          if (e.target === e.currentTarget && !submitting) {
+            setShowConfirm(false)
+          }
+        }}>
+          <div className="crop-modal-content" style={{ maxWidth: 460 }}>
+            <div className="crop-modal-body">
+              <div className="crop-modal-title" style={{ fontSize: 20 }}>
               Odebrat člena z klubu?
-            </div>
-            <div style={{ fontSize: 13, color: 'var(--text-dimmer)', lineHeight: 1.5, marginBottom: 14 }}>
+              </div>
+              <div className="form-help" style={{ fontSize: 14 }}>
               Opravdu chcete odstranit uživatele <strong>{memberName}</strong>? Akce smaže člena z databáze a je nevratná.
-            </div>
+              </div>
             {errorMsg && (
-              <div className="alert alert-error" style={{ marginBottom: 12 }}>
+              <div className="alert alert-error">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <div>{errorMsg}</div>
               </div>
             )}
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
+            </div>
+            <div className="crop-modal-footer" style={{ justifyContent: 'flex-end' }}>
               <button
                 type="button"
                 className="btn"
-                style={{ width: 'auto', padding: '10px 14px' }}
                 onClick={() => setShowConfirm(false)}
                 disabled={submitting}
               >
@@ -116,7 +95,6 @@ export default function RemoveMemberButton({ memberId, memberName, disabled = fa
               <button
                 type="button"
                 className="btn btn-danger"
-                style={{ width: 'auto', padding: '10px 14px' }}
                 onClick={() => {
                   void handleDelete()
                 }}

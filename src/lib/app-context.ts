@@ -169,15 +169,39 @@ export function getThemeVars(club: AppClub | null) {
   const textDim = isSecondaryLight ? lightenColor(textBase, 0.3) : darkenColor(textBase, 0.3)
   const textDimmer = isSecondaryLight ? lightenColor(textBase, 0.5) : darkenColor(textBase, 0.5)
 
+  const surface = bgElevated
+  const surfaceAlt = bgSurface
+  const surfaceTint = isSecondaryLight ? darkenColor(surface, 0.04) : lightenColor(surface, 0.04)
+  const primaryHover = darkenColor(primary, 0.12)
+  const primaryMuted = isSecondaryLight
+    ? `rgba(${primaryRgb.r}, ${primaryRgb.g}, ${primaryRgb.b}, 0.18)`
+    : `rgba(${primaryRgb.r}, ${primaryRgb.g}, ${primaryRgb.b}, 0.16)`
+
   return {
+    '--color-primary': primary,
+    '--color-primary-hover': primaryHover,
+    '--color-primary-muted': primaryMuted,
+    '--color-surface': surface,
+    '--color-surface-alt': surfaceAlt,
+    '--color-surface-tint': surfaceTint,
+    '--color-border': border,
+    '--color-text': textBase,
+    '--color-text-muted': textDim,
+    '--color-text-dim': textDimmer,
+    '--color-success': '#10b981',
+    '--color-warning': '#f59e0b',
+    '--color-error': '#ef4444',
+    '--color-primary-rgb': `${primaryRgb.r}, ${primaryRgb.g}, ${primaryRgb.b}`,
+
+    // Backward-compatible aliases used in legacy classes/components.
     '--red': primary,
-    '--red-dark': primaryDark,
+    '--red-dark': primaryHover,
     '--red-light': primaryLight,
     '--red-rgb': `${primaryRgb.r}, ${primaryRgb.g}, ${primaryRgb.b}`,
     '--red-text': primaryText,
     '--bg': bg,
-    '--bg-elevated': bgElevated,
-    '--bg-surface': bgSurface,
+    '--bg-elevated': surface,
+    '--bg-surface': surfaceAlt,
     '--border': border,
     '--border-light': borderLight,
     '--text': textBase,

@@ -1,61 +1,70 @@
 .wrap {
-  border: 1px solid color-mix(in srgb, var(--border) 78%, transparent);
-  border-radius: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
   overflow: hidden;
-  background:
-    radial-gradient(120% 130% at 0% 0%, rgba(var(--red-rgb, 255, 51, 0), 0.2) 0%, rgba(var(--red-rgb, 255, 51, 0), 0) 58%),
-    linear-gradient(120deg, color-mix(in srgb, var(--bg-elevated) 84%, #000 16%) 0%, color-mix(in srgb, #001547 34%, var(--bg) 66%) 100%);
 }
 
 .head {
-  padding: 18px 20px 10px;
-  border-bottom: 1px solid color-mix(in srgb, var(--border) 76%, transparent);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--color-border);
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
+  gap: var(--space-3);
 }
 
 .title {
   margin: 0;
-  font-size: clamp(26px, 2.2vw, 36px);
-  letter-spacing: -0.6px;
+  font-size: var(--text-5);
+  line-height: 1.2;
+  font-weight: 700;
 }
 
 .desc {
-  margin: 6px 0 0;
-  color: var(--text-dim);
-  font-size: 14px;
+  margin-top: var(--space-1);
+  font-size: var(--text-2);
+  color: var(--color-text-muted);
 }
 
 .back {
+  min-height: 34px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  padding: 0 var(--space-3);
   display: inline-flex;
   align-items: center;
-  min-height: 36px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  color: var(--text);
   text-decoration: none;
-  padding: 0 12px;
-  font-size: 12px;
-  font-weight: 700;
-  background: rgba(0, 0, 0, 0.22);
+  font-size: var(--text-2);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  transition: background var(--fast), border-color var(--fast), color var(--fast);
+}
+
+.back:hover {
+  background: var(--color-surface-alt);
+  border-color: color-mix(in srgb, var(--color-primary) 35%, var(--color-border));
+  color: var(--color-text);
 }
 
 .chartPad {
   height: 520px;
-  padding: 14px;
+  padding: var(--space-4);
 }
 
-@media (max-width: 960px) {
+@media (max-width: 1023px) {
   .head {
-    padding: 14px;
+    padding: var(--space-3) var(--space-4);
     flex-direction: column;
     align-items: stretch;
   }
 
+  .title {
+    font-size: var(--text-4);
+  }
+
   .chartPad {
-    height: 360px;
-    padding: 10px;
+    height: 320px;
+    padding: var(--space-3);
   }
 }

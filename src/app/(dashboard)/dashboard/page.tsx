@@ -25,12 +25,6 @@ export default async function DashboardPage() {
   const coaches = clubMembers.filter((m) => m.role === 'trenér').length
   const userName = `${user.first_name} ${user.last_name}`
   const clubName = club?.name ?? user.organization ?? 'Bez klubu'
-  const clubInitials = clubName
-    .split(' ')
-    .filter(Boolean)
-    .map((part) => part[0]?.toUpperCase() ?? '')
-    .join('')
-    .slice(0, 3)
 
   return (
     <DashboardLayout user={user} isManager={isManager} themeVars={themeVars}>
@@ -49,7 +43,9 @@ export default async function DashboardPage() {
                   className="mobile-home-club-logo"
                 />
               ) : (
-                <div className="mobile-home-club-logo-fallback">{clubInitials || 'TP'}</div>
+                <div className="mobile-home-club-logo-fallback">
+                  <img src="/tp-logo.png" alt="TeamPulse" className="mobile-home-club-logo-fallback-img" />
+                </div>
               )}
             </div>
 

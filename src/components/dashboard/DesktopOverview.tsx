@@ -51,6 +51,17 @@ function activityScore(member: AppUser, totalMembers: number) {
 
 export default function DesktopOverview({ userName, club, members, isManager, currentUserId, canSeeAnalytics }: DesktopOverviewProps) {
   const [reportNotice, setReportNotice] = useState<string | null>(null)
+  const [clubState, setClubState] = useState(club)
+  const [clubForm, setClubForm] = useState({
+    name: club.name,
+    sport: club.sport || '',
+    city: club.city || '',
+    website: club.website || '',
+    club_email: club.club_email || '',
+    club_phone: club.club_phone || '',
+  })
+  const [clubNotice, setClubNotice] = useState<string | null>(null)
+  const [isSavingClub, setIsSavingClub] = useState(false)
 
   const metrics = buildDashboardMetrics(members)
   const {
@@ -67,7 +78,7 @@ export default function DesktopOverview({ userName, club, members, isManager, cu
 
   const composition = compositionData.map((item, i) => ({
     ...item,
-    fill: i === 0 ? 'var(--red)' : 'rgba(var(--red-rgb, 255, 51, 0), 0.45)',
+    fill: i === 0 ? 'var(--color-primary)' : 'var(--color-primary-muted)',
   }))
 
   const topActiveMembers = [...members]
@@ -91,8 +102,8 @@ export default function DesktopOverview({ userName, club, members, isManager, cu
 
   async function handleWeeklyReport() {
     const lines = [
-      `Týdenní report klubu: ${club.name}`,
-      `Sport: ${club.sport || 'Neuvedeno'} | Město: ${club.city || 'Neuvedeno'}`,
+      `Týdenní report klubu: ${clubState.name}`,
+      `Sport: ${clubState.sport || 'Neuvedeno'} | Město: ${clubState.city || 'Neuvedeno'}`,
       '',
       `Celkový kádr: ${totalMembers}`,
       `Hráči: ${players} | Trenéři: ${coaches}`,
@@ -112,60 +123,90 @@ export default function DesktopOverview({ userName, club, members, isManager, cu
     const reportText = lines.join('\n')
 
     try {
-      await navigator.clipboard.writeText(reportText)
-      setReportNotice('Týdenní report byl zkopírován do schránky.')
-    } catch {
-      const blob = new Blob([reportText], { type: 'text/plain;charset=utf-8' })
+      const blob = new Blob([reportText], { type: 'text/markdown;charset=utf-8' })
       const url = URL.createObjectURL(blob)
       const link = document.createElement('a')
       link.href = url
-      link.download = `tydenni-report-${club.name.replace(/\s+/g, '-').toLowerCase()}.txt`
+      link.download = `tydenni-report-${clubState.name.replace(/\s+/g, '-').toLowerCase()}.md`
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
       URL.revokeObjectURL(url)
-      setReportNotice('Týdenní report byl stažen jako textový soubor.')
+      setReportNotice('Týdenní report byl stažen jako soubor.')
+    } catch {
+      setReportNotice('Nepodařilo se vygenerovat report.')
     }
 
     window.setTimeout(() => setReportNotice(null), 3500)
   }
 
+  async function handleClubProfileSave(e: React.FormEvent) {
+    e.preventDefault()
+    if (!isManager || isSavingClub) return
+
+    setIsSavingClub(true)
+    setClubNotice(null)
+
+    try {
+      const res = await fetch('/api/club/profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(clubForm),
+      })
+      const data = await res.json().catch(() => ({}))
+
+      if (!res.ok) {
+        setClubNotice(data.error ?? 'Nepodařilo se uložit profil klubu.')
+        return
+      }
+
+      setClubState((prev) => ({
+        ...prev,
+        name: clubForm.name.trim(),
+        sport: clubForm.sport.trim(),
+        city: clubForm.city.trim(),
+        website: clubForm.website.trim(),
+        club_email: clubForm.club_email.trim(),
+        club_phone: clubForm.club_phone.trim(),
+      }))
+      setClubNotice('Klubový profil byl úspěšně aktualizován.')
+    } catch {
+      setClubNotice('Nastala chyba serveru při ukládání profilu klubu.')
+    } finally {
+      setIsSavingClub(false)
+      window.setTimeout(() => setClubNotice(null), 3500)
+    }
+  }
+
   const recommendations = [
     {
-      color: 'rgba(var(--red-rgb, 255, 51, 0), 0.7)',
+      color: 'var(--color-primary)',
       title: `O ${quarterGrowth} nových členů za aktuální kvartál`,
       text: 'Stabilní růst kádru vytváří prostor pro širší rotaci.',
     },
     {
-      color: 'var(--red)',
+      color: 'var(--color-primary)',
       title: `Index připravenosti ${readiness}%`,
       text: 'Doporučení: přidejte regenerační blok po nejvytíženějších trénincích.',
     },
     {
-      color: 'rgba(var(--red-rgb, 255, 51, 0), 0.4)',
+      color: 'var(--color-text-muted)',
       title: `Průměrná docházka ${attendance}%`,
       text: 'Konzistentní docházka zvyšuje výkonnost i týmovou souhru.',
     },
   ]
-
-  const clubInitials = club.name
-    .split(' ')
-    .filter(Boolean)
-    .map((part) => part[0]?.toUpperCase() ?? '')
-    .join('')
-    .slice(0, 2)
 
   return (
     <div className={styles.wrap}>
       <section className={styles.hero}>
         <div className={styles.heroTop}>
           <div>
-            <h2 className={styles.heroTitle}>Vítejte zpět, {userName}. {club.name} je připravený na další růst.</h2>
+            <h2 className={styles.heroTitle}>Vítejte zpět, {userName}. {clubState.name} je připravený na další růst.</h2>
             <p className={styles.heroSubtitle}>Přehled výkonu, složení týmu a klíčových metrik na jednom místě. Dashboard je optimalizovaný pro rychlé rozhodování vedení moderního klubu.</p>
           </div>
           <div className={styles.heroPills}>
-            <span className={styles.heroPill}>{club.sport || 'Sport'}</span>
-            <span className={styles.heroPill}>{club.city || 'Město'}</span>
+            <span className={styles.heroPill}>{clubState.sport || 'Sport'}</span>
+            <span className={styles.heroPill}>{clubState.city || 'Město'}</span>
           </div>
         </div>
 
@@ -219,19 +260,19 @@ export default function DesktopOverview({ userName, club, members, isManager, cu
               <h3 className={styles.cardTitle}>Výkonnostní trend týmu</h3>
               <p className={styles.cardDesc}>Simulace týmové formy, docházky a indexu připravenosti za posledních 12 měsíců.</p>
             </div>
-            <Link className={styles.cardAction} href="/dashboard/grafy/vykonnost">
+            <Link className={styles.cardAction} href="/grafy/vykonnost">
               Rozbalit
             </Link>
           </div>
           <div className={styles.chartPad}>
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={trendData} margin={{ top: 16, right: 8, bottom: 0, left: 0 }}>
-                <CartesianGrid stroke="rgba(255,255,255,0.09)" strokeDasharray="4 4" />
-                <XAxis dataKey="month" tick={{ fill: 'var(--text-dim)', fontSize: 12 }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fill: 'var(--text-dim)', fontSize: 12 }} axisLine={false} tickLine={false} domain={[0, 100]} />
-                <Tooltip contentStyle={{ borderRadius: 10, border: '1px solid var(--border)', background: 'var(--bg-elevated)' }} />
-                <Line dataKey="attendance" stroke="rgba(var(--red-rgb, 255, 51, 0), 0.45)" strokeWidth={2.2} dot={false} />
-                <Line dataKey="trend" stroke="var(--red)" strokeWidth={3} dot={false} />
+                <CartesianGrid stroke="var(--color-border)" strokeDasharray="0" vertical={false} />
+                <XAxis dataKey="month" tick={{ fill: 'var(--color-text-dim)', fontSize: 12 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: 'var(--color-text-dim)', fontSize: 12 }} axisLine={false} tickLine={false} domain={[0, 100]} />
+                <Tooltip contentStyle={{ borderRadius: 10, border: '1px solid var(--color-border)', background: 'var(--color-surface)' }} />
+                <Line dataKey="attendance" stroke="var(--color-text-muted)" strokeWidth={2} dot={false} />
+                <Line dataKey="trend" stroke="var(--color-primary)" strokeWidth={2.4} dot={false} />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -243,18 +284,18 @@ export default function DesktopOverview({ userName, club, members, isManager, cu
               <h3 className={styles.cardTitle}>Docházka podle měsíců</h3>
               <p className={styles.cardDesc}>Průměrné zapojení hráčů v průběhu sezony.</p>
             </div>
-            <Link className={styles.cardAction} href="/dashboard/grafy/dochazka">
+            <Link className={styles.cardAction} href="/grafy/dochazka">
               Rozbalit
             </Link>
           </div>
           <div className={styles.chartPad}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={attendanceData} margin={{ top: 10, right: 8, bottom: 0, left: 0 }}>
-                <CartesianGrid stroke="rgba(255,255,255,0.08)" vertical={false} />
-                <XAxis dataKey="month" tick={{ fill: 'var(--text-dim)', fontSize: 12 }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fill: 'var(--text-dim)', fontSize: 12 }} axisLine={false} tickLine={false} domain={[0, 100]} />
-                <Tooltip contentStyle={{ borderRadius: 10, border: '1px solid var(--border)', background: 'var(--bg-elevated)' }} />
-                <Bar dataKey="value" fill="var(--red-dark)" radius={[8, 8, 3, 3]} />
+                <CartesianGrid stroke="var(--color-border)" vertical={false} />
+                <XAxis dataKey="month" tick={{ fill: 'var(--color-text-dim)', fontSize: 12 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: 'var(--color-text-dim)', fontSize: 12 }} axisLine={false} tickLine={false} domain={[0, 100]} />
+                <Tooltip contentStyle={{ borderRadius: 10, border: '1px solid var(--color-border)', background: 'var(--color-surface)' }} />
+                <Bar dataKey="value" fill="var(--color-primary)" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -268,7 +309,7 @@ export default function DesktopOverview({ userName, club, members, isManager, cu
               <h3 className={styles.cardTitle}>Složení týmu</h3>
               <p className={styles.cardDesc}>Podíl hráčů a vedení v aktuální soupisce.</p>
             </div>
-            <Link className={styles.cardAction} href="/dashboard/grafy/slozeni">
+            <Link className={styles.cardAction} href="/grafy/slozeni">
               Rozbalit
             </Link>
           </div>
@@ -276,7 +317,7 @@ export default function DesktopOverview({ userName, club, members, isManager, cu
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie data={composition} dataKey="value" nameKey="name" innerRadius={64} outerRadius={102} stroke="transparent" paddingAngle={2} />
-                <Tooltip contentStyle={{ borderRadius: 10, border: '1px solid var(--border)', background: 'var(--bg-elevated)' }} />
+                <Tooltip contentStyle={{ borderRadius: 10, border: '1px solid var(--color-border)', background: 'var(--color-surface)' }} />
               </PieChart>
             </ResponsiveContainer>
           </div>
@@ -314,11 +355,11 @@ export default function DesktopOverview({ userName, club, members, isManager, cu
           <div className={styles.radarPad}>
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart data={radarData} outerRadius="70%">
-                <PolarGrid stroke="rgba(255,255,255,0.12)" />
-                <PolarAngleAxis dataKey="metric" tick={{ fill: 'var(--text-dim)', fontSize: 12 }} />
-                <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fill: 'var(--text-dimmer)', fontSize: 11 }} />
-                <Radar dataKey="value" stroke="var(--red)" fill="rgba(var(--red-rgb, 255, 51, 0), 0.35)" fillOpacity={1} strokeWidth={2.5} />
-                <Tooltip contentStyle={{ borderRadius: 10, border: '1px solid var(--border)', background: 'var(--bg-elevated)' }} />
+                <PolarGrid stroke="var(--color-border)" />
+                <PolarAngleAxis dataKey="metric" tick={{ fill: 'var(--color-text-dim)', fontSize: 12 }} />
+                <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fill: 'var(--color-text-dim)', fontSize: 11 }} />
+                <Radar dataKey="value" stroke="var(--color-primary)" fill="var(--color-primary-muted)" fillOpacity={1} strokeWidth={2} />
+                <Tooltip contentStyle={{ borderRadius: 10, border: '1px solid var(--color-border)', background: 'var(--color-surface)' }} />
               </RadarChart>
             </ResponsiveContainer>
           </div>
@@ -432,34 +473,102 @@ export default function DesktopOverview({ userName, club, members, isManager, cu
           <div className={styles.clubBody}>
             <div className={styles.infoRow}>
               <span className={styles.infoLabel}>Název klubu</span>
-              <span className={styles.infoValue}>{club.name}</span>
+                <span className={styles.infoValue}>{clubState.name}</span>
             </div>
             <div className={styles.infoRow}>
               <span className={styles.infoLabel}>Sport</span>
-              <span className={styles.infoValue}>{club.sport || '–'}</span>
+                <span className={styles.infoValue}>{clubState.sport || '–'}</span>
             </div>
             <div className={styles.infoRow}>
               <span className={styles.infoLabel}>Město</span>
-              <span className={styles.infoValue}>{club.city || '–'}</span>
+                <span className={styles.infoValue}>{clubState.city || '–'}</span>
             </div>
             <div className={styles.infoRow}>
               <span className={styles.infoLabel}>Registrace</span>
-              <span className={styles.infoValue}>{new Date(club.created_at).toLocaleDateString('cs-CZ')}</span>
+                <span className={styles.infoValue}>{new Date(clubState.created_at).toLocaleDateString('cs-CZ')}</span>
             </div>
 
             {!isManager && (
               <div className={styles.logoWrap}>
-                {club.logo ? (
-                  <img src={`/uploads/clubs/${club.logo}`} alt={`Logo ${club.name}`} className={styles.logoImg} />
+                {clubState.logo ? (
+                  <img src={`/uploads/clubs/${clubState.logo}`} alt={`Logo ${clubState.name}`} className={styles.logoImg} />
                 ) : (
-                  <div className={styles.logoFallback}>{clubInitials || 'TP'}</div>
+                  <div className={styles.logoFallback}>
+                    <img src="/tp-logo.png" alt="TeamPulse" className={styles.logoFallbackImg} />
+                  </div>
                 )}
               </div>
             )}
             {isManager && (
-              <div className={styles.clubUploader}>
-                <ClubLogoUploader initialLogo={club.logo} isManager={isManager} />
-              </div>
+              <>
+                <form className={styles.clubEditForm} onSubmit={handleClubProfileSave}>
+                  <div className={styles.clubEditGrid}>
+                    <label className={styles.clubEditField}>
+                      Název klubu
+                      <input
+                        className={styles.clubEditInput}
+                        value={clubForm.name}
+                        onChange={(e) => setClubForm((prev) => ({ ...prev, name: e.target.value }))}
+                        required
+                      />
+                    </label>
+                    <label className={styles.clubEditField}>
+                      Sport
+                      <input
+                        className={styles.clubEditInput}
+                        value={clubForm.sport}
+                        onChange={(e) => setClubForm((prev) => ({ ...prev, sport: e.target.value }))}
+                        required
+                      />
+                    </label>
+                    <label className={styles.clubEditField}>
+                      Město
+                      <input
+                        className={styles.clubEditInput}
+                        value={clubForm.city}
+                        onChange={(e) => setClubForm((prev) => ({ ...prev, city: e.target.value }))}
+                        required
+                      />
+                    </label>
+                    <label className={styles.clubEditField}>
+                      Web
+                      <input
+                        className={styles.clubEditInput}
+                        value={clubForm.website}
+                        onChange={(e) => setClubForm((prev) => ({ ...prev, website: e.target.value }))}
+                        placeholder="https://"
+                      />
+                    </label>
+                    <label className={styles.clubEditField}>
+                      Klubový e-mail
+                      <input
+                        className={styles.clubEditInput}
+                        type="email"
+                        value={clubForm.club_email}
+                        onChange={(e) => setClubForm((prev) => ({ ...prev, club_email: e.target.value }))}
+                      />
+                    </label>
+                    <label className={styles.clubEditField}>
+                      Klubový telefon
+                      <input
+                        className={styles.clubEditInput}
+                        value={clubForm.club_phone}
+                        onChange={(e) => setClubForm((prev) => ({ ...prev, club_phone: e.target.value }))}
+                      />
+                    </label>
+                  </div>
+                  <div className={styles.clubEditActions}>
+                    <button type="submit" className={styles.clubEditBtn} disabled={isSavingClub}>
+                      {isSavingClub ? 'Ukládám…' : 'Uložit klubový profil'}
+                    </button>
+                  </div>
+                  {clubNotice && <div className={styles.clubNotice}>{clubNotice}</div>}
+                </form>
+
+                <div className={styles.clubUploader}>
+                  <ClubLogoUploader initialLogo={clubState.logo} isManager={isManager} />
+                </div>
+              </>
             )}
           </div>
         </article>

@@ -215,13 +215,13 @@ export default function NotificationBell() {
         <div className="notif-panel">
           <div className="notif-panel-header">
             <span className="notif-panel-title">Notifikace</span>
-            <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+            <div className="notif-panel-actions">
               {notifications.length > 0 && (
                 <button className="notif-mark-all" onClick={markAllRead}>
                   Smazat vše
                 </button>
               )}
-              <a href="/notifications" className="notif-mark-all" style={{ textDecoration: 'none' }}>
+              <a href="/notifications" className="notif-mark-all notif-link-all">
                 Zobrazit vše
               </a>
             </div>

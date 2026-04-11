@@ -481,45 +481,24 @@ export default function ChatPage() {
       </div>
 
       {confirmDeleteId !== null && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 10000,
-            background: 'rgba(0, 0, 0, 0.72)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: 16,
-          }}
-          onClick={(e) => {
-            if (e.target === e.currentTarget && deletingMessageId === null) {
-              setConfirmDeleteId(null)
-            }
-          }}
-        >
-          <div
-            style={{
-              width: '100%',
-              maxWidth: 420,
-              borderRadius: 12,
-              border: '1px solid var(--border)',
-              background: 'var(--bg-elevated)',
-              padding: 18,
-              boxShadow: '0 20px 48px rgba(0, 0, 0, 0.45)',
-            }}
-          >
-            <div style={{ fontSize: 17, fontWeight: 700, color: 'var(--text)', marginBottom: 8 }}>
+        <div className="crop-modal active" onClick={(e) => {
+          if (e.target === e.currentTarget && deletingMessageId === null) {
+            setConfirmDeleteId(null)
+          }
+        }}>
+          <div className="crop-modal-content" style={{ maxWidth: 420 }}>
+            <div className="crop-modal-body">
+              <div className="crop-modal-title" style={{ fontSize: 20 }}>
               Smazat zprávu?
-            </div>
-            <div style={{ fontSize: 13, color: 'var(--text-dimmer)', lineHeight: 1.5, marginBottom: 16 }}>
+              </div>
+              <div className="form-help" style={{ fontSize: 14 }}>
               Tato akce je nevratná. Po smazání se odstraní také související notifikace.
+              </div>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
+            <div className="crop-modal-footer" style={{ justifyContent: 'flex-end' }}>
               <button
                 type="button"
                 className="btn"
-                style={{ width: 'auto', padding: '10px 14px' }}
                 onClick={() => setConfirmDeleteId(null)}
                 disabled={deletingMessageId !== null}
               >
@@ -528,7 +507,6 @@ export default function ChatPage() {
               <button
                 type="button"
                 className="btn btn-primary"
-                style={{ width: 'auto', padding: '10px 14px' }}
                 onClick={() => {
                   if (confirmDeleteId === null) return
                   setConfirmDeleteId(null)

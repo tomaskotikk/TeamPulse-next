@@ -388,147 +388,166 @@ export default function ProfilePage() {
           </div>
         )}
 
-        <div className="grid-2">
-          {/* Profilový obrázek */}
-          <div className="section">
-            <div className="section-header">
-              <h3 className="section-title">Profilový obrázek</h3>
-              <p className="section-description">Nahrajte svůj profilový obrázek</p>
-            </div>
-            <div className="section-content">
-              <div className="profile-picture-section">
-                <div className="profile-picture-preview">
-                  {layoutUser.profile_picture ? (
-                    <img src={`/uploads/profiles/${layoutUser.profile_picture}`} alt="Profilový obrázek" />
-                  ) : (
-                    <div className="profile-picture-placeholder">{initials}</div>
-                  )}
+        <div className="profile-desktop-layout">
+          <div className="profile-desktop-main">
+            <div className="grid-2">
+              <div className="section">
+                <div className="section-header">
+                  <h3 className="section-title">Profilový obrázek</h3>
+                  <p className="section-description">Nahrajte svůj profilový obrázek</p>
                 </div>
-                <div className="profile-picture-upload">
-                  <div className="file-input-wrapper">
-                    <input
-                      type="file"
-                      id="profilePictureInput"
-                      ref={fileInputRef}
-                      accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
-                      onChange={onProfileFileChange}
-                      disabled={uploadingPicture}
-                    />
-                    <label htmlFor="profilePictureInput" className="file-input-label">
-                      <svg style={{ width: 16, height: 16 }} viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                      {uploadingPicture ? 'Nahrávám…' : 'Vybrat obrázek'}
-                    </label>
+                <div className="section-content">
+                  <div className="profile-picture-section">
+                    <div className="profile-picture-preview">
+                      {layoutUser.profile_picture ? (
+                        <img src={`/uploads/profiles/${layoutUser.profile_picture}`} alt="Profilový obrázek" />
+                      ) : (
+                        <div className="profile-picture-placeholder">{initials}</div>
+                      )}
+                    </div>
+                    <div className="profile-picture-upload">
+                      <div className="file-input-wrapper">
+                        <input
+                          type="file"
+                          id="profilePictureInput"
+                          ref={fileInputRef}
+                          accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+                          onChange={onProfileFileChange}
+                          disabled={uploadingPicture}
+                        />
+                        <label htmlFor="profilePictureInput" className="file-input-label">
+                          <svg style={{ width: 16, height: 16 }} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                          {uploadingPicture ? 'Nahrávám…' : 'Vybrat obrázek'}
+                        </label>
+                      </div>
+                      <div className="file-info">Max 5MB · JPG, PNG, GIF, WEBP</div>
+                    </div>
                   </div>
-                  <div className="file-info">Max 5MB · JPG, PNG, GIF, WEBP</div>
                 </div>
+              </div>
+
+              <div className="section">
+                <div className="section-header">
+                  <h3 className="section-title">Osobní údaje</h3>
+                  <p className="section-description">Aktualizujte své základní informace</p>
+                </div>
+                <div className="section-content">
+                  <form onSubmit={handleUpdateProfile}>
+                    <div className="form-group">
+                      <label htmlFor="first_name" className="form-label">Jméno *</label>
+                      <input
+                        type="text"
+                        id="first_name"
+                        className="form-input"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="last_name" className="form-label">Příjmení *</label>
+                      <input
+                        type="text"
+                        id="last_name"
+                        className="form-input"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">E-mail</label>
+                      <input
+                        type="email"
+                        className="form-input"
+                        value={layoutUser.email}
+                        disabled
+                      />
+                      <p className="form-help">E-mail nelze změnit</p>
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="phone" className="form-label">Telefon</label>
+                      <input
+                        type="tel"
+                        id="phone"
+                        className="form-input"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder="+420 777 123 456"
+                      />
+                    </div>
+                    <button type="submit" className="btn btn-primary">
+                      Uložit změny
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <div className="section">
+              <div className="section-header">
+                <h3 className="section-title">Změna hesla</h3>
+                <p className="section-description">Aktualizujte své přihlašovací heslo</p>
+              </div>
+              <div className="section-content">
+                <form onSubmit={handleChangePassword} style={{ maxWidth: 400 }}>
+                  <div className="form-group">
+                    <label htmlFor="current_password" className="form-label">Současné heslo *</label>
+                    <input type="password" id="current_password" name="current_password" className="form-input" required />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="new_password" className="form-label">Nové heslo *</label>
+                    <input type="password" id="new_password" name="new_password" className="form-input" required minLength={6} />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="confirm_password" className="form-label">Potvrdit nové heslo *</label>
+                    <input type="password" id="confirm_password" name="confirm_password" className="form-input" required />
+                  </div>
+                  <button type="submit" className="btn btn-primary">
+                    Změnit heslo
+                  </button>
+                </form>
               </div>
             </div>
           </div>
 
-          {/* Osobní údaje */}
-          <div className="section">
-            <div className="section-header">
-              <h3 className="section-title">Osobní údaje</h3>
-              <p className="section-description">Aktualizujte své základní informace</p>
-            </div>
-            <div className="section-content">
-              <form onSubmit={handleUpdateProfile}>
-                <div className="form-group">
-                  <label htmlFor="first_name" className="form-label">Jméno *</label>
-                  <input
-                    type="text"
-                    id="first_name"
-                    className="form-input"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    required
-                  />
+          <aside className="profile-desktop-side">
+            <div className="section">
+              <div className="section-header">
+                <h3 className="section-title">Profilový přehled</h3>
+                <p className="section-description">Rychlé informace o vašem účtu</p>
+              </div>
+              <div className="section-content">
+                <div className="profile-side-user">
+                  {layoutUser.profile_picture ? (
+                    <img src={`/uploads/profiles/${layoutUser.profile_picture}`} alt="Profil" className="profile-side-avatar" />
+                  ) : (
+                    <div className="profile-side-avatar-fallback">{initials || 'U'}</div>
+                  )}
+                  <div className="profile-side-name">{layoutUser.first_name} {layoutUser.last_name}</div>
+                  <div className="profile-side-role">{layoutUser.role}</div>
                 </div>
-                <div className="form-group">
-                  <label htmlFor="last_name" className="form-label">Příjmení *</label>
-                  <input
-                    type="text"
-                    id="last_name"
-                    className="form-input"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <label className="form-label">E-mail</label>
-                  <input
-                    type="email"
-                    className="form-input"
-                    value={layoutUser.email}
-                    disabled
-                  />
-                  <p className="form-help">E-mail nelze změnit</p>
-                </div>
-                <div className="form-group">
-                  <label htmlFor="phone" className="form-label">Telefon</label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    className="form-input"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="+420 777 123 456"
-                  />
-                </div>
-                <button type="submit" className="btn btn-primary">
-                  Uložit změny
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
 
-        {/* Změna hesla */}
-        <div className="section">
-          <div className="section-header">
-            <h3 className="section-title">Změna hesla</h3>
-            <p className="section-description">Aktualizujte své přihlašovací heslo</p>
-          </div>
-          <div className="section-content">
-            <form onSubmit={handleChangePassword} style={{ maxWidth: 400 }}>
-              <div className="form-group">
-                <label htmlFor="current_password" className="form-label">Současné heslo *</label>
-                <input type="password" id="current_password" name="current_password" className="form-input" required />
-              </div>
-              <div className="form-group">
-                <label htmlFor="new_password" className="form-label">Nové heslo *</label>
-                <input type="password" id="new_password" name="new_password" className="form-input" required minLength={6} />
-              </div>
-              <div className="form-group">
-                <label htmlFor="confirm_password" className="form-label">Potvrdit nové heslo *</label>
-                <input type="password" id="confirm_password" name="confirm_password" className="form-input" required />
-              </div>
-              <button type="submit" className="btn btn-primary">
-                Změnit heslo
-              </button>
-            </form>
-          </div>
-        </div>
+                <div className="data-row">
+                  <span className="data-label">Klub</span>
+                  <span className="data-value">{user?.organization ?? '–'}</span>
+                </div>
+                <div className="data-row">
+                  <span className="data-label">E-mail</span>
+                  <span className="data-value">{layoutUser.email}</span>
+                </div>
 
-        {/* Informace o účtu */}
-        <div className="section">
-          <div className="section-header">
-            <h3 className="section-title">Informace o účtu</h3>
-            <p className="section-description">Detaily vašeho účtu</p>
-          </div>
-          <div className="section-content">
-            <div className="data-row">
-              <span className="data-label">Role</span>
-              <span className="data-value">{layoutUser.role}</span>
+                <div className="profile-side-links">
+                  <Link href="/dashboard" className="profile-side-link">Dashboard</Link>
+                  <Link href="/chat" className="profile-side-link">Týmový chat</Link>
+                  <Link href="/notifications" className="profile-side-link">Notifikace</Link>
+                  <Link href="/settings" className="profile-side-link">Nastavení</Link>
+                </div>
+              </div>
             </div>
-            <div className="data-row">
-              <span className="data-label">Klub</span>
-              <span className="data-value">{user?.organization ?? '–'}</span>
-            </div>
-          </div>
+          </aside>
         </div>
       </div>
 

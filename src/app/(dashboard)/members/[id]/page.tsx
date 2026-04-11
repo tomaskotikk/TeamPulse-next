@@ -96,7 +96,7 @@ export default async function MemberDetailPage({ params }: { params: Promise<{ i
               <div className="data-row">
                 <span className="data-label">E-mail</span>
                 <span className="data-value">
-                  <a href={`mailto:${member.email}`} style={{ color: 'var(--red)', textDecoration: 'none' }}>
+                  <a href={`mailto:${member.email}`}>
                     {member.email}
                   </a>
                 </span>
@@ -105,7 +105,7 @@ export default async function MemberDetailPage({ params }: { params: Promise<{ i
                 <span className="data-label">Telefon</span>
                 <span className="data-value">
                   {member.phone ? (
-                    <a href={`tel:${member.phone}`} style={{ color: 'var(--red)', textDecoration: 'none' }}>
+                    <a href={`tel:${member.phone}`}>
                       {member.phone}
                     </a>
                   ) : '–'}

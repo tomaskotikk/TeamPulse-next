@@ -1,346 +1,337 @@
 .wrap {
   display: grid;
-  gap: 16px;
+  gap: var(--space-4);
 }
 
 .hero {
-  border: 1px solid color-mix(in srgb, var(--border) 78%, transparent);
-  border-radius: 18px;
-  padding: 20px;
-  background:
-    radial-gradient(130% 140% at 0% 0%, rgba(var(--red-rgb, 255, 51, 0), 0.22) 0%, rgba(var(--red-rgb, 255, 51, 0), 0) 52%),
-    linear-gradient(115deg, color-mix(in srgb, var(--bg-elevated) 80%, #000 20%) 0%, color-mix(in srgb, #001747 35%, var(--bg) 65%) 48%, color-mix(in srgb, var(--bg) 84%, #000 16%) 100%);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  padding: var(--space-5);
+  display: grid;
+  gap: var(--space-4);
 }
 
 .heroTop {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 14px;
+  gap: var(--space-3);
 }
 
 .heroTitle {
   margin: 0;
-  font-size: clamp(28px, 2.35vw, 42px);
-  line-height: 1.05;
-  letter-spacing: -0.9px;
+  font-size: var(--text-6);
+  line-height: 1.15;
+  font-weight: 700;
+  max-width: 30ch;
 }
 
 .heroSubtitle {
-  margin: 10px 0 0;
-  color: var(--text-dim);
-  max-width: 680px;
-  font-size: 17px;
-  line-height: 1.45;
+  margin-top: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--text-3);
+  max-width: 76ch;
 }
 
 .heroPills {
   display: flex;
-  gap: 10px;
   flex-wrap: wrap;
+  gap: var(--space-2);
 }
 
 .heroPill {
+  min-height: 30px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-alt);
+  padding: 0 10px;
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  min-height: 38px;
-  border: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
-  border-radius: 999px;
-  padding: 0 14px;
-  font-size: 13px;
+  font-size: var(--text-1);
   font-weight: 700;
-  color: var(--text);
-  background: rgba(0, 0, 0, 0.18);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
 }
 
 .heroActions {
-  margin-top: 16px;
   display: flex;
-  align-items: center;
-  gap: 10px;
   flex-wrap: wrap;
+  gap: var(--space-2);
 }
 
 .btnPrimary,
 .btnGhost {
-  min-height: 46px;
-  border-radius: 12px;
-  padding: 0 18px;
+  min-height: 38px;
+  border-radius: var(--radius-sm);
+  padding: 0 var(--space-3);
   text-decoration: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 9px;
-  font-size: 14px;
-  font-weight: 800;
-  font-family: inherit;
-  cursor: pointer;
-}
-
-.reportNotice {
-  margin-top: 10px;
-  border: 1px solid rgba(var(--red-rgb, 255, 51, 0), 0.38);
-  border-radius: 10px;
-  min-height: 36px;
-  padding: 0 12px;
-  display: inline-flex;
-  align-items: center;
-  background: rgba(var(--red-rgb, 255, 51, 0), 0.1);
-  color: var(--text);
-  font-size: 12px;
-  font-weight: 700;
+  gap: var(--space-2);
+  font-size: var(--text-2);
+  font-weight: 600;
+  transition: background var(--fast), border-color var(--fast), color var(--fast);
 }
 
 .btnPrimary {
-  border: 1px solid color-mix(in srgb, var(--red) 80%, #fff 20%);
-  background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%);
-  color: var(--red-text);
+  border: 1px solid var(--color-primary);
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.btnPrimary:hover {
+  border-color: var(--color-primary-hover);
+  background: var(--color-primary-hover);
 }
 
 .btnGhost {
-  border: 1px solid var(--border);
-  background: rgba(0, 0, 0, 0.24);
-  color: var(--text);
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text);
+}
+
+.btnGhost:hover {
+  border-color: color-mix(in srgb, var(--color-primary) 35%, var(--color-border));
+  background: var(--color-surface-alt);
+}
+
+.reportNotice {
+  min-height: 34px;
+  border-radius: var(--radius-sm);
+  border: 1px solid color-mix(in srgb, var(--color-success) 40%, var(--color-border));
+  background: color-mix(in srgb, var(--color-success) 10%, transparent);
+  color: var(--color-success);
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--space-3);
+  font-size: var(--text-2);
+  font-weight: 600;
 }
 
 .kpiGrid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
+  gap: var(--space-3);
 }
 
 .kpiCard {
-  border: 1px solid color-mix(in srgb, var(--border) 74%, transparent);
-  border-radius: 14px;
-  padding: 14px;
-  background: linear-gradient(130deg, color-mix(in srgb, var(--bg-elevated) 88%, #000 12%) 0%, color-mix(in srgb, #03113a 25%, var(--bg) 75%) 100%);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  background: var(--color-surface);
 }
 
 .kpiLabel {
-  font-size: 13px;
-  color: var(--text-dim);
-  margin-bottom: 8px;
+  font-size: var(--text-1);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-dim);
 }
 
 .kpiValue {
-  font-size: clamp(30px, 2.1vw, 42px);
+  margin-top: var(--space-2);
+  font-size: var(--text-6);
   line-height: 1;
-  font-weight: 900;
-  letter-spacing: -0.8px;
+  font-weight: 700;
 }
 
 .kpiNote {
-  margin-top: 7px;
-  font-size: 12px;
-  color: var(--text-dimmer);
+  margin-top: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--text-2);
 }
 
 .grid2 {
   display: grid;
-  grid-template-columns: 1.45fr 1fr;
-  gap: 12px;
+  grid-template-columns: 1.5fr 1fr;
+  gap: var(--space-3);
 }
 
-.card {
-  border: 1px solid color-mix(in srgb, var(--border) 76%, transparent);
-  border-radius: 16px;
+.card,
+.teamCard,
+.clubCard {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
   overflow: hidden;
-  background:
-    radial-gradient(95% 150% at 0% 0%, rgba(var(--red-rgb, 255, 51, 0), 0.18) 0%, rgba(var(--red-rgb, 255, 51, 0), 0) 58%),
-    linear-gradient(125deg, color-mix(in srgb, var(--bg-elevated) 86%, #000 14%) 0%, color-mix(in srgb, #001042 32%, var(--bg) 68%) 100%);
 }
 
-.cardHead {
+.cardHead,
+.teamHead {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 8px;
-  padding: 14px 16px 6px;
+  gap: var(--space-2);
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-4);
 }
 
 .cardTitle {
   margin: 0;
-  font-size: 31px;
-  letter-spacing: -0.4px;
+  font-size: var(--text-4);
+  font-weight: 700;
 }
 
-.cardDesc {
-  margin: 4px 0 0;
-  font-size: 13px;
-  color: var(--text-dim);
+.cardDesc,
+.teamSub {
+  margin-top: var(--space-1);
+  font-size: var(--text-2);
+  color: var(--color-text-muted);
 }
 
 .cardAction {
+  min-height: 32px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  padding: 0 10px;
+  text-decoration: none;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  min-height: 34px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  color: var(--text);
-  text-decoration: none;
-  padding: 0 11px;
-  font-size: 12px;
-  font-weight: 700;
-  background: rgba(0, 0, 0, 0.2);
+  font-size: var(--text-1);
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.cardAction:hover {
+  border-color: color-mix(in srgb, var(--color-primary) 35%, var(--color-border));
+  color: var(--color-text);
+  background: var(--color-surface-alt);
 }
 
 .chartPad {
   height: 290px;
-  padding: 0 10px 10px;
+  padding: var(--space-3);
 }
 
 .radarPad {
   height: 320px;
-  padding: 8px 10px 10px;
+  padding: var(--space-3);
 }
 
-.leaderboardList {
-  padding: 12px 14px 14px;
+.recoList,
+.leaderboardList,
+.quickLinks,
+.clubBody {
   display: grid;
-  gap: 9px;
+  gap: var(--space-2);
+  padding: var(--space-3);
+}
+
+.recoItem,
+.leaderboardItem,
+.infoRow,
+.quickLink,
+.member {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-alt);
+}
+
+.recoItem {
+  padding: var(--space-3);
+}
+
+.recoTop,
+.leaderLeft,
+.leaderRight {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.recoTop {
+  font-size: var(--text-2);
+  font-weight: 600;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+}
+
+.recoText {
+  margin-top: var(--space-1);
+  color: var(--color-text-muted);
+  font-size: var(--text-2);
 }
 
 .leaderboardItem {
-  min-height: 48px;
-  border-radius: 10px;
-  border: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
-  background: color-mix(in srgb, var(--bg) 90%, transparent);
-  padding: 0 10px;
+  min-height: 42px;
+  padding: 0 var(--space-2);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
 }
 
 .leaderLeft,
 .leaderRight {
+  font-size: var(--text-2);
+  font-weight: 600;
+}
+
+.leaderRank,
+.leaderScore {
+  min-width: 26px;
+  height: 26px;
+  border-radius: 999px;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  font-size: 13px;
+  justify-content: center;
+  font-size: var(--text-1);
   font-weight: 700;
 }
 
 .leaderRank {
-  width: 28px;
-  height: 28px;
-  border-radius: 999px;
-  border: 1px solid rgba(var(--red-rgb, 255, 51, 0), 0.5);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--red);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
 }
 
 .leaderScore {
-  min-width: 40px;
-  min-height: 28px;
-  border-radius: 999px;
-  border: 1px solid rgba(var(--red-rgb, 255, 51, 0), 0.45);
-  background: rgba(var(--red-rgb, 255, 51, 0), 0.12);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text);
-}
-
-.recoList {
-  padding: 10px 14px 14px;
-  display: grid;
-  gap: 10px;
-}
-
-.recoItem {
-  border: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
-  border-radius: 12px;
-  background: color-mix(in srgb, var(--bg) 90%, transparent);
-  padding: 11px;
-}
-
-.recoTop {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  font-weight: 700;
-}
-
-.dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-  flex-shrink: 0;
-}
-
-.recoText {
-  margin-top: 5px;
-  color: var(--text-dim);
-  font-size: 13px;
-  line-height: 1.35;
-}
-
-.teamCard {
-  border: 1px solid color-mix(in srgb, var(--border) 76%, transparent);
-  border-radius: 16px;
-  background: linear-gradient(140deg, color-mix(in srgb, var(--bg-elevated) 90%, #000 10%) 0%, color-mix(in srgb, var(--bg) 95%, #000 5%) 100%);
-  overflow: hidden;
-}
-
-.teamHead {
-  padding: 14px 16px 8px;
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.teamSub {
-  margin: 4px 0 0;
-  font-size: 12px;
-  color: var(--text-dimmer);
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
+  background: var(--color-primary-muted);
 }
 
 .teamList {
-  padding: 0 12px 12px;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
+  gap: var(--space-2);
+  padding: var(--space-3);
 }
 
 .member {
-  border: 1px solid color-mix(in srgb, var(--border) 74%, transparent);
-  border-radius: 12px;
-  padding: 9px;
+  text-decoration: none;
   display: flex;
   align-items: center;
-  gap: 9px;
-  color: inherit;
-  text-decoration: none;
-  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  gap: var(--space-2);
+  padding: var(--space-2);
 }
 
 .member:hover {
-  border-color: rgba(var(--red-rgb, 255, 51, 0), 0.45);
+  background: var(--color-primary-muted);
 }
 
 .memberAvatar,
 .memberAvatarImg {
-  width: 42px;
-  height: 42px;
-  border-radius: 11px;
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
   flex-shrink: 0;
 }
 
 .memberAvatar {
-  display: flex;
+  background: var(--color-primary-muted);
+  color: var(--color-primary);
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%);
-  color: var(--red-text);
-  font-size: 13px;
-  font-weight: 800;
+  font-size: var(--text-2);
+  font-weight: 700;
 }
 
 .memberAvatarImg {
@@ -352,114 +343,164 @@
 }
 
 .memberName {
-  font-size: 15px;
-  font-weight: 800;
-  color: var(--text);
+  font-size: var(--text-2);
+  font-weight: 600;
   white-space: nowrap;
-  overflow: hidden;
   text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .memberContact {
-  margin-top: 3px;
-  font-size: 12px;
-  color: var(--text-dim);
+  font-size: var(--text-1);
+  color: var(--color-text-dim);
   white-space: nowrap;
-  overflow: hidden;
   text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .memberRole {
   margin-left: auto;
-  flex-shrink: 0;
-  min-height: 25px;
+  min-height: 24px;
   border-radius: 999px;
-  border: 1px solid var(--border);
-  padding: 0 9px;
+  border: 1px solid var(--color-border);
   display: inline-flex;
   align-items: center;
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text-dim);
-}
-
-.clubCard {
-  border: 1px solid color-mix(in srgb, var(--border) 76%, transparent);
-  border-radius: 16px;
-  overflow: hidden;
-  background:
-    radial-gradient(90% 130% at 0% 0%, rgba(var(--red-rgb, 255, 51, 0), 0.18) 0%, rgba(var(--red-rgb, 255, 51, 0), 0) 54%),
-    linear-gradient(125deg, color-mix(in srgb, #00154d 24%, var(--bg-elevated) 76%) 0%, color-mix(in srgb, var(--bg) 93%, #000 7%) 100%);
-}
-
-.clubBody {
-  padding: 0 14px 14px;
+  padding: 0 8px;
+  font-size: var(--text-1);
+  color: var(--color-text-muted);
 }
 
 .infoRow {
-  border: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
-  border-radius: 10px;
-  min-height: 44px;
-  padding: 0 12px;
+  min-height: 40px;
+  padding: 0 var(--space-3);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  font-size: 13px;
-  margin-bottom: 8px;
 }
 
 .infoLabel {
-  color: var(--text-dim);
+  color: var(--color-text-dim);
+  font-size: var(--text-2);
 }
 
 .infoValue {
-  font-weight: 700;
+  font-size: var(--text-2);
+  font-weight: 600;
   text-align: right;
-  color: var(--text);
+}
+
+.quickLink {
+  min-height: 38px;
+  padding: 0 var(--space-3);
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  font-size: var(--text-2);
+  font-weight: 600;
+}
+
+.quickLink:hover {
+  background: var(--color-primary-muted);
 }
 
 .logoWrap {
-  margin-top: 14px;
+  margin-top: var(--space-2);
   display: flex;
   justify-content: center;
 }
 
-.clubUploader {
-  margin-top: 12px;
-}
-
-.quickLinks {
-  padding: 12px 14px 14px;
-  display: grid;
-  gap: 8px;
-}
-
-.quickLink {
-  min-height: 44px;
-  border-radius: 10px;
-  border: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
-  background: color-mix(in srgb, var(--bg) 90%, transparent);
-  color: var(--text);
-  text-decoration: none;
-  padding: 0 12px;
-  display: inline-flex;
-  align-items: center;
-  font-size: 14px;
-  font-weight: 700;
-}
-
-.quickLink:hover {
-  border-color: rgba(var(--red-rgb, 255, 51, 0), 0.45);
-}
-
 .logoImg,
 .logoFallback {
-  width: 84px;
-  height: 84px;
-  border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
-  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  width: 86px;
+  height: 86px;
+  border-radius: 10px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-alt);
+}
+
+.logoFallback {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.logoFallbackImg {
+  width: 62%;
+  height: 62%;
+  object-fit: contain;
+}
+
+.clubEditForm {
+  margin-top: var(--space-2);
+  display: grid;
+  gap: var(--space-2);
+}
+
+.clubEditGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.clubEditField {
+  display: grid;
+  gap: 6px;
+  font-size: var(--text-1);
+  font-weight: 600;
+  color: var(--color-text-dim);
+}
+
+.clubEditInput {
+  min-height: 36px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-alt);
+  color: var(--color-text);
+  padding: 0 10px;
+  outline: none;
+}
+
+.clubEditInput:focus {
+  border-color: color-mix(in srgb, var(--color-primary) 55%, var(--color-border));
+}
+
+.clubEditActions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.clubEditBtn {
+  min-height: 34px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-primary);
+  background: var(--color-primary);
+  color: #fff;
+  padding: 0 var(--space-3);
+  font-size: var(--text-2);
+  font-weight: 600;
+}
+
+.clubEditBtn:disabled {
+  opacity: 0.7;
+}
+
+.clubNotice {
+  min-height: 34px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-alt);
+  color: var(--color-text-muted);
+  padding: 0 var(--space-2);
+  display: inline-flex;
+  align-items: center;
+  font-size: var(--text-2);
+}
+
+@media (max-width: 1100px) {
+  .clubEditGrid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .logoImg {
@@ -467,24 +508,31 @@
 }
 
 .logoFallback {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
-  font-weight: 900;
-  color: var(--text);
+  font-size: var(--text-5);
+  font-weight: 700;
+  color: var(--color-text-muted);
 }
 
-@media (max-width: 1280px) {
+.clubUploader {
+  margin-top: var(--space-2);
+}
+
+@media (max-width: 1279px) {
   .kpiGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .grid2 {
-    grid-template-columns: 1fr;
-  }
-
+  .grid2,
   .teamList {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 1023px) {
+  .wrap {
+    display: none;
   }
 }
