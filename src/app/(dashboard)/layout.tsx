@@ -29,7 +29,7 @@ export default async function DashboardRootLayout({
   }
 
   const themeVars = getThemeVars(club)
-  const themeCss = `.app-layout{${Object.entries(themeVars).map(([k, v]) => `${k}:${v}`).join(';')}}`
+  const themeCss = `.app-layout, body{${Object.entries(themeVars).map(([k, v]) => `${k}:${v}`).join(';')}}`
 
   return (
     <>

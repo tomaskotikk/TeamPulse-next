@@ -27,8 +27,8 @@ export default async function MembersPage() {
         title="Členové"
         actions={
           isManager ? (
-            <Link href="/invite" className="topbar-btn primary">
-              <svg style={{ width: 16, height: 16 }} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <Link href="/invite" className="topbar-btn primary compact">
+              <svg style={{ width: 14, height: 14 }} viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
               Pozvat člena
@@ -50,7 +50,9 @@ export default async function MembersPage() {
             <h3 className="section-title">Seznam členů</h3>
             <p className="section-description">Všichni hráči, trenéři a partneři</p>
           </div>
-          <MembersDirectory members={members} currentUserId={user.id} isManager={isManager} />
+          <div className="section-content">
+            <MembersDirectory members={members} currentUserId={user.id} isManager={isManager} />
+          </div>
         </div>
       </div>
     </DashboardLayout>

@@ -1,7 +1,9 @@
 .wrap {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
-  background: var(--color-surface);
+  background:
+    radial-gradient(130% 100% at 0% 0%, color-mix(in srgb, var(--color-primary) 14%, transparent) 0%, transparent 68%),
+    linear-gradient(160deg, color-mix(in srgb, var(--color-surface) 90%, transparent) 0%, color-mix(in srgb, var(--color-bg) 84%, transparent) 100%);
   overflow: hidden;
 }
 
@@ -38,11 +40,12 @@
   font-size: var(--text-2);
   font-weight: 600;
   color: var(--color-text-muted);
+  background: color-mix(in srgb, var(--color-surface-alt) 76%, transparent);
   transition: background var(--fast), border-color var(--fast), color var(--fast);
 }
 
 .back:hover {
-  background: var(--color-surface-alt);
+  background: color-mix(in srgb, var(--color-primary) 14%, var(--color-surface-alt));
   border-color: color-mix(in srgb, var(--color-primary) 35%, var(--color-border));
   color: var(--color-text);
 }

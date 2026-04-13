@@ -6,7 +6,9 @@
 .hero {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
-  background: var(--color-surface);
+  background:
+    radial-gradient(120% 110% at 0% 0%, color-mix(in srgb, var(--color-primary) 18%, transparent) 0%, transparent 64%),
+    linear-gradient(155deg, color-mix(in srgb, var(--color-surface) 92%, transparent) 0%, color-mix(in srgb, var(--color-bg) 84%, transparent) 100%);
   padding: var(--space-5);
   display: grid;
   gap: var(--space-4);
@@ -44,7 +46,7 @@
   min-height: 30px;
   border-radius: 999px;
   border: 1px solid var(--color-border);
-  background: var(--color-surface-alt);
+  background: color-mix(in srgb, var(--color-surface-alt) 88%, transparent);
   padding: 0 10px;
   display: inline-flex;
   align-items: center;
@@ -78,7 +80,7 @@
 
 .btnPrimary {
   border: 1px solid var(--color-primary);
-  background: var(--color-primary);
+  background: linear-gradient(145deg, color-mix(in srgb, var(--color-primary) 95%, #fff 5%) 0%, color-mix(in srgb, var(--color-primary-hover) 94%, #000 6%) 100%);
   color: #fff;
 }
 
@@ -89,7 +91,7 @@
 
 .btnGhost {
   border: 1px solid var(--color-border);
-  background: transparent;
+  background: color-mix(in srgb, var(--color-surface-alt) 76%, transparent);
   color: var(--color-text);
 }
 
@@ -121,7 +123,9 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   padding: var(--space-4);
-  background: var(--color-surface);
+  background:
+    radial-gradient(150% 120% at 0% 0%, color-mix(in srgb, var(--color-primary) 12%, transparent) 0%, transparent 70%),
+    color-mix(in srgb, var(--color-surface) 90%, transparent);
 }
 
 .kpiLabel {
@@ -156,7 +160,9 @@
 .clubCard {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
-  background: var(--color-surface);
+  background:
+    radial-gradient(130% 120% at 100% 0%, color-mix(in srgb, var(--color-primary) 10%, transparent) 0%, transparent 72%),
+    linear-gradient(160deg, color-mix(in srgb, var(--color-surface) 90%, transparent) 0%, color-mix(in srgb, var(--color-bg) 84%, transparent) 100%);
   overflow: hidden;
 }
 
@@ -228,7 +234,7 @@
 .member {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-  background: var(--color-surface-alt);
+  background: color-mix(in srgb, var(--color-surface-alt) 86%, transparent);
 }
 
 .recoItem {
@@ -455,7 +461,7 @@
   min-height: 36px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--color-border);
-  background: var(--color-surface-alt);
+  background: color-mix(in srgb, var(--color-surface-alt) 86%, transparent);
   color: var(--color-text);
   padding: 0 10px;
   outline: none;
@@ -489,7 +495,7 @@
   min-height: 34px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--color-border);
-  background: var(--color-surface-alt);
+  background: color-mix(in srgb, var(--color-surface-alt) 86%, transparent);
   color: var(--color-text-muted);
   padding: 0 var(--space-2);
   display: inline-flex;

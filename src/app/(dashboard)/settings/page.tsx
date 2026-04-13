@@ -3,6 +3,18 @@
 import { useEffect, useState } from 'react'
 import DashboardLayout from '@/components/DashboardLayout'
 import Topbar from '@/components/Topbar'
+import {
+  Building2,
+  KeyRound,
+  Mail,
+  Palette,
+  RotateCcw,
+  Save,
+  ShieldCheck,
+  Sparkles,
+  UserRound,
+  BadgeCheck,
+} from 'lucide-react'
 
 type AppUser = {
   id: number
@@ -131,21 +143,48 @@ export default function SettingsPage() {
     two_factor_enabled: false,
   }
 
+  if (loadingContext) {
+    return (
+      <DashboardLayout user={layoutUser} isManager={isManager} themeVars={themeVars}>
+        <Topbar title="Nastavení" backHref="/dashboard" backLabel="Zpět" />
+        <div className="app-content">
+          <div className="section settings-loading-card">
+            <div className="section-content settings-loading-content">
+              <div className="settings-loading-icon">
+                <Sparkles size={18} />
+              </div>
+              <div>Načítání nastavení…</div>
+            </div>
+          </div>
+        </div>
+      </DashboardLayout>
+    )
+  }
+
   return (
     <DashboardLayout user={layoutUser} isManager={isManager} themeVars={themeVars}>
       <Topbar title="Nastavení" backHref="/dashboard" backLabel="Zpět" />
 
       <div className="app-content">
-        {loadingContext && (
-          <div className="section" style={{ marginBottom: 16 }}>
-            <div className="section-content">Načítání nastavení…</div>
-          </div>
-        )}
-
         <div className="page-intro">
           <div className="page-intro-meta">Správa účtu a klubu</div>
           <h2 className="content-title">Nastavení</h2>
           <p className="content-subtitle">Spravujte nastavení účtu a aplikace</p>
+        </div>
+
+        <div className="settings-quick-strip">
+          <div className="settings-quick-item">
+            <ShieldCheck size={16} />
+            <span>Bezpečnost účtu</span>
+          </div>
+          <div className="settings-quick-item">
+            <Palette size={16} />
+            <span>Barvy klubu</span>
+          </div>
+          <div className="settings-quick-item">
+            <UserRound size={16} />
+            <span>Účet a profil</span>
+          </div>
         </div>
 
         {successMsg && (
@@ -168,13 +207,23 @@ export default function SettingsPage() {
         {/* BEZPEČNOST */}
         <div className="section">
           <div className="section-header">
-            <h3 className="section-title">Bezpečnost</h3>
-            <p className="section-description">Nastavení přihlašování a ověření</p>
+            <div className="section-title-with-icon">
+              <span className="section-icon-badge">
+                <ShieldCheck size={16} />
+              </span>
+              <div>
+                <h3 className="section-title">Bezpečnost</h3>
+                <p className="section-description">Nastavení přihlašování a ověření</p>
+              </div>
+            </div>
           </div>
           <div className="section-content">
             <div className="setting-row">
               <div className="setting-label">
-                <div className="setting-label-title">Dvoufázové ověření</div>
+                <div className="setting-label-title">
+                  <KeyRound size={16} />
+                  Dvoufázové ověření
+                </div>
                 <div className="setting-label-desc">
                   {twoFA ? 'Zapnuto – přihlášení vyžaduje zadání kódu z e-mailu' : 'Vypnuto – doporučujeme zapnout pro větší bezpečnost'}
                 </div>
@@ -183,6 +232,7 @@ export default function SettingsPage() {
                 onClick={handleToggle2FA}
                 className={`btn toggle-btn ${twoFA ? 'btn-secondary' : 'btn-primary'}`}
               >
+                <ShieldCheck size={16} />
                 {twoFA ? 'Vypnout' : 'Zapnout'}
               </button>
             </div>
@@ -193,14 +243,25 @@ export default function SettingsPage() {
         {isManager && (
           <div className="section">
             <div className="section-header">
-              <h3 className="section-title">Barevné schéma</h3>
-              <p className="section-description">Vytvořte profesionální vzhled aplikace podle identity vašeho klubu</p>
+              <div className="section-title-with-icon">
+                <span className="section-icon-badge">
+                  <Palette size={16} />
+                </span>
+                <div>
+                  <h3 className="section-title">Barevné schéma</h3>
+                  <p className="section-description">Vytvořte profesionální vzhled aplikace podle identity vašeho klubu</p>
+                </div>
+              </div>
             </div>
             <div className="section-content">
               <form onSubmit={handleSaveColors} className="theme-editor-form">
                 <div className="theme-editor-top">
-                  <p className="theme-editor-note">Tip: Vysoký kontrast mezi pozadím a textem zlepšuje čitelnost celé aplikace.</p>
+                  <p className="theme-editor-note">
+                    <Sparkles size={15} />
+                    Vysoký kontrast mezi pozadím a textem zlepšuje čitelnost celé aplikace.
+                  </p>
                   <button type="button" className="btn btn-secondary" onClick={applyDefaultPalette}>
+                    <RotateCcw size={16} />
                     Použít výchozí paletu
                   </button>
                 </div>
@@ -210,7 +271,10 @@ export default function SettingsPage() {
                     <div className="theme-color-header">
                       <span className="theme-color-dot" style={{ background: primaryColor }} />
                       <div>
-                        <label className="form-label">Primární</label>
+                        <label className="form-label">
+                          <Palette size={14} />
+                          Primární
+                        </label>
                         <p className="theme-color-hint">Tlačítka, aktivní prvky, akcenty</p>
                       </div>
                     </div>
@@ -230,7 +294,10 @@ export default function SettingsPage() {
                     <div className="theme-color-header">
                       <span className="theme-color-dot" style={{ background: secondaryColor }} />
                       <div>
-                        <label className="form-label">Sekundární</label>
+                        <label className="form-label">
+                          <Building2 size={14} />
+                          Sekundární
+                        </label>
                         <p className="theme-color-hint">Hlavní pozadí aplikace</p>
                       </div>
                     </div>
@@ -250,7 +317,10 @@ export default function SettingsPage() {
                     <div className="theme-color-header">
                       <span className="theme-color-dot" style={{ background: accentColor }} />
                       <div>
-                        <label className="form-label">Doplňková</label>
+                        <label className="form-label">
+                          <Sparkles size={14} />
+                          Doplňková
+                        </label>
                         <p className="theme-color-hint">Text a kontrastní obsah</p>
                       </div>
                     </div>
@@ -271,6 +341,7 @@ export default function SettingsPage() {
                   <div className="theme-preview-bar" style={{ borderColor: `${accentColor}22` }}>
                     <div className="theme-preview-brand">TeamPulse</div>
                     <button type="button" className="theme-preview-cta" style={{ background: primaryColor, color: accentColor }}>
+                      <Save size={14} />
                       Primární akce
                     </button>
                   </div>
@@ -300,21 +371,30 @@ export default function SettingsPage() {
         {/* INFORMACE O ÚČTU */}
         <div className="section">
           <div className="section-header">
-            <h3 className="section-title">Profil a účet</h3>
-            <p className="section-description">Vaše osobní údaje a role</p>
+            <div className="section-title-with-icon">
+              <span className="section-icon-badge">
+                <UserRound size={16} />
+              </span>
+              <div>
+                <h3 className="section-title">Profil a účet</h3>
+                <p className="section-description">Vaše osobní údaje a role</p>
+              </div>
+            </div>
           </div>
           <div className="section-content">
-            <div className="data-row">
-              <span className="data-label">E-mailová adresa</span>
-              <span className="data-value">{user?.email ?? '–'}</span>
-            </div>
-            <div className="data-row">
-              <span className="data-label">Role v klubu</span>
-              <span className="data-value">{user?.role ?? '–'}</span>
-            </div>
-            <div className="data-row">
-              <span className="data-label">Váš klub</span>
-              <span className="data-value">{user?.organization ?? '–'}</span>
+            <div className="account-info-grid">
+              <div className="account-info-item">
+                <span className="data-label"><Mail size={14} /> E-mailová adresa</span>
+                <span className="data-value">{user?.email ?? '–'}</span>
+              </div>
+              <div className="account-info-item">
+                <span className="data-label"><BadgeCheck size={14} /> Role v klubu</span>
+                <span className="data-value">{user?.role ?? '–'}</span>
+              </div>
+              <div className="account-info-item">
+                <span className="data-label"><Building2 size={14} /> Váš klub</span>
+                <span className="data-value">{user?.organization ?? '–'}</span>
+              </div>
             </div>
           </div>
         </div>
