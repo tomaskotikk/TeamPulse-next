@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server'
-import fs from 'node:fs/promises'
-import path from 'node:path'
 import { createAdminClient } from '@/lib/supabase/server'
 import { getClubForUser, getCurrentAppUser } from '@/lib/app-context'
+import {
+  CLUB_LOGOS_BUCKET,
+  removeImageFromBucket,
+  sanitizeUploadedObjectName,
+  uploadImageToBucket,
+} from '@/lib/storage/uploads'
 
 const ALLOWED_TYPES = new Set([
   'image/jpeg',
@@ -64,16 +68,29 @@ export async function POST(request: Request) {
     }
 
     const ext = extFromType(file.type)
-    const fileName = `club_${club.id}_${Date.now()}.${ext}`
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'clubs')
-    const absolutePath = path.join(uploadDir, fileName)
-
-    await fs.mkdir(uploadDir, { recursive: true })
+    const fileName = sanitizeUploadedObjectName(`club_${club.id}_${Date.now()}.${ext}`)
     const buffer = Buffer.from(await file.arrayBuffer())
-    await fs.writeFile(absolutePath, buffer)
 
     const supabase = await createAdminClient()
     const oldLogo = club.logo
+
+    const { error: storageError } = await uploadImageToBucket({
+      supabase,
+      bucket: CLUB_LOGOS_BUCKET,
+      objectName: fileName,
+      buffer,
+      contentType: file.type,
+    })
+
+    if (storageError) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Nepodařilo se uložit logo do úložiště. Zkontrolujte bucket v Supabase.',
+        },
+        { status: 500 }
+      )
+    }
 
     const { error } = await supabase
       .from('clubs')
@@ -81,13 +98,20 @@ export async function POST(request: Request) {
       .eq('id', club.id)
 
     if (error) {
-      await fs.rm(absolutePath, { force: true })
+      await removeImageFromBucket({
+        supabase,
+        bucket: CLUB_LOGOS_BUCKET,
+        objectName: fileName,
+      })
       return NextResponse.json({ success: false, error: 'Nepodařilo se uložit logo do databáze.' }, { status: 500 })
     }
 
     if (oldLogo) {
-      const oldPath = path.join(uploadDir, path.basename(oldLogo))
-      await fs.rm(oldPath, { force: true })
+      await removeImageFromBucket({
+        supabase,
+        bucket: CLUB_LOGOS_BUCKET,
+        objectName: oldLogo,
+      })
     }
 
     return NextResponse.json({

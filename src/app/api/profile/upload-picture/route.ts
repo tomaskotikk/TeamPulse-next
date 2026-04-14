@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server'
-import fs from 'node:fs/promises'
-import path from 'node:path'
 import { createAdminClient } from '@/lib/supabase/server'
 import { getCurrentAppUser } from '@/lib/app-context'
+import {
+  PROFILE_IMAGES_BUCKET,
+  removeImageFromBucket,
+  sanitizeUploadedObjectName,
+  uploadImageToBucket,
+} from '@/lib/storage/uploads'
 
 const ALLOWED_TYPES = new Set([
   'image/jpeg',
@@ -55,16 +59,29 @@ export async function POST(request: Request) {
     }
 
     const ext = extFromType(file.type)
-    const fileName = `user_${user.id}_${Date.now()}.${ext}`
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'profiles')
-    const absolutePath = path.join(uploadDir, fileName)
-
-    await fs.mkdir(uploadDir, { recursive: true })
+    const fileName = sanitizeUploadedObjectName(`user_${user.id}_${Date.now()}.${ext}`)
     const buffer = Buffer.from(await file.arrayBuffer())
-    await fs.writeFile(absolutePath, buffer)
 
     const supabase = await createAdminClient()
     const oldPicture = user.profile_picture
+
+    const { error: storageError } = await uploadImageToBucket({
+      supabase,
+      bucket: PROFILE_IMAGES_BUCKET,
+      objectName: fileName,
+      buffer,
+      contentType: file.type,
+    })
+
+    if (storageError) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Nepodařilo se uložit profilovku do úložiště. Zkontrolujte bucket v Supabase.',
+        },
+        { status: 500 }
+      )
+    }
 
     const { error } = await supabase
       .from('users')
@@ -72,13 +89,20 @@ export async function POST(request: Request) {
       .eq('id', user.id)
 
     if (error) {
-      await fs.rm(absolutePath, { force: true })
+      await removeImageFromBucket({
+        supabase,
+        bucket: PROFILE_IMAGES_BUCKET,
+        objectName: fileName,
+      })
       return NextResponse.json({ success: false, error: 'Nepodařilo se uložit profilovku do databáze.' }, { status: 500 })
     }
 
     if (oldPicture) {
-      const oldPath = path.join(uploadDir, path.basename(oldPicture))
-      await fs.rm(oldPath, { force: true })
+      await removeImageFromBucket({
+        supabase,
+        bucket: PROFILE_IMAGES_BUCKET,
+        objectName: oldPicture,
+      })
     }
 
     return NextResponse.json({
