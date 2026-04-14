@@ -1,16 +1,19 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState, type CSSProperties } from 'react'
 import DashboardLayout from '@/components/DashboardLayout'
 import Topbar from '@/components/Topbar'
 import {
   Building2,
+  Eye,
   KeyRound,
+  LayoutPanelTop,
   Mail,
   Palette,
   RotateCcw,
   Save,
   ShieldCheck,
+  SlidersHorizontal,
   Sparkles,
   UserRound,
   BadgeCheck,
@@ -27,6 +30,41 @@ type AppUser = {
   two_factor_enabled: boolean
 }
 
+type ThemeEffects = {
+  gradientEnabled: boolean
+  gradientStrength: number
+  softStrength: number
+  glowStrength: number
+  blurStrength: number
+  motionSpeed: number
+}
+
+const EFFECTS_STORAGE_KEY = 'tp-theme-effects-v1'
+const DEFAULT_EFFECTS: ThemeEffects = {
+  gradientEnabled: true,
+  gradientStrength: 58,
+  softStrength: 42,
+  glowStrength: 35,
+  blurStrength: 8,
+  motionSpeed: 100,
+}
+
+function clampRange(value: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, value))
+}
+
+function parseBooleanVar(value: string | undefined, fallback: boolean) {
+  if (!value) return fallback
+  return value === '1' || value === 'true'
+}
+
+function parseNumberVar(value: string | undefined, fallback: number, min: number, max: number) {
+  if (!value) return fallback
+  const num = Number(value)
+  if (!Number.isFinite(num)) return fallback
+  return clampRange(num, min, max)
+}
+
 export default function SettingsPage() {
   const [user, setUser] = useState<AppUser | null>(null)
   const [themeVars, setThemeVars] = useState<Record<string, string>>({})
@@ -41,6 +79,7 @@ export default function SettingsPage() {
   const [primaryColor, setPrimaryColor] = useState('#FF3300')
   const [secondaryColor, setSecondaryColor] = useState('#000000')
   const [accentColor, setAccentColor] = useState('#FFFFFF')
+  const [effects, setEffects] = useState<ThemeEffects>(DEFAULT_EFFECTS)
 
   useEffect(() => {
     let mounted = true
@@ -62,6 +101,35 @@ export default function SettingsPage() {
         setPrimaryColor(data.club?.primary_color ?? '#FF3300')
         setSecondaryColor(data.club?.secondary_color ?? '#000000')
         setAccentColor(data.club?.accent_color ?? '#FFFFFF')
+
+        const serverThemeVars = data.themeVars ?? {}
+        const fromServer: ThemeEffects = {
+          gradientEnabled: parseBooleanVar(serverThemeVars['--ui-gradient-enabled'], DEFAULT_EFFECTS.gradientEnabled),
+          gradientStrength: parseNumberVar(serverThemeVars['--ui-gradient-strength'], DEFAULT_EFFECTS.gradientStrength, 0, 100),
+          softStrength: parseNumberVar(serverThemeVars['--ui-gradient-soft-strength'], DEFAULT_EFFECTS.softStrength, 0, 100),
+          glowStrength: parseNumberVar(serverThemeVars['--ui-glow-strength'], DEFAULT_EFFECTS.glowStrength, 0, 100),
+          blurStrength: parseNumberVar(serverThemeVars['--ui-backdrop-blur-strength'], DEFAULT_EFFECTS.blurStrength, 0, 22),
+          motionSpeed: parseNumberVar(serverThemeVars['--ui-motion-speed'], DEFAULT_EFFECTS.motionSpeed, 60, 170),
+        }
+
+        try {
+          const raw = localStorage.getItem(`${EFFECTS_STORAGE_KEY}:${data.user?.organization ?? 'default'}`)
+          if (raw) {
+            const parsed = JSON.parse(raw) as Partial<ThemeEffects>
+            setEffects({
+              gradientEnabled: typeof parsed.gradientEnabled === 'boolean' ? parsed.gradientEnabled : fromServer.gradientEnabled,
+              gradientStrength: clampRange(Number(parsed.gradientStrength ?? fromServer.gradientStrength), 0, 100),
+              softStrength: clampRange(Number(parsed.softStrength ?? fromServer.softStrength), 0, 100),
+              glowStrength: clampRange(Number(parsed.glowStrength ?? fromServer.glowStrength), 0, 100),
+              blurStrength: clampRange(Number(parsed.blurStrength ?? fromServer.blurStrength), 0, 22),
+              motionSpeed: clampRange(Number(parsed.motionSpeed ?? fromServer.motionSpeed), 60, 170),
+            })
+          } else {
+            setEffects(fromServer)
+          }
+        } catch {
+          setEffects(fromServer)
+        }
       } catch {
         if (mounted) showError('Nepodařilo se načíst nastavení.')
       } finally {
@@ -81,6 +149,12 @@ export default function SettingsPage() {
     setErrorMsg(null)
     setTimeout(() => setSuccessMsg(null), 4000)
   }
+
+  useEffect(() => {
+    if (!user?.organization) return
+
+    localStorage.setItem(`${EFFECTS_STORAGE_KEY}:${user.organization}`, JSON.stringify(effects))
+  }, [effects, user?.organization])
 
   function showError(msg: string) {
     setErrorMsg(msg)
@@ -132,6 +206,56 @@ export default function SettingsPage() {
     setAccentColor('#FFFFFF')
   }
 
+  function applyEffectsPreset(preset: 'cinema' | 'flat' | 'soft' | 'vivid') {
+    if (preset === 'cinema') {
+      setEffects({ gradientEnabled: true, gradientStrength: 74, softStrength: 38, glowStrength: 48, blurStrength: 10, motionSpeed: 90 })
+      return
+    }
+    if (preset === 'flat') {
+      setEffects({ gradientEnabled: false, gradientStrength: 0, softStrength: 0, glowStrength: 0, blurStrength: 0, motionSpeed: 100 })
+      return
+    }
+    if (preset === 'soft') {
+      setEffects({ gradientEnabled: true, gradientStrength: 36, softStrength: 28, glowStrength: 20, blurStrength: 6, motionSpeed: 110 })
+      return
+    }
+
+    setEffects({ gradientEnabled: true, gradientStrength: 88, softStrength: 70, glowStrength: 62, blurStrength: 12, motionSpeed: 130 })
+  }
+
+  function resetEffectsToDefault() {
+    setEffects(DEFAULT_EFFECTS)
+  }
+
+  const liveThemeVars = useMemo(() => {
+    return {
+      ...themeVars,
+      '--ui-gradient-enabled': effects.gradientEnabled ? '1' : '0',
+      '--ui-gradient-strength': String(effects.gradientEnabled ? effects.gradientStrength : 0),
+      '--ui-gradient-soft-strength': String(effects.gradientEnabled ? effects.softStrength : 0),
+      '--ui-glow-strength': String(effects.gradientEnabled ? effects.glowStrength : 0),
+      '--ui-backdrop-blur-strength': String(effects.blurStrength),
+      '--ui-motion-speed': String(effects.motionSpeed),
+    }
+  }, [effects, themeVars])
+
+  const previewVars = useMemo(() => {
+    const g = effects.gradientEnabled ? effects.gradientStrength : 0
+    const s = effects.gradientEnabled ? effects.softStrength : 0
+    const glow = effects.gradientEnabled ? effects.glowStrength : 0
+
+    return {
+      '--preview-primary': primaryColor,
+      '--preview-secondary': secondaryColor,
+      '--preview-accent': accentColor,
+      '--preview-gradient-main': `${(g / 100) * 0.24}`,
+      '--preview-gradient-soft': `${(s / 100) * 0.17}`,
+      '--preview-glow': `${(glow / 100) * 0.5}`,
+      '--preview-blur': `${effects.blurStrength}px`,
+      '--preview-motion': `${(220 / effects.motionSpeed).toFixed(3)}s`,
+    } as CSSProperties
+  }, [accentColor, effects, primaryColor, secondaryColor])
+
   const layoutUser = user ?? {
     id: 0,
     first_name: '',
@@ -145,7 +269,7 @@ export default function SettingsPage() {
 
   if (loadingContext) {
     return (
-      <DashboardLayout user={layoutUser} isManager={isManager} themeVars={themeVars}>
+      <DashboardLayout user={layoutUser} isManager={isManager} themeVars={liveThemeVars}>
         <Topbar title="Nastavení" backHref="/dashboard" backLabel="Zpět" />
         <div className="app-content">
           <div className="section settings-loading-card">
@@ -162,7 +286,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <DashboardLayout user={layoutUser} isManager={isManager} themeVars={themeVars}>
+    <DashboardLayout user={layoutUser} isManager={isManager} themeVars={liveThemeVars}>
       <Topbar title="Nastavení" backHref="/dashboard" backLabel="Zpět" />
 
       <div className="app-content">
@@ -258,12 +382,18 @@ export default function SettingsPage() {
                 <div className="theme-editor-top">
                   <p className="theme-editor-note">
                     <Sparkles size={15} />
-                    Vysoký kontrast mezi pozadím a textem zlepšuje čitelnost celé aplikace.
+                    Teď upravujete reálný vizuální engine aplikace, včetně gradientů, glow efektu i bluru panelů.
                   </p>
-                  <button type="button" className="btn btn-secondary" onClick={applyDefaultPalette}>
-                    <RotateCcw size={16} />
-                    Použít výchozí paletu
-                  </button>
+                  <div className="theme-editor-top-actions">
+                    <button type="button" className="btn btn-secondary" onClick={applyDefaultPalette}>
+                      <RotateCcw size={16} />
+                      Výchozí barvy
+                    </button>
+                    <button type="button" className="btn btn-secondary" onClick={resetEffectsToDefault}>
+                      <RotateCcw size={16} />
+                      Výchozí efekty
+                    </button>
+                  </div>
                 </div>
 
                 <div className="theme-color-grid">
@@ -364,11 +494,165 @@ export default function SettingsPage() {
                   <button type="submit" className="btn btn-primary">Uložit změny</button>
                 </div>
               </form>
-            </div>
+                <div className="theme-effects-studio">
+                  <div className="theme-effects-head">
+                    <div>
+                      <h4>
+                        <SlidersHorizontal size={16} />
+                        Gradient Studio
+                      </h4>
+                      <p>Efekty se mění živě v celé aplikaci. Uložení je lokální pro tento klub.</p>
+                    </div>
+                    <button
+                      type="button"
+                      className={`btn ${effects.gradientEnabled ? 'btn-primary' : 'btn-secondary'}`}
+                      onClick={() => setEffects((prev) => ({ ...prev, gradientEnabled: !prev.gradientEnabled }))}
+                    >
+                      {effects.gradientEnabled ? 'Gradient zapnutý' : 'Gradient vypnutý'}
+                    </button>
+                  </div>
+
+                  <div className="theme-presets-row">
+                    <button type="button" className="theme-preset-chip" onClick={() => applyEffectsPreset('cinema')}>Cinematic</button>
+                    <button type="button" className="theme-preset-chip" onClick={() => applyEffectsPreset('soft')}>Soft UI</button>
+                    <button type="button" className="theme-preset-chip" onClick={() => applyEffectsPreset('vivid')}>Vivid Neon</button>
+                    <button type="button" className="theme-preset-chip" onClick={() => applyEffectsPreset('flat')}>Flat Clean</button>
+                  </div>
+
+                  <div className="theme-effects-grid">
+                    <label className="theme-range-control">
+                      <span>Intenzita hlavního gradientu</span>
+                      <input
+                        type="range"
+                        min={0}
+                        max={100}
+                        value={effects.gradientStrength}
+                        onChange={(e) => setEffects((prev) => ({ ...prev, gradientStrength: Number(e.target.value) }))}
+                      />
+                      <strong>{effects.gradientStrength}%</strong>
+                    </label>
+
+                    <label className="theme-range-control">
+                      <span>Jemná vrstva (soft gradient)</span>
+                      <input
+                        type="range"
+                        min={0}
+                        max={100}
+                        value={effects.softStrength}
+                        onChange={(e) => setEffects((prev) => ({ ...prev, softStrength: Number(e.target.value) }))}
+                      />
+                      <strong>{effects.softStrength}%</strong>
+                    </label>
+
+                    <label className="theme-range-control">
+                      <span>Glow síla panelů</span>
+                      <input
+                        type="range"
+                        min={0}
+                        max={100}
+                        value={effects.glowStrength}
+                        onChange={(e) => setEffects((prev) => ({ ...prev, glowStrength: Number(e.target.value) }))}
+                      />
+                      <strong>{effects.glowStrength}%</strong>
+                    </label>
+
+                    <label className="theme-range-control">
+                      <span>Rozostření skla (blur)</span>
+                      <input
+                        type="range"
+                        min={0}
+                        max={22}
+                        value={effects.blurStrength}
+                        onChange={(e) => setEffects((prev) => ({ ...prev, blurStrength: Number(e.target.value) }))}
+                      />
+                      <strong>{effects.blurStrength}px</strong>
+                    </label>
+
+                    <label className="theme-range-control">
+                      <span>Rychlost animací UI</span>
+                      <input
+                        type="range"
+                        min={60}
+                        max={170}
+                        value={effects.motionSpeed}
+                        onChange={(e) => setEffects((prev) => ({ ...prev, motionSpeed: Number(e.target.value) }))}
+                      />
+                      <strong>{effects.motionSpeed}%</strong>
+                    </label>
+                  </div>
+
+                  <div className="theme-preview-v2" style={previewVars}>
+                    <div className="theme-preview-v2-topbar">
+                      <div className="theme-preview-v2-brand">
+                        <LayoutPanelTop size={14} /> TeamPulse
+                      </div>
+                      <div className="theme-preview-v2-pill-wrap">
+                        <span className="theme-preview-v2-pill">RUGBY</span>
+                        <span className="theme-preview-v2-pill">ZLIN</span>
+                      </div>
+                    </div>
+
+                    <div className="theme-preview-v2-hero">
+                      <h4>Vítejte zpět, Tomas. RC Zlín je připravený na další růst.</h4>
+                      <p>Přehled výkonu, složení týmu a klíčových metrik na jednom místě. Dashboard je optimalizovaný pro rychlé rozhodování vedení moderního klubu.</p>
+                      <div className="theme-preview-v2-hero-actions">
+                        <button type="button">Pozvat nového člena</button>
+                        <button type="button">Otevřít správu členů</button>
+                        <button type="button">Týdenní report</button>
+                      </div>
+                    </div>
+
+                    <div className="theme-preview-v2-grid">
+                      <div className="theme-preview-v2-card theme-preview-v2-stats">
+                        <div>
+                          <span>AKTIVNÍ ČLENOVÉ</span>
+                          <strong>24</strong>
+                        </div>
+                        <div>
+                          <span>ZPRÁVY DNES</span>
+                          <strong>18</strong>
+                        </div>
+                        <div>
+                          <span>VYTÍŽENOST</span>
+                          <strong>92%</strong>
+                        </div>
+                      </div>
+
+                      <div className="theme-preview-v2-card theme-preview-v2-feed">
+                        <div className="theme-preview-v2-feed-item">
+                          <div className="theme-preview-v2-dot" />
+                          <div>
+                            <strong>Anna Berková</strong>
+                            <small>Publikovala týdenní plán tréninků.</small>
+                          </div>
+                        </div>
+                        <div className="theme-preview-v2-feed-item">
+                          <div className="theme-preview-v2-dot" />
+                          <div>
+                            <strong>Petr Novák</strong>
+                            <small>Potvrdil účast na zápase v pátek.</small>
+                          </div>
+                        </div>
+                        <div className="theme-preview-v2-feed-item">
+                          <div className="theme-preview-v2-dot" />
+                          <div>
+                            <strong>System</strong>
+                            <small>Připomínka: vyprší členství 3 hráčům.</small>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="theme-preview-v2-footnote">
+                      <Eye size={14} />
+                      Náhled používá stejné proměnné jako aplikace: barvy, gradient sílu, glow, blur i tempo animací.
+                    </div>
+                  </div>
+                </div>
+              </div>
           </div>
         )}
 
-        {/* INFORMACE O ÚČTU */}
         <div className="section">
           <div className="section-header">
             <div className="section-title-with-icon">
@@ -376,8 +660,8 @@ export default function SettingsPage() {
                 <UserRound size={16} />
               </span>
               <div>
-                <h3 className="section-title">Profil a účet</h3>
-                <p className="section-description">Vaše osobní údaje a role</p>
+                <h3 className="section-title">Účet</h3>
+                <p className="section-description">Přehled vašich základních údajů</p>
               </div>
             </div>
           </div>
