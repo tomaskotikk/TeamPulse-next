@@ -396,6 +396,39 @@ export function buildAccountDeletedByAdminEmail(input: {
   }
 }
 
+export function buildClubDeletedByAdminEmail(input: {
+  fullName: string
+  clubName: string
+  reason?: string | null
+  supportEmail: string
+}): EmailContent {
+  const safeFullName = escapeHtml(input.fullName)
+  const safeClubName = escapeHtml(input.clubName)
+  const safeReason = input.reason ? escapeHtml(input.reason) : ''
+  const safeSupportEmail = escapeHtml(input.supportEmail)
+
+  return {
+    subject: 'Klub byl odstranen administratorem - TeamPulse',
+    html: renderEmailLayout(
+      'Klub byl odstraněn',
+      `Klub ${input.clubName} byl odstraněn administrátorem`,
+      `
+        <h2 style="margin:0 0 16px;font-size:24px;color:#1d1d1f;">Klub byl odstraněn</h2>
+        <p style="margin:0 0 16px;color:#4a4a4a;font-size:16px;line-height:1.7;">Ahoj ${safeFullName},</p>
+        <p style="margin:0 0 16px;color:#4a4a4a;font-size:16px;line-height:1.7;">klub <strong style="color:#E43432;">${safeClubName}</strong> byl odstraněn administrátorem TeamPulse.</p>
+        ${safeReason ? `<div style="margin:0 0 20px;padding:14px 16px;background:#fff4f4;border:1px solid #f4caca;border-radius:10px;color:#7b2020;font-size:14px;line-height:1.6;"><strong>Důvod:</strong><br />${safeReason}</div>` : ''}
+        <p style="margin:0;color:#6e6e73;font-size:14px;line-height:1.6;">V případě nejasností kontaktuj podporu: <a href="mailto:${safeSupportEmail}" style="color:#E43432;text-decoration:none;">${safeSupportEmail}</a>.</p>
+      `
+    ),
+    text: joinText([
+      `Ahoj ${input.fullName},`,
+      `klub ${input.clubName} byl odstraněn administrátorem TeamPulse.`,
+      input.reason ? `Důvod: ${input.reason}` : undefined,
+      `Podpora: ${input.supportEmail}`,
+    ]),
+  }
+}
+
 export function buildClubCreatedClubEmail(input: {
   clubName: string
   managerName: string

@@ -5,7 +5,19 @@ import { getCurrentAdminUser } from '@/lib/auth/admin'
 import { createAdminClient } from '@/lib/supabase/server'
 import { getSupportEmail } from '@/lib/email/config'
 import { sendTransactionalEmail } from '@/lib/email/send'
-import { buildAccountDeletedByAdminEmail } from '@/lib/email/templates'
+import {
+  buildAccountDeletedByAdminEmail,
+  buildClubDeletedByAdminEmail,
+} from '@/lib/email/templates'
+
+type ClubMember = {
+  id: number
+  first_name: string | null
+  last_name: string | null
+  email: string
+  admin: boolean
+  profile_picture: string | null
+}
 
 export async function DELETE(
   request: Request,
@@ -26,7 +38,6 @@ export async function DELETE(
 
     const payload = await request.json().catch(() => ({}))
     const reason = String(payload?.reason || '').trim().slice(0, 1000)
-    const deleteOwnerAccount = Boolean(payload?.deleteOwnerAccount)
 
     const supabase = await createAdminClient()
 
@@ -50,6 +61,34 @@ export async function DELETE(
       .eq('id', club.owner_user_id)
       .maybeSingle()
 
+    const { data: membersRaw, error: membersError } = await supabase
+      .from('users')
+      .select('id, first_name, last_name, email, admin, profile_picture')
+      .eq('organization', club.name)
+
+    if (membersError) {
+      return NextResponse.json({ error: 'Nepodarilo se nacist cleny klubu.' }, { status: 500 })
+    }
+
+    const members = (membersRaw ?? []) as ClubMember[]
+
+    const ownerInMembers = owner && members.some((m) => m.id === owner.id)
+    if (owner && !ownerInMembers) {
+      members.push(owner as ClubMember)
+    }
+
+    const usersToDelete = members.filter((member) => !member.admin && member.id !== admin.id)
+    const usersToKeep = members.filter((member) => member.admin || member.id === admin.id)
+
+    const notifyByEmail = new Map<string, ClubMember>()
+    for (const member of members) {
+      notifyByEmail.set(member.email.toLowerCase(), member)
+    }
+
+    if (owner?.email) {
+      notifyByEmail.set(owner.email.toLowerCase(), owner as ClubMember)
+    }
+
     const { error: deleteClubError } = await supabase
       .from('clubs')
       .delete()
@@ -59,70 +98,48 @@ export async function DELETE(
       return NextResponse.json({ error: 'Nepodarilo se smazat klub.' }, { status: 500 })
     }
 
-    const { error: clearOrgError } = await supabase
-      .from('users')
-      .update({ organization: null })
-      .eq('organization', club.name)
+    if (usersToDelete.length > 0) {
+      const idsToDelete = usersToDelete.map((u) => u.id)
+      const { error: deleteUsersError } = await supabase
+        .from('users')
+        .delete()
+        .in('id', idsToDelete)
+
+      if (deleteUsersError) {
+        return NextResponse.json(
+          { error: 'Klub byl smazan, ale nepodarilo se odstranit uzivatele klubu.' },
+          { status: 500 }
+        )
+      }
+
+      await Promise.all(
+        usersToDelete
+          .filter((u) => Boolean(u.profile_picture))
+          .map(async (u) => {
+            const profilePath = path.join(
+              process.cwd(),
+              'public',
+              'uploads',
+              'profiles',
+              path.basename(u.profile_picture as string)
+            )
+            await fs.rm(profilePath, { force: true })
+          })
+      )
+    }
+
+    const userIdsToKeep = usersToKeep.map((u) => u.id)
+    let clearOrgError: { message?: string } | null = null
+    if (userIdsToKeep.length > 0) {
+      const clearResult = await supabase
+        .from('users')
+        .update({ organization: null })
+        .in('id', userIdsToKeep)
+      clearOrgError = clearResult.error
+    }
 
     if (clearOrgError) {
       console.error('Clear organization after club delete error:', clearOrgError)
-    }
-
-    let ownerDeleted = false
-    let ownerDeleteMessage: string | null = null
-
-    if (deleteOwnerAccount && owner) {
-      if (owner.admin) {
-        ownerDeleteMessage = 'Ucet spravce je admin, proto nebyl smazan.'
-      } else if (owner.id === admin.id) {
-        ownerDeleteMessage = 'Nelze smazat vlastni admin ucet.'
-      } else {
-        const { data: anotherOwnedClub, error: anotherOwnedClubError } = await supabase
-          .from('clubs')
-          .select('id')
-          .eq('owner_user_id', owner.id)
-          .limit(1)
-          .maybeSingle()
-
-        if (anotherOwnedClubError) {
-          console.error('Owner other clubs check error:', anotherOwnedClubError)
-          ownerDeleteMessage = 'Klub byl smazan, ale nepodarilo se overit vlastnictvi dalsich klubu u spravce.'
-        } else if (anotherOwnedClub) {
-          ownerDeleteMessage = 'Spravce vlastni jeste dalsi klub, proto jeho ucet nebyl smazan.'
-        } else {
-          const fullName = `${owner.first_name ?? ''} ${owner.last_name ?? ''}`.trim() || 'uzivateli'
-          const accountDeleteReason = reason || `Ucet byl odstraneny spolu se smazanim klubu ${club.name}.`
-
-          try {
-            const content = buildAccountDeletedByAdminEmail({
-              fullName,
-              reason: accountDeleteReason,
-              supportEmail: getSupportEmail(),
-            })
-
-            await sendTransactionalEmail({
-              to: owner.email,
-              subject: content.subject,
-              html: content.html,
-              text: content.text,
-            })
-          } catch (mailErr) {
-            console.error('Club delete owner email error:', mailErr)
-          }
-
-          const { error: deleteOwnerError } = await supabase
-            .from('users')
-            .delete()
-            .eq('id', owner.id)
-
-          if (deleteOwnerError) {
-            console.error('Club delete owner account error:', deleteOwnerError)
-            ownerDeleteMessage = 'Klub byl smazan, ale ucet spravce se nepodarilo smazat.'
-          } else {
-            ownerDeleted = true
-          }
-        }
-      }
     }
 
     if (club.logo) {
@@ -130,15 +147,63 @@ export async function DELETE(
       await fs.rm(clubLogoPath, { force: true })
     }
 
-    if (ownerDeleted && owner?.profile_picture) {
-      const ownerProfilePath = path.join(process.cwd(), 'public', 'uploads', 'profiles', path.basename(owner.profile_picture))
-      await fs.rm(ownerProfilePath, { force: true })
+    const deleteReason = reason || `Klub ${club.name} byl odstraneny administratorem.`
+
+    const deletionEmailContentById = new Map<number, ReturnType<typeof buildAccountDeletedByAdminEmail>>()
+    for (const user of usersToDelete) {
+      const fullName = `${user.first_name ?? ''} ${user.last_name ?? ''}`.trim() || 'uzivateli'
+      deletionEmailContentById.set(
+        user.id,
+        buildAccountDeletedByAdminEmail({
+          fullName,
+          reason: deleteReason,
+          supportEmail: getSupportEmail(),
+        })
+      )
+    }
+
+    const clubDeletedEmailContentByEmail = new Map<string, ReturnType<typeof buildClubDeletedByAdminEmail>>()
+    for (const member of notifyByEmail.values()) {
+      const fullName = `${member.first_name ?? ''} ${member.last_name ?? ''}`.trim() || 'uzivateli'
+      clubDeletedEmailContentByEmail.set(
+        member.email.toLowerCase(),
+        buildClubDeletedByAdminEmail({
+          fullName,
+          clubName: club.name,
+          reason: reason || null,
+          supportEmail: getSupportEmail(),
+        })
+      )
+    }
+
+    const emailResults = await Promise.allSettled(
+      Array.from(notifyByEmail.values()).map(async (member) => {
+        const key = member.email.toLowerCase()
+        const content = deletionEmailContentById.get(member.id) ?? clubDeletedEmailContentByEmail.get(key)
+        if (!content) return
+
+        await sendTransactionalEmail({
+          to: member.email,
+          subject: content.subject,
+          html: content.html,
+          text: content.text,
+        })
+      })
+    )
+
+    const emailFailed = emailResults.filter((result) => result.status === 'rejected').length
+    const emailSent = emailResults.length - emailFailed
+
+    if (emailFailed > 0) {
+      console.error('Club delete notification email failures:', emailFailed)
     }
 
     return NextResponse.json({
       success: true,
-      ownerDeleted,
-      ownerDeleteMessage,
+      deletedUsersCount: usersToDelete.length,
+      keptAdminsCount: usersToKeep.length,
+      emailSent,
+      emailFailed,
     })
   } catch (err) {
     console.error('Admin delete club error:', err)

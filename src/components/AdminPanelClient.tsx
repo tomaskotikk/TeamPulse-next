@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
 import ClubApprovalActions from '@/components/ClubApprovalActions'
+import AdminClubDeleteAction from '@/components/AdminClubDeleteAction'
 import UserModerationActions from '@/components/UserModerationActions'
 import styles from '@/components/admin-panel.module.css'
 
@@ -207,7 +208,7 @@ export default function AdminPanelClient({ admin, clubs, users }: AdminPanelClie
             <div className={styles.sectionBody}>
               <div className={styles.tableWrap}>
                 <table className={styles.table}>
-                  <thead><tr><th>ID</th><th>Název</th><th>Sport</th><th>Město</th><th>Stav</th><th>Správce</th></tr></thead>
+                  <thead><tr><th>ID</th><th>Název</th><th>Sport</th><th>Město</th><th>Stav</th><th>Správce</th><th>Smazat</th></tr></thead>
                   <tbody>
                     {filteredClubs.map((club) => {
                       const owner = ownerById.get(club.owner_user_id)
@@ -223,6 +224,9 @@ export default function AdminPanelClient({ admin, clubs, users }: AdminPanelClie
                             {statusOf(club) === 'rejected' && <span className={`${styles.badge} ${styles.rejected}`}>Zamítnuto</span>}
                           </td>
                           <td>{owner ? `${owner.first_name} ${owner.last_name}` : '-'}</td>
+                          <td>
+                            <AdminClubDeleteAction clubId={club.id} clubName={club.name} />
+                          </td>
                         </tr>
                       )
                     })}

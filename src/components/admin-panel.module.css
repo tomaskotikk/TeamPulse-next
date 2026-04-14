@@ -311,6 +311,34 @@
   font-size: 14px;
 }
 
+.clubDeleteWrap {
+  display: grid;
+  gap: 4px;
+}
+
+.clubDeleteBtn {
+  border: 1px solid #7f1d1d;
+  background: #3a1317;
+  color: #fecaca;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.clubDeleteBtn:disabled {
+  opacity: 0.75;
+  cursor: default;
+}
+
+.clubDeleteError {
+  color: #fca5a5;
+  font-size: 11px;
+  max-width: 220px;
+  white-space: normal;
+}
+
 @media (max-width: 980px) {
   .filters {
     grid-template-columns: 1fr 1fr;
