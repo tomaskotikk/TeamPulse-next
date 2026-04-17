@@ -113,6 +113,48 @@
   font-weight: 600;
 }
 
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-top: var(--space-1);
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: var(--text-4);
+  font-weight: 700;
+}
+
+.miniPlus {
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  border: 1px solid var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 18%, transparent);
+  color: var(--color-text);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1;
+  transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
+}
+
+.miniPlus:hover {
+  transform: scale(1.06);
+  border-color: color-mix(in srgb, var(--color-primary) 80%, #fff 20%);
+  background: color-mix(in srgb, var(--color-primary) 30%, transparent);
+}
+
+.sectionSaving {
+  margin-top: calc(var(--space-2) * -1);
+  font-size: var(--text-1);
+  color: var(--color-text-dim);
+}
+
 .kpiGrid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -122,10 +164,17 @@
 .kpiCard {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
+  position: relative;
   padding: var(--space-4);
+  transition: transform 200ms ease, box-shadow 220ms ease, border-color 220ms ease, background 220ms ease;
   background:
     radial-gradient(150% 120% at 0% 0%, color-mix(in srgb, var(--color-primary) 12%, transparent) 0%, transparent 70%),
     color-mix(in srgb, var(--color-surface) 90%, transparent);
+}
+
+.kpiCard:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--color-primary) 35%, var(--color-border));
 }
 
 .kpiLabel {
@@ -155,15 +204,30 @@
   gap: var(--space-3);
 }
 
+.analyticsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
 .card,
 .teamCard,
 .clubCard {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
+  position: relative;
   background:
     radial-gradient(130% 120% at 100% 0%, color-mix(in srgb, var(--color-primary) 10%, transparent) 0%, transparent 72%),
     linear-gradient(160deg, color-mix(in srgb, var(--color-surface) 90%, transparent) 0%, color-mix(in srgb, var(--color-bg) 84%, transparent) 100%);
   overflow: hidden;
+  transition: transform 220ms ease, box-shadow 240ms ease, border-color 220ms ease;
+}
+
+.card:hover,
+.teamCard:hover,
+.clubCard:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-border));
 }
 
 .cardHead,
@@ -206,6 +270,403 @@
   border-color: color-mix(in srgb, var(--color-primary) 35%, var(--color-border));
   color: var(--color-text);
   background: var(--color-surface-alt);
+}
+
+.draggableCard {
+  cursor: grab;
+}
+
+.draggingCard {
+  cursor: grabbing;
+  opacity: 0.84;
+  box-shadow:
+    0 0 0 2px color-mix(in srgb, var(--color-primary) 45%, transparent),
+    0 20px 36px color-mix(in srgb, #000 28%, transparent);
+}
+
+.cardRemoveBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-surface-alt) 86%, transparent);
+  color: var(--color-text-dim);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1;
+  transition: background 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.cardRemoveBtn:hover {
+  transform: scale(1.06);
+  color: var(--color-text);
+  background: color-mix(in srgb, var(--color-primary) 16%, transparent);
+}
+
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  background: color-mix(in srgb, #000 58%, transparent);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3);
+  z-index: 100;
+}
+
+.modalWindow {
+  width: min(980px, calc(100vw - 20px));
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background:
+    radial-gradient(120% 110% at 0% 0%, color-mix(in srgb, var(--color-primary) 18%, transparent) 0%, transparent 66%),
+    color-mix(in srgb, var(--color-surface) 96%, transparent);
+  box-shadow: 0 30px 80px color-mix(in srgb, #000 46%, transparent);
+  animation: modalIn 220ms ease;
+  overflow: hidden;
+}
+
+.modalHead {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modalTitle {
+  margin: 0;
+  font-size: var(--text-4);
+  font-weight: 700;
+}
+
+.modalClose {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-surface-alt) 86%, transparent);
+  color: var(--color-text-muted);
+  font-weight: 700;
+}
+
+.modalClose:hover {
+  color: var(--color-text);
+}
+
+.modalBody {
+  padding: var(--space-3) var(--space-4);
+  display: grid;
+  grid-template-columns: minmax(220px, 0.8fr) minmax(0, 1fr);
+  gap: var(--space-3);
+}
+
+.modalList {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-surface-alt) 80%, transparent);
+  padding: var(--space-2);
+  display: grid;
+  gap: 8px;
+}
+
+.modalItem {
+  min-height: 36px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+  color: var(--color-text);
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 var(--space-2);
+  font-size: var(--text-2);
+  font-weight: 600;
+}
+
+.modalItemVisual {
+  width: 24px;
+  height: 18px;
+  border-radius: 5px;
+  border: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-surface-alt) 84%, transparent);
+  flex-shrink: 0;
+}
+
+.modalItemActive,
+.modalItem:hover {
+  border-color: color-mix(in srgb, var(--color-primary) 45%, var(--color-border));
+  background: color-mix(in srgb, var(--color-primary) 16%, transparent);
+}
+
+.previewPane {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-surface-alt) 74%, transparent);
+  padding: var(--space-3);
+  display: grid;
+  gap: var(--space-2);
+}
+
+.previewLabel {
+  font-size: var(--text-1);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-dim);
+  font-weight: 700;
+}
+
+.previewCard {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  position: relative;
+  background:
+    radial-gradient(120% 110% at 0% 0%, color-mix(in srgb, var(--color-primary) 12%, transparent) 0%, transparent 70%),
+    color-mix(in srgb, var(--color-surface) 92%, transparent);
+  padding: var(--space-3);
+  display: grid;
+  gap: var(--space-2);
+}
+
+.previewCardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.previewCardTitleWrap {
+  flex: 1;
+}
+
+.previewExpandBtn {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-surface-alt) 88%, transparent);
+  color: var(--color-text-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  line-height: 1;
+  transition: transform 180ms ease, background 180ms ease, color 180ms ease;
+  cursor: pointer;
+  padding: 0;
+}
+
+.previewExpandBtn:hover {
+  transform: scale(1.05);
+  color: var(--color-text);
+  background: color-mix(in srgb, var(--color-primary) 16%, transparent);
+}
+
+.previewCardTitle {
+  font-size: var(--text-3);
+  font-weight: 700;
+}
+
+.previewCardText {
+  font-size: var(--text-2);
+  color: var(--color-text-muted);
+}
+
+.previewSketch {
+  margin-top: 2px;
+  cursor: zoom-in;
+}
+
+.previewSketchVisual {
+  display: block;
+  width: 100%;
+  min-height: 84px;
+  border-radius: 10px;
+  border: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-surface-alt) 82%, transparent);
+}
+
+.previewSketchVisualLarge {
+  min-height: min(56vh, 520px);
+}
+
+.previewFullscreen {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 224px;
+  background: color-mix(in srgb, #000 58%, transparent);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  padding: var(--space-3);
+}
+
+.previewFullscreenCard {
+  width: min(1400px, calc(100vw - 56px));
+  max-height: min(86vh, 800px);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--color-surface) 96%, transparent);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.previewFullscreenHead {
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-3);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.previewFullscreenBody {
+  padding: var(--space-4);
+  min-height: 300px;
+  max-height: calc(86vh - 100px);
+  overflow-y: auto;
+  flex: 1;
+}
+
+.kpi-kpiTotalMembers,
+.kpi-kpiPlayerBase,
+.kpi-kpiReadiness,
+.kpi-kpiAttendance {
+  background:
+    linear-gradient(to bottom, color-mix(in srgb, var(--color-border) 58%, transparent) 0 8px, transparent 8px 100%),
+    radial-gradient(130px 70px at 12% 18%, color-mix(in srgb, var(--color-primary) 22%, transparent) 0%, transparent 70%),
+    color-mix(in srgb, var(--color-surface-alt) 88%, transparent);
+}
+
+.analytics-trend,
+.analytics-attendance,
+.analytics-composition,
+.analytics-recommendations,
+.analytics-radar,
+.analytics-topMembers {
+  background: color-mix(in srgb, var(--color-surface-alt) 88%, transparent);
+}
+
+.analytics-trend {
+  background:
+    linear-gradient(130deg, transparent 36%, color-mix(in srgb, var(--color-primary) 30%, transparent) 36% 39%, transparent 39% 58%, color-mix(in srgb, var(--color-primary) 38%, transparent) 58% 62%, transparent 62%),
+    linear-gradient(to top, color-mix(in srgb, var(--color-border) 55%, transparent) 1px, transparent 1px) 0 0/100% 26%,
+    color-mix(in srgb, var(--color-surface-alt) 88%, transparent);
+}
+
+.analytics-attendance {
+  background:
+    linear-gradient(to right,
+      transparent 0 8%,
+      color-mix(in srgb, var(--color-primary) 60%, transparent) 8% 14%,
+      transparent 14% 24%,
+      color-mix(in srgb, var(--color-primary) 42%, transparent) 24% 30%,
+      transparent 30% 40%,
+      color-mix(in srgb, var(--color-primary) 75%, transparent) 40% 46%,
+      transparent 46% 56%,
+      color-mix(in srgb, var(--color-primary) 54%, transparent) 56% 62%,
+      transparent 62% 100%),
+    linear-gradient(to top, color-mix(in srgb, var(--color-border) 55%, transparent) 1px, transparent 1px) 0 0/100% 24%,
+    color-mix(in srgb, var(--color-surface-alt) 88%, transparent);
+}
+
+.analytics-composition {
+  background:
+    radial-gradient(circle at center,
+      transparent 0 22px,
+      color-mix(in srgb, var(--color-surface-alt) 90%, transparent) 22px 31px,
+      transparent 31px),
+    conic-gradient(
+      color-mix(in srgb, var(--color-primary) 70%, transparent) 0 42%,
+      color-mix(in srgb, var(--color-primary-muted) 85%, var(--color-border)) 42% 100%
+    );
+  background-size: 84px 84px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.analytics-recommendations {
+  background:
+    linear-gradient(to bottom,
+      color-mix(in srgb, var(--color-border) 62%, transparent) 0 8px,
+      transparent 8px 26px,
+      color-mix(in srgb, var(--color-border) 58%, transparent) 26px 34px,
+      transparent 34px 52px,
+      color-mix(in srgb, var(--color-border) 48%, transparent) 52px 60px,
+      transparent 60px 100%),
+    radial-gradient(circle at 7% 13%, color-mix(in srgb, var(--color-primary) 68%, transparent) 0 4px, transparent 4px),
+    radial-gradient(circle at 7% 41%, color-mix(in srgb, var(--color-primary) 62%, transparent) 0 4px, transparent 4px),
+    radial-gradient(circle at 7% 69%, color-mix(in srgb, var(--color-primary) 44%, transparent) 0 4px, transparent 4px),
+    color-mix(in srgb, var(--color-surface-alt) 88%, transparent);
+}
+
+.analytics-radar {
+  background:
+    radial-gradient(circle at center, transparent 0 20%, color-mix(in srgb, var(--color-border) 56%, transparent) 20% 21%, transparent 21% 34%, color-mix(in srgb, var(--color-border) 48%, transparent) 34% 35%, transparent 35%),
+    conic-gradient(from 30deg,
+      color-mix(in srgb, var(--color-primary) 34%, transparent) 0 16%,
+      transparent 16% 33%,
+      color-mix(in srgb, var(--color-primary) 44%, transparent) 33% 49%,
+      transparent 49% 66%,
+      color-mix(in srgb, var(--color-primary) 30%, transparent) 66% 84%,
+      transparent 84% 100%),
+    color-mix(in srgb, var(--color-surface-alt) 88%, transparent);
+}
+
+.analytics-topMembers {
+  background:
+    linear-gradient(to bottom,
+      color-mix(in srgb, var(--color-border) 58%, transparent) 0 10px,
+      transparent 10px 30px,
+      color-mix(in srgb, var(--color-border) 62%, transparent) 30px 40px,
+      transparent 40px 60px,
+      color-mix(in srgb, var(--color-border) 50%, transparent) 60px 70px,
+      transparent 70px),
+    linear-gradient(to right,
+      color-mix(in srgb, var(--color-primary) 55%, transparent) 0 12%,
+      transparent 12% 100%),
+    color-mix(in srgb, var(--color-surface-alt) 88%, transparent);
+}
+
+.modalFooter {
+  border-top: 1px solid var(--color-border);
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+.modalEmpty {
+  font-size: var(--text-2);
+  color: var(--color-text-muted);
+  padding: var(--space-2);
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .chartPad {
@@ -532,7 +993,14 @@
   }
 
   .grid2,
+  .analyticsGrid,
   .teamList {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 860px) {
+  .modalBody {
     grid-template-columns: 1fr;
   }
 }
