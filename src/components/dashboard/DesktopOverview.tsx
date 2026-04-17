@@ -973,19 +973,40 @@ export default function DesktopOverview({ userName, club, members, isManager, cu
             <div className={styles.previewFullscreen} onClick={() => setPreviewFullscreen(false)}>
               <div className={styles.previewFullscreenCard} onClick={(e) => e.stopPropagation()}>
                 <div className={styles.previewFullscreenHead}>
-                  <div>
+                  <div className={styles.previewFullscreenHeadLeft}>
                     <div className={styles.previewLabel}>Náhled přes celou obrazovku</div>
                     <div className={styles.previewCardTitle}>
                       {activeModal === 'kpi' ? KPI_LABELS[selected as KpiCardId] : ANALYTICS_LABELS[selected as AnalyticsCardId]}
                     </div>
                   </div>
-                  <button
-                    type="button"
-                    className={styles.modalClose}
-                    onClick={() => setPreviewFullscreen(false)}
-                  >
-                    x
-                  </button>
+                  <div className={styles.previewFullscreenHeadRight}>
+                    {activeModal === 'analytics' && (
+                      <>
+                        {selected === 'trend' && (
+                          <Link className={styles.cardAction} href="/grafy/vykonnost">
+                            Rozbalit
+                          </Link>
+                        )}
+                        {selected === 'attendance' && (
+                          <Link className={styles.cardAction} href="/grafy/dochazka">
+                            Rozbalit
+                          </Link>
+                        )}
+                        {selected === 'composition' && (
+                          <Link className={styles.cardAction} href="/grafy/slozeni">
+                            Rozbalit
+                          </Link>
+                        )}
+                      </>
+                    )}
+                    <button
+                      type="button"
+                      className={styles.modalClose}
+                      onClick={() => setPreviewFullscreen(false)}
+                    >
+                      x
+                    </button>
+                  </div>
                 </div>
                 <div className={styles.previewFullscreenBody}>
                   {renderFullscreenChart(selected)}
