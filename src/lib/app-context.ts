@@ -36,6 +36,7 @@ export type AppClub = {
   primary_color?: string | null
   secondary_color?: string | null
   accent_color?: string | null
+  dashboard_layout?: string | null
   created_at: string
 }
 
@@ -108,7 +109,7 @@ export async function getClubForUser(user: AppUser) {
   if (user.role === 'manažer') {
     const { data } = await supabase
       .from('clubs')
-      .select('id, owner_user_id, approved, rejected_at, rejection_reason, name, sport, city, logo, address, ico, dic, website, club_email, club_phone, primary_color, secondary_color, accent_color, created_at')
+      .select('id, owner_user_id, approved, rejected_at, rejection_reason, name, sport, city, logo, address, ico, dic, website, club_email, club_phone, primary_color, secondary_color, accent_color, dashboard_layout, created_at')
       .eq('owner_user_id', user.id)
       .order('id', { ascending: false })
       .limit(1)
@@ -121,7 +122,7 @@ export async function getClubForUser(user: AppUser) {
 
   const { data } = await supabase
     .from('clubs')
-    .select('id, owner_user_id, approved, rejected_at, rejection_reason, name, sport, city, logo, address, ico, dic, website, club_email, club_phone, primary_color, secondary_color, accent_color, created_at')
+    .select('id, owner_user_id, approved, rejected_at, rejection_reason, name, sport, city, logo, address, ico, dic, website, club_email, club_phone, primary_color, secondary_color, accent_color, dashboard_layout, created_at')
     .eq('name', user.organization)
     .limit(1)
     .maybeSingle()

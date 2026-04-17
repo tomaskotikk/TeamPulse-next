@@ -190,8 +190,13 @@ export default function MembersDirectory({ members, currentUserId, isManager }: 
                   <div className="member-avatar">{mInitials}</div>
                 )}
                 <div className="member-info">
-                  <div className="member-name">
-                    {member.first_name} {member.last_name}
+                  <div className="member-top-row">
+                    <div className="member-name">
+                      {member.first_name} {member.last_name}
+                    </div>
+                    <span className={`member-badge ${member.role === 'manažer' ? 'manager' : ''}`}>
+                      {member.role}
+                    </span>
                   </div>
                   <div className="member-role">{member.role}</div>
                   <div className="member-contact">
@@ -199,9 +204,6 @@ export default function MembersDirectory({ members, currentUserId, isManager }: 
                     {member.phone && ` · ${member.phone}`}
                   </div>
                 </div>
-                <span className={`member-badge ${member.role === 'manažer' ? 'manager' : ''}`}>
-                  {member.role}
-                </span>
               </Link>
             )
           })}

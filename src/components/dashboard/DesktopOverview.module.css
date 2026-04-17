@@ -220,14 +220,7 @@
     radial-gradient(130% 120% at 100% 0%, color-mix(in srgb, var(--color-primary) 10%, transparent) 0%, transparent 72%),
     linear-gradient(160deg, color-mix(in srgb, var(--color-surface) 90%, transparent) 0%, color-mix(in srgb, var(--color-bg) 84%, transparent) 100%);
   overflow: hidden;
-  transition: transform 220ms ease, box-shadow 240ms ease, border-color 220ms ease;
-}
-
-.card:hover,
-.teamCard:hover,
-.clubCard:hover {
-  transform: translateY(-2px);
-  border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-border));
+  transition: box-shadow 240ms ease;
 }
 
 .cardHead,
@@ -266,10 +259,8 @@
   color: var(--color-text-muted);
 }
 
-.cardAction:hover {
-  border-color: color-mix(in srgb, var(--color-primary) 35%, var(--color-border));
-  color: var(--color-text);
-  background: var(--color-surface-alt);
+.card .cardAction {
+  margin-right: 38px;
 }
 
 .draggableCard {
@@ -301,13 +292,12 @@
   font-weight: 700;
   font-size: 12px;
   line-height: 1;
-  transition: background 180ms ease, color 180ms ease, transform 180ms ease;
+  transition: background 180ms ease, color 180ms ease;
 }
 
 .cardRemoveBtn:hover {
-  transform: scale(1.06);
   color: var(--color-text);
-  background: color-mix(in srgb, var(--color-primary) 16%, transparent);
+  background: color-mix(in srgb, var(--color-surface-alt) 86%, transparent);
 }
 
 .modalBackdrop {

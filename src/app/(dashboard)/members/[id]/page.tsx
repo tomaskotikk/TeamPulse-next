@@ -59,78 +59,128 @@ export default async function MemberDetailPage({ params }: { params: Promise<{ i
           <p className="content-subtitle">Detaily profilu člena</p>
         </div>
 
-        <div className="grid-2">
-          {/* Profilový obrázek */}
-          <div className="section">
-            <div className="section-header">
-              <h3 className="section-title">Profilové foto</h3>
+        <div className="profile-mobile-hub">
+          <div className="profile-mobile-hub-top">
+            <div className="profile-mobile-hub-banner">
+              <div className="profile-mobile-hub-banner-noise" aria-hidden="true" />
             </div>
-            <div className="section-content">
-              <div className="profile-picture-section">
-                <div className="profile-picture-preview">
+
+            <div className="profile-mobile-hub-avatar-wrap">
+              {member.profile_picture ? (
+                <img src={`/uploads/profiles/${member.profile_picture}`} alt={`Profil člena ${member.first_name} ${member.last_name}`} className="profile-mobile-hub-avatar" />
+              ) : (
+                <div className="profile-mobile-hub-avatar-fallback">{mInitials || 'U'}</div>
+              )}
+            </div>
+
+            <div className="profile-mobile-hub-info">
+              <div className="profile-mobile-hub-name">{member.first_name} {member.last_name}</div>
+              <div className="profile-mobile-hub-meta">{member.role} • {member.organization ?? 'Bez klubu'}</div>
+            </div>
+          </div>
+        </div>
+
+        <section className="section profile-discord-card">
+          <div className="profile-discord-banner">
+            <div className="profile-discord-banner-noise" aria-hidden="true" />
+            <div className="profile-discord-club-logo-wrap">
+              {club.logo ? (
+                <img src={`/uploads/clubs/${club.logo}`} alt={`Logo klubu ${club.name}`} className="profile-discord-club-logo" />
+              ) : (
+                <img src="/tp-logo.png" alt="TeamPulse" className="profile-discord-club-logo profile-discord-club-logo-fallback" />
+              )}
+            </div>
+          </div>
+
+          <div className="profile-discord-body">
+            <div className="profile-discord-layout">
+              <div className="profile-discord-left">
+                <div className="profile-discord-avatar-wrap">
                   {member.profile_picture ? (
-                    <img src={`/uploads/profiles/${member.profile_picture}`} alt="Profilový obrázek" />
+                    <img src={`/uploads/profiles/${member.profile_picture}`} alt={`Profil člena ${member.first_name} ${member.last_name}`} className="profile-discord-avatar" />
                   ) : (
-                    <div className="profile-picture-placeholder">{mInitials}</div>
+                    <div className="profile-discord-avatar-fallback">{mInitials || 'U'}</div>
                   )}
                 </div>
-                <div style={{ marginTop: 16 }}>
-                  <span className={`member-badge ${member.role === 'manažer' ? 'manager' : ''}`} style={{ fontSize: 14, padding: '6px 14px' }}>
-                    {member.role}
-                  </span>
+
+                <div className="profile-discord-identity">
+                  <div className="profile-discord-role">{member.role || 'Uživatel'}</div>
+                  <h3 className="profile-discord-name">{member.first_name} {member.last_name}</h3>
+                  <p className="profile-discord-club">{member.organization ?? 'Bez klubu'}</p>
+                </div>
+              </div>
+
+              <div className="profile-discord-right">
+                <div className="profile-discord-params-title">Parametry účtu</div>
+                <div className="profile-discord-meta-grid">
+                  <div className="profile-discord-meta-item">
+                    <span>Stav účtu</span>
+                    <strong>Aktivní</strong>
+                  </div>
+                  <div className="profile-discord-meta-item">
+                    <span>Klub</span>
+                    <strong>{member.organization ?? 'Bez klubu'}</strong>
+                  </div>
+                  <div className="profile-discord-meta-item">
+                    <span>E-mail</span>
+                    <strong>{member.email}</strong>
+                  </div>
+                  <div className="profile-discord-meta-item">
+                    <span>Telefon</span>
+                    <strong>{member.phone || 'Nezadáno'}</strong>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+        </section>
 
-          {/* Osobní údaje */}
-          <div className="section">
-            <div className="section-header">
-              <h3 className="section-title">Osobní údaje</h3>
+        <div className="section">
+          <div className="section-header">
+            <h3 className="section-title">Osobní údaje</h3>
+          </div>
+          <div className="section-content">
+            <div className="data-row">
+              <span className="data-label">Jméno</span>
+              <span className="data-value">{member.first_name} {member.last_name}</span>
             </div>
-            <div className="section-content">
-              <div className="data-row">
-                <span className="data-label">Jméno</span>
-                <span className="data-value">{member.first_name} {member.last_name}</span>
-              </div>
-              <div className="data-row">
-                <span className="data-label">E-mail</span>
-                <span className="data-value">
-                  <a href={`mailto:${member.email}`}>
-                    {member.email}
+            <div className="data-row">
+              <span className="data-label">E-mail</span>
+              <span className="data-value">
+                <a href={`mailto:${member.email}`}>
+                  {member.email}
+                </a>
+              </span>
+            </div>
+            <div className="data-row">
+              <span className="data-label">Telefon</span>
+              <span className="data-value">
+                {member.phone ? (
+                  <a href={`tel:${member.phone}`}>
+                    {member.phone}
                   </a>
-                </span>
-              </div>
-              <div className="data-row">
-                <span className="data-label">Telefon</span>
-                <span className="data-value">
-                  {member.phone ? (
-                    <a href={`tel:${member.phone}`}>
-                      {member.phone}
-                    </a>
-                  ) : '–'}
-                </span>
-              </div>
-              <div className="data-row">
-                <span className="data-label">Role</span>
-                <span className="data-value">{member.role}</span>
-              </div>
-              <div className="data-row">
-                <span className="data-label">Klub</span>
-                <span className="data-value">{member.organization ?? '–'}</span>
-              </div>
-              <div className="data-row">
-                <span className="data-label">Člen od</span>
-                <span className="data-value">
-                  {member.created_at
-                    ? new Date(member.created_at).toLocaleDateString('cs-CZ', {
-                        day: 'numeric',
-                        month: 'numeric',
-                        year: 'numeric',
-                      })
-                    : '–'}
-                </span>
-              </div>
+                ) : '–'}
+              </span>
+            </div>
+            <div className="data-row">
+              <span className="data-label">Role</span>
+              <span className="data-value">{member.role}</span>
+            </div>
+            <div className="data-row">
+              <span className="data-label">Klub</span>
+              <span className="data-value">{member.organization ?? '–'}</span>
+            </div>
+            <div className="data-row">
+              <span className="data-label">Člen od</span>
+              <span className="data-value">
+                {member.created_at
+                  ? new Date(member.created_at).toLocaleDateString('cs-CZ', {
+                      day: 'numeric',
+                      month: 'numeric',
+                      year: 'numeric',
+                    })
+                  : '–'}
+              </span>
             </div>
           </div>
         </div>

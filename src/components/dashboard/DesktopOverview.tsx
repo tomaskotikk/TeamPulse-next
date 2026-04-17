@@ -310,7 +310,7 @@ export default function DesktopOverview({ userName, club, members, isManager, cu
   const recommendations = [
     {
       color: 'var(--color-primary)',
-      title: `O ${quarterGrowth} novych clenu za aktualni kvartal`,
+      title: `O ${quarterGrowth} nových členů za aktuální kvartál`,
       text: 'Stabilní růst kádru vytváří prostor pro širší rotaci.',
     },
     {
@@ -350,7 +350,6 @@ export default function DesktopOverview({ userName, club, members, isManager, cu
         ...prev,
         dashboard_layout: JSON.stringify(nextLayout),
       }))
-      setLayoutNotice('Rozvržení dashboardu uloženo.')
     } catch {
       setLayoutNotice('Nastala chyba serveru při ukládání rozvržení.')
     } finally {
@@ -1036,7 +1035,7 @@ export default function DesktopOverview({ userName, club, members, isManager, cu
         <div className={styles.heroActions}>
           {isManager && (
             <Link href="/invite" className={styles.btnPrimary}>
-              Pozvat noveho clena
+              Pozvat nového člena
             </Link>
           )}
           <Link href="/members" className={styles.btnGhost}>
@@ -1149,7 +1148,7 @@ export default function DesktopOverview({ userName, club, members, isManager, cu
           <article className={styles.card}>
             <div className={styles.cardHead}>
               <div>
-                <h3 className={styles.cardTitle}>Rychle odkazy</h3>
+                <h3 className={styles.cardTitle}>Rychlé odkazy</h3>
                 <p className={styles.cardDesc}>Vše, co hráč běžně potřebuje mít po ruce.</p>
               </div>
             </div>
@@ -1167,7 +1166,7 @@ export default function DesktopOverview({ userName, club, members, isManager, cu
         <article className={styles.teamCard}>
           <div className={styles.teamHead}>
             <div>
-              <h3 className={styles.cardTitle}>Aktualni tym</h3>
+              <h3 className={styles.cardTitle}>Aktuální tým</h3>
               <p className={styles.teamSub}>Všichni členové v jedné linii, posun vpravo zobrazí další.</p>
             </div>
             <Link href="/members" className={styles.cardAction}>Zobrazit vše</Link>
@@ -1194,7 +1193,7 @@ export default function DesktopOverview({ userName, club, members, isManager, cu
         <article className={styles.clubCard}>
           <div className={styles.teamHead}>
             <div>
-              <h3 className={styles.cardTitle}>Klubovy profil</h3>
+              <h3 className={styles.cardTitle}>Klubový profil</h3>
               <p className={styles.teamSub}>Branding, identita a klíčové informace organizace.</p>
             </div>
           </div>
