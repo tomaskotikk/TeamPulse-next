@@ -39,7 +39,6 @@ type ThemeEffects = {
   motionSpeed: number
 }
 
-const EFFECTS_STORAGE_KEY = 'tp-theme-effects-v1'
 const DEFAULT_EFFECTS: ThemeEffects = {
   gradientEnabled: true,
   gradientStrength: 58,
@@ -75,6 +74,7 @@ export default function SettingsPage() {
   const [successMsg, setSuccessMsg] = useState<string | null>(null)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [twoFA, setTwoFA] = useState(false)
+  const [savingEffects, setSavingEffects] = useState(false)
 
   const [primaryColor, setPrimaryColor] = useState('#FF3300')
   const [secondaryColor, setSecondaryColor] = useState('#000000')
@@ -111,25 +111,7 @@ export default function SettingsPage() {
           blurStrength: parseNumberVar(serverThemeVars['--ui-backdrop-blur-strength'], DEFAULT_EFFECTS.blurStrength, 0, 22),
           motionSpeed: parseNumberVar(serverThemeVars['--ui-motion-speed'], DEFAULT_EFFECTS.motionSpeed, 60, 170),
         }
-
-        try {
-          const raw = localStorage.getItem(`${EFFECTS_STORAGE_KEY}:${data.user?.organization ?? 'default'}`)
-          if (raw) {
-            const parsed = JSON.parse(raw) as Partial<ThemeEffects>
-            setEffects({
-              gradientEnabled: typeof parsed.gradientEnabled === 'boolean' ? parsed.gradientEnabled : fromServer.gradientEnabled,
-              gradientStrength: clampRange(Number(parsed.gradientStrength ?? fromServer.gradientStrength), 0, 100),
-              softStrength: clampRange(Number(parsed.softStrength ?? fromServer.softStrength), 0, 100),
-              glowStrength: clampRange(Number(parsed.glowStrength ?? fromServer.glowStrength), 0, 100),
-              blurStrength: clampRange(Number(parsed.blurStrength ?? fromServer.blurStrength), 0, 22),
-              motionSpeed: clampRange(Number(parsed.motionSpeed ?? fromServer.motionSpeed), 60, 170),
-            })
-          } else {
-            setEffects(fromServer)
-          }
-        } catch {
-          setEffects(fromServer)
-        }
+        setEffects(fromServer)
       } catch {
         if (mounted) showError('Nepodařilo se načíst nastavení.')
       } finally {
@@ -149,12 +131,6 @@ export default function SettingsPage() {
     setErrorMsg(null)
     setTimeout(() => setSuccessMsg(null), 4000)
   }
-
-  useEffect(() => {
-    if (!user?.organization) return
-
-    localStorage.setItem(`${EFFECTS_STORAGE_KEY}:${user.organization}`, JSON.stringify(effects))
-  }, [effects, user?.organization])
 
   function showError(msg: string) {
     setErrorMsg(msg)
@@ -198,6 +174,55 @@ export default function SettingsPage() {
 
     showSuccess('Barvy klubu byly úspěšně uloženy.')
     setThemeVars(data.themeVars ?? {})
+  }
+
+  function normalizeEffects(input: ThemeEffects): ThemeEffects {
+    return {
+      gradientEnabled: Boolean(input.gradientEnabled),
+      gradientStrength: clampRange(Number(input.gradientStrength), 0, 100),
+      softStrength: clampRange(Number(input.softStrength), 0, 100),
+      glowStrength: clampRange(Number(input.glowStrength), 0, 100),
+      blurStrength: clampRange(Number(input.blurStrength), 0, 22),
+      motionSpeed: clampRange(Number(input.motionSpeed), 60, 170),
+    }
+  }
+
+  async function persistEffects(nextEffects: ThemeEffects, successMsgText?: string) {
+    setSavingEffects(true)
+
+    const payload = normalizeEffects(nextEffects)
+    const res = await fetch('/api/settings/effects', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ effects: payload }),
+    })
+
+    const data = await res.json()
+    setSavingEffects(false)
+
+    if (!res.ok) {
+      showError(data.error ?? 'Nepodařilo se uložit efekty vzhledu.')
+      return false
+    }
+
+    setEffects(payload)
+    setThemeVars(data.themeVars ?? {})
+    if (successMsgText) showSuccess(successMsgText)
+    return true
+  }
+
+  async function handleSaveEffects() {
+    await persistEffects(effects, 'Efekty Gradient Studia byly uloženy pro celý klub.')
+  }
+
+  async function handleToggleGradient() {
+    const next = {
+      ...effects,
+      gradientEnabled: !effects.gradientEnabled,
+    }
+
+    setEffects(next)
+    await persistEffects(next, next.gradientEnabled ? 'Gradient byl zapnut pro celý klub.' : 'Gradient byl vypnut pro celý klub.')
   }
 
   function applyDefaultPalette() {
@@ -501,15 +526,26 @@ export default function SettingsPage() {
                         <SlidersHorizontal size={16} />
                         Gradient Studio
                       </h4>
-                      <p>Efekty se mění živě v celé aplikaci. Uložení je lokální pro tento klub.</p>
+                      <p>Efekty se mění živě v celé aplikaci. Uložení je sdílené pro celý klub.</p>
                     </div>
-                    <button
-                      type="button"
-                      className={`btn ${effects.gradientEnabled ? 'btn-primary' : 'btn-secondary'}`}
-                      onClick={() => setEffects((prev) => ({ ...prev, gradientEnabled: !prev.gradientEnabled }))}
-                    >
-                      {effects.gradientEnabled ? 'Gradient zapnutý' : 'Gradient vypnutý'}
-                    </button>
+                    <div className="theme-editor-top-actions">
+                      <button
+                        type="button"
+                        className="btn btn-secondary"
+                        onClick={handleSaveEffects}
+                        disabled={savingEffects}
+                      >
+                        {savingEffects ? 'Ukládám...' : 'Uložit efekty'}
+                      </button>
+                      <button
+                        type="button"
+                        className={`btn ${effects.gradientEnabled ? 'btn-primary' : 'btn-secondary'}`}
+                        onClick={handleToggleGradient}
+                        disabled={savingEffects}
+                      >
+                        {effects.gradientEnabled ? 'Gradient zapnutý' : 'Gradient vypnutý'}
+                      </button>
+                    </div>
                   </div>
 
                   <div className="theme-presets-row">

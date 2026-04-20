@@ -30,6 +30,12 @@ export interface Club {
   primary_color: string | null
   secondary_color: string | null
   accent_color: string | null
+  ui_gradient_enabled: boolean | null
+  ui_gradient_strength: number | null
+  ui_gradient_soft_strength: number | null
+  ui_glow_strength: number | null
+  ui_backdrop_blur_strength: number | null
+  ui_motion_speed: number | null
   created_at: string
 }
 

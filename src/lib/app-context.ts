@@ -36,6 +36,12 @@ export type AppClub = {
   primary_color?: string | null
   secondary_color?: string | null
   accent_color?: string | null
+  ui_gradient_enabled?: boolean | null
+  ui_gradient_strength?: number | null
+  ui_gradient_soft_strength?: number | null
+  ui_glow_strength?: number | null
+  ui_backdrop_blur_strength?: number | null
+  ui_motion_speed?: number | null
   dashboard_layout?: string | null
   created_at: string
 }
@@ -44,6 +50,15 @@ const DEFAULT_COLORS = {
   primary: '#FF3300',
   secondary: '#000000',
   accent: '#FFFFFF',
+}
+
+const DEFAULT_EFFECTS = {
+  gradientEnabled: true,
+  gradientStrength: 58,
+  softStrength: 42,
+  glowStrength: 35,
+  blurStrength: 8,
+  motionSpeed: 100,
 }
 
 const ROLE_ORDER: Record<string, number> = {
@@ -89,6 +104,16 @@ function darkenColor(hex: string, percent: number) {
   return `#${nr.toString(16).padStart(2, '0')}${ng.toString(16).padStart(2, '0')}${nb.toString(16).padStart(2, '0')}`
 }
 
+function clampNumber(value: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, value))
+}
+
+function normalizeEffectNumber(value: unknown, fallback: number, min: number, max: number) {
+  const parsed = Number(value)
+  if (!Number.isFinite(parsed)) return fallback
+  return clampNumber(parsed, min, max)
+}
+
 export async function getCurrentAppUser() {
   const session = await readSessionFromCookies()
   if (!session?.userId) return null
@@ -109,7 +134,7 @@ export async function getClubForUser(user: AppUser) {
   if (user.role === 'manažer') {
     const { data } = await supabase
       .from('clubs')
-      .select('id, owner_user_id, approved, rejected_at, rejection_reason, name, sport, city, logo, address, ico, dic, website, club_email, club_phone, primary_color, secondary_color, accent_color, dashboard_layout, created_at')
+      .select('id, owner_user_id, approved, rejected_at, rejection_reason, name, sport, city, logo, address, ico, dic, website, club_email, club_phone, primary_color, secondary_color, accent_color, ui_gradient_enabled, ui_gradient_strength, ui_gradient_soft_strength, ui_glow_strength, ui_backdrop_blur_strength, ui_motion_speed, dashboard_layout, created_at')
       .eq('owner_user_id', user.id)
       .order('id', { ascending: false })
       .limit(1)
@@ -122,7 +147,7 @@ export async function getClubForUser(user: AppUser) {
 
   const { data } = await supabase
     .from('clubs')
-    .select('id, owner_user_id, approved, rejected_at, rejection_reason, name, sport, city, logo, address, ico, dic, website, club_email, club_phone, primary_color, secondary_color, accent_color, dashboard_layout, created_at')
+    .select('id, owner_user_id, approved, rejected_at, rejection_reason, name, sport, city, logo, address, ico, dic, website, club_email, club_phone, primary_color, secondary_color, accent_color, ui_gradient_enabled, ui_gradient_strength, ui_gradient_soft_strength, ui_glow_strength, ui_backdrop_blur_strength, ui_motion_speed, dashboard_layout, created_at')
     .eq('name', user.organization)
     .limit(1)
     .maybeSingle()
@@ -151,7 +176,6 @@ export function getThemeVars(club: AppClub | null) {
   const secondary = club?.secondary_color || DEFAULT_COLORS.secondary
   const accent = club?.accent_color || DEFAULT_COLORS.accent
 
-  const primaryDark = darkenColor(primary, 0.15)
   const primaryLight = lightenColor(primary, 0.2)
   const primaryText = isLightColor(primary) ? '#000000' : '#FFFFFF'
   const primaryRgb = hexToRgb(primary)
@@ -178,6 +202,13 @@ export function getThemeVars(club: AppClub | null) {
     ? `rgba(${primaryRgb.r}, ${primaryRgb.g}, ${primaryRgb.b}, 0.18)`
     : `rgba(${primaryRgb.r}, ${primaryRgb.g}, ${primaryRgb.b}, 0.16)`
 
+  const gradientEnabled = club?.ui_gradient_enabled ?? DEFAULT_EFFECTS.gradientEnabled
+  const gradientStrength = normalizeEffectNumber(club?.ui_gradient_strength, DEFAULT_EFFECTS.gradientStrength, 0, 100)
+  const softStrength = normalizeEffectNumber(club?.ui_gradient_soft_strength, DEFAULT_EFFECTS.softStrength, 0, 100)
+  const glowStrength = normalizeEffectNumber(club?.ui_glow_strength, DEFAULT_EFFECTS.glowStrength, 0, 100)
+  const blurStrength = normalizeEffectNumber(club?.ui_backdrop_blur_strength, DEFAULT_EFFECTS.blurStrength, 0, 22)
+  const motionSpeed = normalizeEffectNumber(club?.ui_motion_speed, DEFAULT_EFFECTS.motionSpeed, 60, 170)
+
   return {
     '--color-primary': primary,
     '--color-primary-hover': primaryHover,
@@ -193,6 +224,13 @@ export function getThemeVars(club: AppClub | null) {
     '--color-warning': '#f59e0b',
     '--color-error': '#ef4444',
     '--color-primary-rgb': `${primaryRgb.r}, ${primaryRgb.g}, ${primaryRgb.b}`,
+
+    '--ui-gradient-enabled': gradientEnabled ? '1' : '0',
+    '--ui-gradient-strength': String(gradientStrength),
+    '--ui-gradient-soft-strength': String(softStrength),
+    '--ui-glow-strength': String(glowStrength),
+    '--ui-backdrop-blur-strength': String(blurStrength),
+    '--ui-motion-speed': String(motionSpeed),
 
     // Backward-compatible aliases used in legacy classes/components.
     '--red': primary,
