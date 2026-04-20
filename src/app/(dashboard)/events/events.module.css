@@ -1,0 +1,616 @@
+.eventsRoot {
+  display: grid;
+  grid-template-columns: minmax(0, 1.48fr) minmax(280px, 0.8fr);
+  gap: 14px;
+}
+
+.calendarCard {
+  background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-border) 86%, transparent);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--ui-soft-shadow);
+}
+
+.calendarHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 14px 10px;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 72%, transparent);
+}
+
+.monthTitle {
+  margin: 0;
+  font-size: clamp(1rem, 1.85vw, 1.24rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.createBtn {
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 55%, var(--color-border));
+  background: color-mix(in srgb, var(--color-primary) 18%, transparent);
+  color: var(--color-text);
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: 700;
+  padding: 0 12px;
+}
+
+.iconBtn {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--color-border) 80%, transparent);
+  background: color-mix(in srgb, var(--color-surface-alt) 82%, transparent);
+  color: var(--color-text);
+  display: grid;
+  place-items: center;
+}
+
+.iconBtn:hover {
+  border-color: color-mix(in srgb, var(--color-primary) 50%, var(--color-border));
+}
+
+.weekdayRow {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 72%, transparent);
+}
+
+.weekday {
+  padding: 7px 4px;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-align: left;
+  text-transform: lowercase;
+}
+
+.daysGrid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.dayCell {
+  min-height: clamp(58px, 7.6vw, 76px);
+  border-right: 1px solid color-mix(in srgb, var(--color-border) 60%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 60%, transparent);
+  padding: 4px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.dayCell:nth-child(7n) {
+  border-right: none;
+}
+
+.dayMuted {
+  opacity: 0.45;
+}
+
+.daySelected {
+  outline: 2px solid color-mix(in srgb, var(--color-primary) 70%, transparent);
+  outline-offset: -2px;
+}
+
+.dayButton {
+  border: none;
+  background: transparent;
+  color: var(--color-text);
+  text-align: left;
+  font-size: clamp(0.84rem, 1.3vw, 1.05rem);
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+}
+
+.eventChip {
+  border: none;
+  color: #fff;
+  border-radius: 7px;
+  padding: 2px 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  white-space: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.timeStackBtn {
+  border: none;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 2px;
+  padding: 0;
+  cursor: pointer;
+}
+
+.timeBlock {
+  border-radius: 6px;
+  padding: 2px 5px;
+  font-size: 0.66rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.timeStartTraining {
+  background: #ff5c66;
+  color: #ffffff;
+}
+
+.timeEndTraining {
+  background: #7dd3fc;
+  color: #082f49;
+  line-height: 1;
+}
+
+.timeStartMeeting {
+  background: #f59e0b;
+  color: #1f1300;
+}
+
+.timeEndMeeting {
+  background: #fde68a;
+  color: #422006;
+}
+
+.timeStartMatch {
+  background: #ef4444;
+  color: #fff1f2;
+}
+
+.timeEndMatch {
+  background: #fca5a5;
+  color: #450a0a;
+}
+
+.timeStartEvent {
+  background: #6366f1;
+  color: #eef2ff;
+}
+
+.timeEndEvent {
+  background: #c7d2fe;
+  color: #1e1b4b;
+}
+
+.training {
+  background: #ff5c66;
+}
+
+.match {
+  background: #16c3ad;
+}
+
+.meeting {
+  background: #5f6b86;
+}
+
+.event {
+  background: #7e7cfc;
+}
+
+.moreBadge {
+  margin-top: auto;
+  font-size: 0.62rem;
+  color: var(--color-text-muted);
+}
+
+.sideRail {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+}
+
+.panelCard {
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--color-border) 80%, transparent);
+  background: color-mix(in srgb, var(--color-surface-alt) 88%, transparent);
+  padding: 14px;
+}
+
+.panelTitle {
+  margin: 0;
+  font-size: 1.08rem;
+  font-weight: 800;
+}
+
+.panelSub {
+  margin: 6px 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.formGrid {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.formGridFull {
+  grid-column: 1 / -1;
+}
+
+.label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  font-weight: 700;
+}
+
+.field,
+.select,
+.textarea {
+  width: 100%;
+  border: 1px solid color-mix(in srgb, var(--color-border) 84%, transparent);
+  background: color-mix(in srgb, var(--color-bg) 78%, transparent);
+  color: var(--color-text);
+  border-radius: 10px;
+  padding: 10px 11px;
+}
+
+.textarea {
+  min-height: 84px;
+  resize: vertical;
+}
+
+.repeatWrap {
+  margin-top: 12px;
+  border-top: 1px solid color-mix(in srgb, var(--color-border) 65%, transparent);
+  padding-top: 12px;
+}
+
+.weekdayPickers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.weekdayBtn {
+  border: 1px solid color-mix(in srgb, var(--color-border) 84%, transparent);
+  border-radius: 10px;
+  padding: 7px 10px;
+  background: color-mix(in srgb, var(--color-bg) 80%, transparent);
+  color: var(--color-text-muted);
+  font-weight: 700;
+}
+
+.weekdayBtnActive {
+  border-color: color-mix(in srgb, var(--color-primary) 65%, var(--color-border));
+  color: var(--color-text);
+  background: color-mix(in srgb, var(--color-primary) 18%, transparent);
+}
+
+.actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+}
+
+.dayEventsList {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.upcomingList {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.upcomingItem {
+  width: 100%;
+  border: 1px solid color-mix(in srgb, var(--color-border) 78%, transparent);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--color-bg) 74%, transparent);
+  padding: 10px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: inherit;
+  text-align: left;
+}
+
+.upcomingItem:hover {
+  border-color: color-mix(in srgb, var(--color-primary) 45%, var(--color-border));
+}
+
+.upcomingIcon {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.upcomingIconTraining {
+  background: color-mix(in srgb, #10b981 28%, transparent);
+  color: #6ee7b7;
+}
+
+.upcomingIconMatch {
+  background: color-mix(in srgb, #ef4444 24%, transparent);
+  color: #fca5a5;
+}
+
+.upcomingIconMeeting {
+  background: color-mix(in srgb, #3b82f6 24%, transparent);
+  color: #93c5fd;
+}
+
+.upcomingIconEvent {
+  background: color-mix(in srgb, #6366f1 26%, transparent);
+  color: #a5b4fc;
+}
+
+.upcomingContent {
+  min-width: 0;
+  flex: 1;
+}
+
+.upcomingTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.upcomingTitle {
+  margin: 0;
+  font-size: 1.03rem;
+  font-weight: 800;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.upcomingMeta {
+  margin: 4px 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.88rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.upcomingTimeRow {
+  margin: 4px 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.88rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.upcomingTimeIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  line-height: 1;
+}
+
+.dayEvent {
+  border: 1px solid color-mix(in srgb, var(--color-border) 80%, transparent);
+  border-radius: 10px;
+  padding: 10px;
+  background: color-mix(in srgb, var(--color-bg) 72%, transparent);
+}
+
+.selectedCard {
+  margin-top: 8px;
+  border: 1px solid color-mix(in srgb, var(--color-border) 80%, transparent);
+  border-radius: 10px;
+  padding: 10px;
+  background: color-mix(in srgb, var(--color-bg) 72%, transparent);
+}
+
+.selectedActions {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.iconActionBtn {
+  border: 1px solid color-mix(in srgb, var(--color-border) 80%, transparent);
+  background: color-mix(in srgb, var(--color-surface) 82%, transparent);
+  color: var(--color-text);
+  border-radius: 8px;
+  padding: 6px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+}
+
+.iconActionBtn:hover {
+  border-color: color-mix(in srgb, var(--color-primary) 45%, var(--color-border));
+}
+
+.iconActionDelete {
+  border-color: color-mix(in srgb, #ef4444 65%, var(--color-border));
+  color: #fecaca;
+  background: color-mix(in srgb, #ef4444 18%, transparent);
+}
+
+.dayEventBtn {
+  border: 1px solid color-mix(in srgb, var(--color-border) 80%, transparent);
+  border-radius: 10px;
+  padding: 10px;
+  background: color-mix(in srgb, var(--color-bg) 72%, transparent);
+  text-align: left;
+  width: 100%;
+  color: inherit;
+}
+
+.dayEventBtn:hover {
+  border-color: color-mix(in srgb, var(--color-primary) 40%, var(--color-border));
+}
+
+.dayEventTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.dayEventTitle {
+  margin: 0;
+  font-weight: 800;
+}
+
+.dayEventMeta {
+  margin: 6px 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.56);
+  display: grid;
+  place-items: center;
+  z-index: 60;
+  padding: 18px;
+}
+
+.modalCard {
+  width: min(520px, 100%);
+  background: var(--color-surface);
+  border: 1px solid color-mix(in srgb, var(--color-border) 85%, transparent);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.modalCardWide {
+  width: min(760px, 100%);
+  max-height: min(88vh, 820px);
+  overflow: auto;
+  background: var(--color-surface);
+  border: 1px solid color-mix(in srgb, var(--color-border) 85%, transparent);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.modalTitle {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.modalMeta {
+  margin-top: 8px;
+  color: var(--color-text-muted);
+  line-height: 1.45;
+}
+
+.modalActions {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+}
+
+.deleteBtn {
+  background: color-mix(in srgb, #ef4444 30%, transparent);
+  border: 1px solid color-mix(in srgb, #ef4444 64%, var(--color-border));
+  color: #fee2e2;
+}
+
+@media (max-width: 780px) {
+  .eventsRoot {
+    grid-template-columns: 1fr;
+  }
+
+  .monthTitle {
+    font-size: 1rem;
+  }
+
+  .createBtn {
+    padding: 0 10px;
+    font-size: 0.88rem;
+  }
+
+  .weekday {
+    text-align: center;
+    padding: 7px 2px;
+    font-size: 0.78rem;
+  }
+
+  .dayCell {
+    min-height: 54px;
+    padding: 4px;
+  }
+
+  .dayButton {
+    font-size: 0.86rem;
+  }
+
+  .eventChip {
+    font-size: 0.64rem;
+    padding: 2px 4px;
+  }
+
+  .timeBlock {
+    font-size: 0.6rem;
+    padding: 2px 4px;
+  }
+
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .upcomingTitle {
+    font-size: 0.95rem;
+  }
+
+  .upcomingMeta {
+    font-size: 0.82rem;
+  }
+
+  .upcomingTimeRow {
+    font-size: 0.82rem;
+  }
+
+  .modalCardWide {
+    padding: 14px;
+  }
+}

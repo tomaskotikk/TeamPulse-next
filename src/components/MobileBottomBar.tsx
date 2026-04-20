@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Bell, Home, MessageSquare, Users, User } from 'lucide-react'
+import { Bell, CalendarDays, Home, Users, User } from 'lucide-react'
 
 interface MobileBottomBarProps {
   user: {
@@ -40,9 +40,9 @@ export default function MobileBottomBar({ user }: MobileBottomBarProps) {
         <span>Lidé</span>
       </Link>
 
-      <Link href="/chat" className={navItemClass(pathname, '/chat')}>
-        <MessageSquare className="mobile-bottom-icon" aria-hidden="true" />
-        <span>Chat</span>
+      <Link href="/events" className={navItemClass(pathname, '/events')}>
+        <CalendarDays className="mobile-bottom-icon" aria-hidden="true" />
+        <span>Události</span>
       </Link>
 
       <Link href="/notifications" className={navItemClass(pathname, '/notifications')}>

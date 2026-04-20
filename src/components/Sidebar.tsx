@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import {
   Bell,
+  CalendarDays,
   ChevronLeft,
   LineChart,
   LogOut,
@@ -80,6 +81,11 @@ export default function Sidebar({ user, isManager }: SidebarProps) {
           <Link href="/dashboard" className={navClass('/dashboard')}>
             <LayoutDashboard className="nav-icon" />
             <span className="nav-label">Dashboard</span>
+          </Link>
+
+          <Link href="/events" className={navClass('/events')}>
+            <CalendarDays className="nav-icon" />
+            <span className="nav-label">Události</span>
           </Link>
 
           {canSeeGraphs && (
