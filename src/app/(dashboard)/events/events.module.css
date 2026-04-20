@@ -560,6 +560,11 @@
     grid-template-columns: 1fr;
   }
 
+  .modalBackdrop {
+    align-items: center;
+    padding: 12px;
+  }
+
   .monthTitle {
     font-size: 1rem;
   }
@@ -611,6 +616,39 @@
   }
 
   .modalCardWide {
+    width: min(720px, 100%);
+    max-height: 84vh;
+    border-radius: 14px;
     padding: 14px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .modalCard {
+    width: min(520px, 100%);
+    max-height: 78vh;
+    border-radius: 14px;
+    padding: 14px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .modalHeader {
+    position: static;
+    padding-bottom: 0;
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+
+  .actions {
+    position: static;
+    padding: 0;
+    border-top: none;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+
+  .actions .btn {
+    flex: 1 1 100%;
   }
 }
