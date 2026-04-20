@@ -2,6 +2,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1.48fr) minmax(280px, 0.8fr);
   gap: 14px;
+  align-items: start;
 }
 
 .calendarCard {
@@ -10,6 +11,7 @@
   border-radius: 14px;
   overflow: hidden;
   box-shadow: var(--ui-soft-shadow);
+  height: fit-content;
 }
 
 .calendarHeader {
@@ -159,40 +161,19 @@
   color: #ffffff;
 }
 
-.timeEndTraining {
-  background: #7dd3fc;
-  color: #082f49;
-  line-height: 1;
-}
-
 .timeStartMeeting {
-  background: #f59e0b;
-  color: #1f1300;
-}
-
-.timeEndMeeting {
-  background: #fde68a;
-  color: #422006;
+  background: #5f6b86;
+  color: #ffffff;
 }
 
 .timeStartMatch {
-  background: #ef4444;
-  color: #fff1f2;
-}
-
-.timeEndMatch {
-  background: #fca5a5;
-  color: #450a0a;
+  background: #16c3ad;
+  color: #06352f;
 }
 
 .timeStartEvent {
-  background: #6366f1;
-  color: #eef2ff;
-}
-
-.timeEndEvent {
-  background: #c7d2fe;
-  color: #1e1b4b;
+  background: #7e7cfc;
+  color: #eef0ff;
 }
 
 .training {
@@ -318,6 +299,13 @@
   gap: 8px;
 }
 
+.dayEventsTitle {
+  margin: 4px 0 2px;
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--color-text-muted);
+}
+
 .upcomingList {
   margin-top: 10px;
   display: flex;
@@ -353,23 +341,23 @@
 }
 
 .upcomingIconTraining {
-  background: color-mix(in srgb, #10b981 28%, transparent);
-  color: #6ee7b7;
+  background: color-mix(in srgb, #ff5c66 26%, transparent);
+  color: #ff9ea5;
 }
 
 .upcomingIconMatch {
-  background: color-mix(in srgb, #ef4444 24%, transparent);
-  color: #fca5a5;
+  background: color-mix(in srgb, #16c3ad 24%, transparent);
+  color: #80f1e2;
 }
 
 .upcomingIconMeeting {
-  background: color-mix(in srgb, #3b82f6 24%, transparent);
-  color: #93c5fd;
+  background: color-mix(in srgb, #5f6b86 24%, transparent);
+  color: #b5bfd3;
 }
 
 .upcomingIconEvent {
-  background: color-mix(in srgb, #6366f1 26%, transparent);
-  color: #a5b4fc;
+  background: color-mix(in srgb, #7e7cfc 26%, transparent);
+  color: #c1c4ff;
 }
 
 .upcomingContent {

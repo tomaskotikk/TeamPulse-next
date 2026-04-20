@@ -118,13 +118,6 @@ function timeStartClass(type: ClubEvent['type']) {
   return styles.timeStartEvent
 }
 
-function timeEndClass(type: ClubEvent['type']) {
-  if (type === 'training') return styles.timeEndTraining
-  if (type === 'match') return styles.timeEndMatch
-  if (type === 'meeting') return styles.timeEndMeeting
-  return styles.timeEndEvent
-}
-
 function eventTypeIcon(type: ClubEvent['type']) {
   if (type === 'training') return <Dumbbell size={15} />
   if (type === 'match') return <Trophy size={15} />
@@ -199,6 +192,10 @@ export default function EventsPage() {
       .sort((a, b) => new Date(a.starts_at).getTime() - new Date(b.starts_at).getTime())
       .slice(0, 3)
   }, [events])
+
+  const selectedDateEvents = useMemo(() => {
+    return eventsByDay.get(selectedDate) ?? []
+  }, [eventsByDay, selectedDate])
 
   const loadMonthEvents = useCallback(async (month: Date) => {
     const fromDate = startOfMonthGrid(month)
@@ -531,7 +528,7 @@ export default function EventsPage() {
                   const key = dateKey(day)
                   const inCurrentMonth = day.getMonth() === currentMonth.getMonth()
                   const list = eventsByDay.get(key) ?? []
-                  const topThree = list.slice(0, 3)
+                  const topTwo = list.slice(0, 2)
                   const isSelected = key === selectedDate
 
                   return (
@@ -552,7 +549,7 @@ export default function EventsPage() {
                         {day.getDate()}
                       </button>
 
-                      {topThree.map((event) => (
+                      {topTwo.map((event) => (
                         <button
                           key={event.id}
                           type="button"
@@ -563,12 +560,11 @@ export default function EventsPage() {
                           }}
                         >
                           <span className={`${styles.timeBlock} ${timeStartClass(event.type)}`}>{localTimeLabel(event.starts_at, event.all_day)}</span>
-                          <span className={`${styles.timeBlock} ${timeEndClass(event.type)}`}>{event.ends_at ? localTimeLabel(event.ends_at, event.all_day) : '--:--'}</span>
                         </button>
                       ))}
 
-                      {list.length > 3 && (
-                        <div className={styles.moreBadge}>+{list.length - 3} další</div>
+                      {list.length > 2 && (
+                        <div className={styles.moreBadge}>+{list.length - 2} další</div>
                       )}
                     </div>
                   )
@@ -640,6 +636,28 @@ export default function EventsPage() {
                 ) : (
                   <p className={styles.panelSub}>Klikněte na událost v kalendáři.</p>
                 )}
+
+                <div className={styles.dayEventsList}>
+                  <h5 className={styles.dayEventsTitle}>
+                    Události dne ({new Date(selectedDate).toLocaleDateString('cs-CZ', { day: 'numeric', month: 'long' })})
+                  </h5>
+                  {selectedDateEvents.length === 0 ? (
+                    <p className={styles.panelSub}>Pro tento den zatím není naplánovaná žádná akce.</p>
+                  ) : (
+                    selectedDateEvents.map((event) => (
+                      <button key={event.id} type="button" className={styles.dayEventBtn} onClick={() => openEventDetails(event)}>
+                        <div className={styles.dayEventTop}>
+                          <p className={styles.dayEventTitle}>{event.title}</p>
+                          <span className={chipClass(event.type)}>{eventTypeLabel(event.type)}</span>
+                        </div>
+                        <p className={styles.dayEventMeta}>
+                          <Clock3 size={13} /> {localTimeLabel(event.starts_at, event.all_day)}
+                          {event.ends_at ? ` - ${localTimeLabel(event.ends_at, event.all_day)}` : ''}
+                        </p>
+                      </button>
+                    ))
+                  )}
+                </div>
               </section>
 
               <section className={styles.panelCard}>
