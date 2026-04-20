@@ -261,6 +261,24 @@ export default function DesktopOverview({ userName, club, members, isManager, cu
   const isLayoutEditable = canSeeAnalytics && isManager
   const dndEnabled = mounted && isLayoutEditable
 
+  const heroContent = isManager
+    ? {
+        title: `Vítejte zpět, ${userName}. ${clubState.name} je připravený na další růst.`,
+        subtitle: 'Přehled výkonu, složení týmu a klíčových metrik na jednom místě. Dashboard je optimalizovaný pro rychlé rozhodování vedení moderního klubu.',
+        membersLabel: 'Otevřít správu členů',
+      }
+    : canSeeAnalytics
+      ? {
+          title: `Vítejte zpět, ${userName}. ${clubState.name} má prostor na další progres.`,
+          subtitle: 'Sledujte vývoj týmu, docházku a klíčové signály, které pomáhají trenérskému vedení plánovat další kroky.',
+          membersLabel: 'Otevřít členy týmu',
+        }
+      : {
+          title: `Vítejte zpět, ${userName}. Dnes makáme za ${clubState.name}.`,
+          subtitle: 'Tady najdete vše důležité pro hráče: přehled klubu, spoluhráče a rychlé odkazy na denní fungování týmu.',
+          membersLabel: 'Prohlédnout spoluhráče',
+        }
+
   useEffect(() => {
     setMounted(true)
   }, [])
@@ -1023,8 +1041,8 @@ export default function DesktopOverview({ userName, club, members, isManager, cu
       <section className={styles.hero}>
         <div className={styles.heroTop}>
           <div>
-            <h2 className={styles.heroTitle}>Vítejte zpět, {userName}. {clubState.name} je připravený na další růst.</h2>
-            <p className={styles.heroSubtitle}>Přehled výkonu, složení týmu a klíčových metrik na jednom místě. Dashboard je optimalizovaný pro rychlé rozhodování vedení moderního klubu.</p>
+            <h2 className={styles.heroTitle}>{heroContent.title}</h2>
+            <p className={styles.heroSubtitle}>{heroContent.subtitle}</p>
           </div>
           <div className={styles.heroPills}>
             <span className={styles.heroPill}>{clubState.sport || 'Sport'}</span>
@@ -1039,7 +1057,7 @@ export default function DesktopOverview({ userName, club, members, isManager, cu
             </Link>
           )}
           <Link href="/members" className={styles.btnGhost}>
-            Otevřít správu členů
+            {heroContent.membersLabel}
           </Link>
           {canSeeAnalytics && (
             <button type="button" className={styles.btnGhost} onClick={handleWeeklyReport}>

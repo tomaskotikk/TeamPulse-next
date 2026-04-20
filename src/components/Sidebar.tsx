@@ -29,15 +29,11 @@ interface SidebarProps {
 
 export default function Sidebar({ user, isManager }: SidebarProps) {
   const pathname = usePathname()
-  const [collapsed, setCollapsed] = useState(false)
+  const [collapsed, setCollapsed] = useState(() => {
+    if (typeof window === 'undefined') return false
+    return window.localStorage.getItem('tp-sidebar-collapsed') === '1'
+  })
   const canSeeGraphs = user.role === 'manažer' || user.role === 'trenér'
-
-  useEffect(() => {
-    const saved = window.localStorage.getItem('tp-sidebar-collapsed')
-    if (saved === '1') {
-      setCollapsed(true)
-    }
-  }, [])
 
   useEffect(() => {
     window.localStorage.setItem('tp-sidebar-collapsed', collapsed ? '1' : '0')
@@ -62,7 +58,6 @@ export default function Sidebar({ user, isManager }: SidebarProps) {
           <span className="sidebar-brand-mark" aria-hidden="true">
             <img src="/tp-logo.png" alt="" className="sidebar-brand-logo" />
           </span>
-          <span className="sidebar-brand-text">TeamPulse</span>
         </Link>
         <button
           type="button"
