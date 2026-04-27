@@ -3619,11 +3619,56 @@ input[type='color'] {
 
 .club-create-page {
   min-height: 100vh;
-  background:
-    radial-gradient(900px 440px at 0% 0%, rgba(255, 51, 0, 0.07), transparent 58%),
-    radial-gradient(700px 360px at 100% 10%, rgba(255, 51, 0, 0.05), transparent 55%),
-    #f8f9fb;
+  background: #f8f9fb;
   color: #0f1117;
+  position: relative;
+  overflow: hidden;
+}
+
+.club-create-bg-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(80, 95, 125, 0.065) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(80, 95, 125, 0.065) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(circle at 50% 15%, black 10%, transparent 68%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.club-create-orb {
+  position: absolute;
+  border-radius: 999px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.club-create-orb-a {
+  width: 520px;
+  height: 520px;
+  left: -160px;
+  top: 80px;
+  background: radial-gradient(circle, rgba(221, 28, 63, 0.14), rgba(221, 28, 63, 0));
+  filter: blur(1px);
+}
+
+.club-create-orb-b {
+  width: 440px;
+  height: 440px;
+  right: -120px;
+  top: 40px;
+  background: radial-gradient(circle, rgba(221, 28, 63, 0.09), rgba(221, 28, 63, 0));
+  filter: blur(1px);
+}
+
+.club-create-orb-c {
+  width: 380px;
+  height: 380px;
+  right: 18%;
+  bottom: 60px;
+  background: radial-gradient(circle, rgba(25, 42, 78, 0.1), rgba(25, 42, 78, 0));
+  filter: blur(1px);
 }
 
 .club-create-main {
@@ -3632,6 +3677,8 @@ input[type='color'] {
   padding: 42px 0 56px;
   display: grid;
   gap: 22px;
+  position: relative;
+  z-index: 1;
 }
 
 .club-create-hero {

@@ -238,6 +238,10 @@ export default function CreateClubPage() {
 
   return (
     <div className={`club-create-page club-create-page--step-${phase}`}>
+      <div className="club-create-bg-grid" aria-hidden="true" />
+      <div className="club-create-orb club-create-orb-a" aria-hidden="true" />
+      <div className="club-create-orb club-create-orb-b" aria-hidden="true" />
+      <div className="club-create-orb club-create-orb-c" aria-hidden="true" />
       <PublicNavbar />
 
       <main className="club-create-main">

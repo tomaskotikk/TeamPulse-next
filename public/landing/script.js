@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const showcaseImage = document.getElementById("showcaseImage");
     const showcaseRoute = document.getElementById("showcaseRoute");
-    const tabs = Array.from(document.querySelectorAll(".show-tab"));
+    const tabs = Array.from(document.querySelectorAll(".story-tab"));
 
     const switchShowcase = (key) => {
         const payload = showcaseData[key];
