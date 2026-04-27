@@ -464,12 +464,12 @@ h3 {
     display: flex;
     align-items: center;
     width: max-content;
-    animation: logoMarqueeMove 28s linear infinite;
+    animation: logoMarqueeMove 50s linear infinite;
     will-change: transform;
 }
 
 .logo-marquee-track--reverse {
-    animation: logoMarqueeMoveReverse 32s linear infinite;
+    animation: logoMarqueeMoveReverse 56s linear infinite;
 }
 
 .logo-marquee-group {
