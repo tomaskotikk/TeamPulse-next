@@ -1,10 +1,10 @@
 .page {
   min-height: 100vh;
   background:
-    radial-gradient(900px 440px at 0% 0%, rgba(255, 51, 0, 0.14), transparent 58%),
-    radial-gradient(780px 360px at 100% 5%, rgba(255, 51, 0, 0.1), transparent 55%),
-    linear-gradient(180deg, #05070c 0%, #0b1018 100%);
-  color: #f5f7fc;
+    radial-gradient(900px 440px at 0% 0%, rgba(255, 51, 0, 0.07), transparent 58%),
+    radial-gradient(700px 360px at 100% 10%, rgba(255, 51, 0, 0.05), transparent 55%),
+    #f8f9fb;
+  color: #0f1117;
 }
 
 .main {
@@ -16,16 +16,16 @@
 }
 
 .hero {
-  border: 1px solid #263244;
+  border: 1px solid #e2e7f0;
   border-radius: 16px;
-  background: linear-gradient(180deg, #121925 0%, #0f1621 100%);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+  background: #fff;
+  box-shadow: 0 4px 16px rgba(16, 24, 40, 0.06);
   padding: 20px;
 }
 
 .kicker {
   margin: 0;
-  color: #f87171;
+  color: #ff3300;
   font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.08em;
@@ -36,20 +36,21 @@
   margin: 8px 0 4px;
   font-size: clamp(24px, 3.2vw, 36px);
   line-height: 1.15;
+  color: #0f1117;
 }
 
 .subtitle {
   margin: 0;
-  color: #9ba9bf;
+  color: #5a6478;
   max-width: 720px;
   line-height: 1.7;
 }
 
 .card {
-  border: 1px solid #263244;
+  border: 1px solid #e2e7f0;
   border-radius: 16px;
-  background: linear-gradient(180deg, #121925 0%, #0f1621 100%);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+  background: #fff;
+  box-shadow: 0 4px 16px rgba(16, 24, 40, 0.06);
   padding: 20px;
   display: grid;
   gap: 14px;
@@ -75,35 +76,35 @@
 }
 
 .badgePending {
-  color: #fde68a;
-  border-color: #7c5e10;
-  background: rgba(158, 110, 9, 0.25);
+  color: #92400e;
+  border-color: #fde68a;
+  background: rgba(251, 191, 36, 0.15);
 }
 
 .badgeRejected {
-  color: #fecaca;
-  border-color: #7f1d1d;
-  background: rgba(127, 29, 29, 0.3);
+  color: #991b1b;
+  border-color: #fca5a5;
+  background: rgba(220, 38, 38, 0.1);
 }
 
 .clubName {
-  color: #e2e8f4;
+  color: #1e2433;
   font-size: 14px;
   font-weight: 700;
 }
 
 .description {
   margin: 0;
-  color: #d6deed;
+  color: #5a6478;
   line-height: 1.75;
   font-size: 16px;
 }
 
 .rejectBox {
-  border: 1px solid #7f1d1d;
+  border: 1px solid #fca5a5;
   border-radius: 12px;
-  background: rgba(127, 29, 29, 0.24);
-  color: #fecaca;
+  background: rgba(220, 38, 38, 0.06);
+  color: #991b1b;
   padding: 12px 14px;
   display: grid;
   gap: 6px;
@@ -117,21 +118,21 @@
 }
 
 .infoItem {
-  border: 1px solid #283446;
+  border: 1px solid #e2e7f0;
   border-radius: 11px;
-  background: #0f1724;
+  background: #f8f9fb;
   padding: 11px 12px;
   display: grid;
   gap: 2px;
 }
 
 .infoItem span {
-  color: #96a3ba;
+  color: #7a8599;
   font-size: 12px;
 }
 
 .infoItem strong {
-  color: #f5f7fc;
+  color: #0f1117;
   font-size: 16px;
 }
 
@@ -148,8 +149,8 @@
   justify-content: center;
   min-height: 44px;
   border-radius: 11px;
-  border: 1px solid #7f1d1d;
-  background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+  border: 1px solid #ff3300;
+  background: linear-gradient(135deg, #ff4b19 0%, #e03000 100%);
   color: #fff;
   text-decoration: none;
   font-weight: 800;
@@ -162,9 +163,9 @@
   justify-content: center;
   min-height: 44px;
   border-radius: 11px;
-  border: 1px solid #334155;
-  background: #111a28;
-  color: #dce5f4;
+  border: 1px solid #d4dae6;
+  background: #f8f9fb;
+  color: #1e2433;
   text-decoration: none;
   font-weight: 700;
   padding: 0 16px;
