@@ -172,8 +172,8 @@ h3 {
 }
 
 .brand img {
-    width: 48px;
-    height: 48px;
+    width: 62px;
+    height: 62px;
     object-fit: contain;
 }
 
@@ -368,12 +368,12 @@ h3 {
 
 .red-shape {
     position: absolute;
-    width: 700px;
-    height: 700px;
+    width: 500px;
+    height: 500px;
     background: #e30613;
     border-radius: 50%;
-    top: 38%;
-    right: -150px;
+    top: 35%;
+    right: -10px;
     transform: translateY(-50%);
     z-index: 1;
 }

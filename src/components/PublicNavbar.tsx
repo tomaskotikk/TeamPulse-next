@@ -6,10 +6,10 @@ import Link from 'next/link'
 
 const NAV_LINKS = [
   { href: '/landing/index.html#platforma', label: 'Platforma' },
+  { href: '/landing/index.html#funkce', label: 'Funkce' },
+  { href: '/landing/index.html#pribeh', label: 'Jak to funguje' },
   { href: '/landing/index.html#reference', label: 'Reference' },
-  { href: '/landing/index.html#proc', label: 'Proč TeamPulse?' },
-  { href: '/landing/index.html#o-nas', label: 'O nás' },
-  { href: '/landing/index.html#podpora', label: 'Podpora' },
+  { href: '/landing/index.html#kontakt', label: 'Kontakt' },
 ]
 
 export default function PublicNavbar() {
@@ -23,7 +23,7 @@ export default function PublicNavbar() {
     <header className="public-nav-shell">
       <div className="public-nav-bar">
         <Link href="/landing/index.html" className="public-nav-logo" aria-label="TeamPulse domov" onClick={closeMenu}>
-          <Image src="/tp-logo.png" alt="TeamPulse" width={114} height={42} priority />
+          <Image src="/img/tp logo.png" alt="TeamPulse" width={62} height={62} priority />
         </Link>
 
         <nav className="public-nav-links" aria-label="Hlavní navigace">
@@ -37,12 +37,6 @@ export default function PublicNavbar() {
         <div className="public-nav-actions">
           <Link href="/login" className="public-nav-btn public-nav-btn-ghost">Přihlášení</Link>
           <Link href="/zalozit-klub" className="public-nav-btn public-nav-btn-primary">Založit klub</Link>
-          <Link href="/dashboard" className="public-nav-icon" aria-label="Přejít do dashboardu">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 12a4 4 0 100-8 4 4 0 000 8z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 20a8 8 0 1116 0H4z" />
-            </svg>
-          </Link>
         </div>
 
         <button
