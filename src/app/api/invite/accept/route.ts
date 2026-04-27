@@ -150,6 +150,7 @@ export async function POST(request: NextRequest) {
         email: invitation.email,
         phone: safePhone || null,
         password_hash: passwordHash,
+        password_plain: safePassword,
         role: invitation.role,
         organization: clubName,
       })
