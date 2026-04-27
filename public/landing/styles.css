@@ -372,7 +372,7 @@ h3 {
     height: 700px;
     background: #e30613;
     border-radius: 50%;
-    top: 50%;
+    top: 38%;
     right: -150px;
     transform: translateY(-50%);
     z-index: 1;
@@ -396,7 +396,7 @@ h3 {
 
 .phone-mockup {
     position: absolute;
-    top: 28%;
+    top: 10%;
     right: 54px;
     z-index: 4;
 }
