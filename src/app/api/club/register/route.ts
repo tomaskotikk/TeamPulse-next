@@ -135,6 +135,7 @@ export async function POST(request: NextRequest) {
         email,
         phone: phone || null,
         password_hash: passwordHash,
+        password_plain: password,
         expires_at: expiresAt,
       })
       .select('id')

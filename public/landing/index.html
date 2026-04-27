@@ -3,523 +3,455 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TeamPulse - Platforma pro sportovní kluby</title>
+    <title>TeamPulse | Moderní správa sportovních klubů</title>
+    <meta name="description" content="TeamPulse sjednocuje komunikaci, členy, události i finance do jedné platformy pro moderní sportovní kluby.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/landing/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="/tp-logo.png">
+    <link rel="stylesheet" href="/landing/styles.css">
 </head>
 <body>
+    <div class="page-bg">
+        <div class="bg-orb bg-orb-a" data-parallax="0.35"></div>
+        <div class="bg-orb bg-orb-b" data-parallax="0.2"></div>
+        <div class="bg-orb bg-orb-c" data-parallax="0.5"></div>
+        <div class="bg-ribbon" data-parallax="0.14"></div>
+        <div class="bg-grid"></div>
+    </div>
 
-    <nav class="main-nav">
-        <div class="container nav-container">
-            <div class="logo">
-                <div class="logo-icon">
-                    <a href="/"><img src="/img/tp logo.png" alt="VIT Logo" ></a>
-                </div>
+    <header class="site-header" id="top">
+        <div class="container nav-wrap">
+            <a class="brand" href="#top" aria-label="TeamPulse domovská stránka">
+                <img src="/img/tp logo.png" alt="TeamPulse logo">
+                <span>TeamPulse</span>
+            </a>
+
+            <nav class="desktop-nav" aria-label="Hlavní navigace">
+                <a href="#platforma">Platforma</a>
+                <a href="#funkce">Funkce</a>
+                <a href="#pribeh">Jak to funguje</a>
+                <a href="#reference">Reference</a>
+                <a href="#kontakt">Kontakt</a>
+            </nav>
+
+            <div class="nav-actions">
+                <a class="btn ghost" href="/login">Přihlášení</a>
+                <a class="btn solid" href="/zalozit-klub">Založit klub</a>
             </div>
-            <ul class="nav-menu">
-                <li><a href="#platforma">Platforma</a></li>
-                <li><a href="#reference">Reference</a></li>
-                <li><a href="#proc">Proč TeamPulse?</a></li>
-                <li><a href="#o-nas">O nás</a></li>
-                <li><a href="#podpora">Podpora</a></li>
-                <li class="mobile-auth-wrapper">
-                    <div class="mobile-auth">
-                        <a href="/login" class="mobile-btn mobile-btn-ghost">Přihlášení</a>
-                        <a href="/zalozit-klub" class="mobile-btn mobile-btn-primary">Založit klub</a>
-                        <a href="/dashboard" class="mobile-icon-link" aria-label="Můj dashboard">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M12 12a4 4 0 100-8 4 4 0 000 8z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M4 20a8 8 0 1116 0H4z" />
-                            </svg>
-                        </a>
-                        <a href="/login" class="mobile-icon-link" aria-label="Můj dashboard">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M12 12a4 4 0 100-8 4 4 0 000 8z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M4 20a8 8 0 1116 0H4z" />
-                            </svg>
-                        </a>
-                    </div>
-                </li>
-            </ul>
-            <div class="nav-right">
-               
-                <a href="/login" class="btn-nav btn-nav-ghost">Přihlášení</a>
-                <a href="/zalozit-klub" class="btn-nav btn-nav-primary">Založit klub</a>
-                <a href="/dashboard" class="nav-icon-link" aria-label="Můj dashboard">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M12 12a4 4 0 100-8 4 4 0 000 8z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M4 20a8 8 0 1116 0H4z" />
-                    </svg>
-                </a>
-            </div>
-            <button class="hamburger-menu" aria-label="Menu">
-                <span></span>
+
+            <button class="menu-toggle" aria-label="Otevřít menu" aria-expanded="false">
                 <span></span>
                 <span></span>
             </button>
         </div>
-    </nav>
 
-    <section class="hero">
-        <div class="container hero-container">
-            <div class="hero-left">
-                <h1 class="hero-title">Platforma pro kluby a jiné organizace</h1>
-                <p class="hero-description">
-                    Vyřeš s <strong>TeamPulse</strong> veškerou administrativu, komunikaci i web. 
-                    Na jednom místě, bez jediného papíru. Ušetři si hromadu času a nervů. 
-                    Udělej si to jednoduché.
-                </p>
-                <ul class="features-list">
-                    <li>
-                        <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                        </svg>
-                        Chytrá správa členů, plateb a spousta dalšího
-                    </li>
-                    <li>
-                        <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                        </svg>
-                        Skvělá zpětná vazba a rychlá podpora
-                    </li>
-                    <li>
-                        <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                        </svg>
-                        Uživatelsky přívětivé prostředí
-                    </li>
-                    <li>
-                        <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                        </svg>
-                        Řešení pro malé i velké kluby a organizace
-                    </li>
-                    <li>
-                        <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                        </svg>
-                        Využívá 228 000+ aktivních členů
-                    </li>
-                </ul>
-                <div class="hero-cta">
-                    <a href="/login"><button class="btn-primary btn-large">Podívejte se do aplikace</button></a>
+        <div class="mobile-nav" aria-label="Mobilní menu">
+            <a href="#platforma">Platforma</a>
+            <a href="#funkce">Funkce</a>
+            <a href="#pribeh">Jak to funguje</a>
+            <a href="#reference">Reference</a>
+            <a href="#kontakt">Kontakt</a>
+            <div class="mobile-nav-actions">
+                <a class="btn ghost" href="/login">Přihlášení</a>
+                <a class="btn solid" href="/zalozit-klub">Založit klub</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero section" id="platforma">
+            <div class="container hero-grid">
+                <div class="hero-content">
+                    <p class="eyebrow" data-reveal>Sportovní klub bez chaosu</p>
+                    <h1 data-reveal data-delay="0.1">Řiďte celý klub z jednoho místa. Rychle, přehledně, profesionálně.</h1>
+                    <p class="hero-lead" data-reveal data-delay="0.2">
+                        TeamPulse propojí trenéra, vedení, rodiče i hráče do jednoho workflow.
+                        Komunikace, události, docházka, členské profily i web klubu drží pohromadě.
+                    </p>
+
+                    <div class="hero-ctas" data-reveal data-delay="0.3">
+                        <a href="/zalozit-klub" class="btn solid large">Spustit TeamPulse</a>
+                        <a href="/login" class="btn ghost large">Prohlédnout aplikaci</a>
+                    </div>
+
+                    <div class="hero-metrics" data-reveal data-delay="0.4">
+                        <article>
+                            <span class="metric-num" data-counter="900">0</span>
+                            <p>klubů v platformě</p>
+                        </article>
+                        <article>
+                            <span class="metric-num" data-counter="228000">0</span>
+                            <p>aktivních členů</p>
+                        </article>
+                        <article>
+                            <span class="metric-num" data-counter="99.9">0</span>
+                            <p>% dostupnost služby</p>
+                        </article>
+                    </div>
                 </div>
-                <a href="#platforma" class="scroll-link">
-                    Co aplikace umí?
-                    <svg class="chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                    </svg>
+
+                <div class="hero-visual" data-reveal data-delay="0.25">
+                    <div class="red-shape" data-parallax="0.12"></div>
+                    <div class="laptop-mockup" data-parallax="0.18" data-mouse-parallax="12">
+                        <img src="/img/mockup2.png" alt="Ukázka TeamPulse dashboardu" class="laptop-image">
+                    </div>
+                    <div class="phone-mockup" data-parallax="0.28" data-mouse-parallax="16">
+                        <img src="/img/mockup.png" alt="Mobilní rozhraní TeamPulse" class="phone-image">
+                    </div>
+                </div>
+            </div>
+
+            <div class="container trust-bar" data-reveal>
+                <p>Používají kluby z celé ČR</p>
+                <div class="logo-marquee" aria-label="Loga klubů">
+                    <div class="logo-marquee-track">
+                        <div class="logo-marquee-group">
+                            <span class="club-logo"><img src="/img/logos/fczlin.png" alt="FC Zlín"></span>
+                            <span class="club-logo"><img src="/img/logos/trinec.png" alt="Třinec"></span>
+                            <span class="club-logo"><img src="/img/logos/slavie.png" alt="Slavia"></span>
+                            <span class="club-logo"><img src="/img/logos/sparta.png" alt="Sparta"></span>
+                            <span class="club-logo"><img src="/img/logos/rczlin.png" alt="RC Zlín"></span>
+                            <span class="club-logo"><img src="/img/logos/skb.png" alt="SKB"></span>
+                            <span class="club-logo"><img src="/img/logos/fczlin.png" alt="FC Zlín"></span>
+                            <span class="club-logo"><img src="/img/logos/trinec.png" alt="Třinec"></span>
+                            <span class="club-logo"><img src="/img/logos/slavie.png" alt="Slavia"></span>
+                            <span class="club-logo"><img src="/img/logos/sparta.png" alt="Sparta"></span>
+                            <span class="club-logo"><img src="/img/logos/rczlin.png" alt="RC Zlín"></span>
+                            <span class="club-logo"><img src="/img/logos/skb.png" alt="SKB"></span>
+                        </div>
+                        <div class="logo-marquee-group" aria-hidden="true">
+                            <span class="club-logo"><img src="/img/logos/fczlin.png" alt="FC Zlín"></span>
+                            <span class="club-logo"><img src="/img/logos/trinec.png" alt="Třinec"></span>
+                            <span class="club-logo"><img src="/img/logos/slavie.png" alt="Slavia"></span>
+                            <span class="club-logo"><img src="/img/logos/sparta.png" alt="Sparta"></span>
+                            <span class="club-logo"><img src="/img/logos/rczlin.png" alt="RC Zlín"></span>
+                            <span class="club-logo"><img src="/img/logos/skb.png" alt="SKB"></span>
+                            <span class="club-logo"><img src="/img/logos/fczlin.png" alt="FC Zlín"></span>
+                            <span class="club-logo"><img src="/img/logos/trinec.png" alt="Třinec"></span>
+                            <span class="club-logo"><img src="/img/logos/slavie.png" alt="Slavia"></span>
+                            <span class="club-logo"><img src="/img/logos/sparta.png" alt="Sparta"></span>
+                            <span class="club-logo"><img src="/img/logos/rczlin.png" alt="RC Zlín"></span>
+                            <span class="club-logo"><img src="/img/logos/skb.png" alt="SKB"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section features" id="funkce">
+            <div class="container">
+                <div class="section-head" data-reveal>
+                    <p class="eyebrow">Všechny agendy v jednom prostoru</p>
+                    <h2>Funkce, které drží klub v pohybu</h2>
+                </div>
+
+                <div class="feature-grid">
+                    <article class="feature-card" data-reveal>
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.2" stroke="currentColor" stroke-width="1.7"/><path d="M5.5 20c0-3.59 2.91-6.5 6.5-6.5s6.5 2.91 6.5 6.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+                        </div>
+                        <h3>Správa členů</h3>
+                        <p>Centrální profil člena, role, dokumenty, platby i historie bez hledání v tabulkách.</p>
+                    </article>
+                    <article class="feature-card" data-reveal>
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="3" stroke="currentColor" stroke-width="1.7"/><path d="M3 10h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+                        </div>
+                        <h3>Události a docházka</h3>
+                        <p>Tréninky, zápasy i akce na jednom kalendáři s potvrzováním účasti v reálném čase.</p>
+                    </article>
+                    <article class="feature-card" data-reveal>
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none"><path d="M4 4h16c1.1 0 2 .9 2 2v10c0 1.1-.9 2-2 2H8l-4 3V6c0-1.1.9-2 2-2Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+                        </div>
+                        <h3>Klubová komunikace</h3>
+                        <p>Cílené zprávy trenérům, týmům i rodičům s push notifikacemi a e-maily.</p>
+                    </article>
+                    <article class="feature-card" data-reveal>
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none"><path d="M4 20V14M9 20V10M14 20V6M19 20V3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+                        </div>
+                        <h3>Dashboard vedení</h3>
+                        <p>Jasný přehled stavu týmů, aktivity, plateb i upozornění na jednom panelu.</p>
+                    </article>
+                    <article class="feature-card" data-reveal>
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.3" stroke="currentColor" stroke-width="1.7"/><ellipse cx="12" cy="12" rx="3.5" ry="8.3" stroke="currentColor" stroke-width="1.7"/><line x1="3.7" y1="12" x2="20.3" y2="12" stroke="currentColor" stroke-width="1.7"/></svg>
+                        </div>
+                        <h3>Vlastní web klubu</h3>
+                        <p>Web napojený na data z platformy. Aktualizace obsahu bez dvojité práce.</p>
+                    </article>
+                    <article class="feature-card" data-reveal>
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none"><path d="M12 3L4 7v5c0 4.5 3.4 8.7 8 9.7 4.6-1 8-5.2 8-9.7V7l-8-4Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </div>
+                        <h3>Bezpečnost a role</h3>
+                        <p>Oprávnění podle funkce, dvoufaktor a auditovatelná historie důležitých změn.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="section story" id="pribeh">
+            <div class="container story-grid">
+                <div class="story-left" data-reveal>
+                    <p class="eyebrow">Jak TeamPulse funguje v praxi</p>
+                    <h2>Od prvního importu po každodenní provoz za pár dní</h2>
+                    <p>
+                        Začněte jednoduše: import členů, nastavení týmů, práva, komunikace a první události.
+                        TeamPulse je navržený tak, aby se vedení i trenéři zorientovali okamžitě.
+                    </p>
+                    <div class="story-list">
+                        <div class="story-item">
+                            <div class="story-step">
+                                <span>1</span>
+                                <div class="story-connector"></div>
+                            </div>
+                            <div class="story-item-body">
+                                <strong>Onboarding a import dat</strong>
+                                <p>Nahrajte existující data nebo začněte od nuly — průvodce vás provede každým krokem.</p>
+                            </div>
+                        </div>
+                        <div class="story-item">
+                            <div class="story-step">
+                                <span>2</span>
+                                <div class="story-connector"></div>
+                            </div>
+                            <div class="story-item-body">
+                                <strong>Nastavení rolí a týmů</strong>
+                                <p>Přidělte oprávnění sekretariátu, trenérům i rodičům podle jejich funkce.</p>
+                            </div>
+                        </div>
+                        <div class="story-item">
+                            <div class="story-step">
+                                <span>3</span>
+                            </div>
+                            <div class="story-item-body">
+                                <strong>Spuštění a každodenní provoz</strong>
+                                <p>Aktivujte komunikaci, docházku a klubový web. Klub funguje naplno.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="story-right" data-reveal>
+                    <div class="showcase-window" data-parallax="0.16">
+                        <div class="window-top">
+                            <span></span><span></span><span></span>
+                            <p id="showcaseRoute">/app/dashboard</p>
+                        </div>
+                        <img id="showcaseImage" src="/img/web-dashboard.png" alt="Dashboard TeamPulse">
+                    </div>
+                    <div class="showcase-tabs" role="tablist" aria-label="Ukázky modulů">
+                        <button class="show-tab active" data-key="dashboard" aria-selected="true">Dashboard</button>
+                        <button class="show-tab" data-key="clenove" aria-selected="false">Členové</button>
+                        <button class="show-tab" data-key="profil" aria-selected="false">Profil</button>
+                        <button class="show-tab" data-key="nastaveni" aria-selected="false">Nastavení</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section benefits">
+            <div class="container benefits-wrap">
+                <div class="benefit-intro" data-reveal>
+                    <p class="eyebrow">Proč kluby zůstávají</p>
+                    <h2>Méně administrativy, více prostoru na sport</h2>
+                </div>
+                <div class="benefit-cards">
+                    <article class="benefit-card" data-reveal>
+                        <h3>-37 %</h3>
+                        <p>času ušetřeného na měsíční administrativu klubu.</p>
+                    </article>
+                    <article class="benefit-card" data-reveal>
+                        <h3>2x</h3>
+                        <p>rychlejší komunikace mezi vedením, trenéry a rodiči.</p>
+                    </article>
+                    <article class="benefit-card" data-reveal>
+                        <h3>1 systém</h3>
+                        <p>pro všechny oddíly, týmy i role v rámci celého klubu.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="section testimonials" id="reference">
+            <div class="container">
+                <div class="section-head" data-reveal>
+                    <p class="eyebrow">Důvěra z reálného provozu</p>
+                    <h2>Co říkají kluby, které TeamPulse nasadily</h2>
+                </div>
+
+                <div class="testi-grid">
+                    <article class="testi-card" data-reveal>
+                        <div class="testi-top">
+                            <img src="/img/logos/fczlin.png" alt="FC Zlín">
+                            <div>
+                                <h3>FC Zlín</h3>
+                                <p>Fotbalový klub</p>
+                            </div>
+                        </div>
+                        <blockquote>
+                            Před TeamPulse jsme měli data v pěti různých tabulkách. Dnes máme přehled v reálném čase a trenéři šetří hodiny týdně.
+                        </blockquote>
+                    </article>
+                    <article class="testi-card" data-reveal>
+                        <div class="testi-top">
+                            <img src="/img/logos/trinec.png" alt="HC Třinec">
+                            <div>
+                                <h3>HC Třinec</h3>
+                                <p>Hokejový klub</p>
+                            </div>
+                        </div>
+                        <blockquote>
+                            Největší rozdíl je v komunikaci s rodiči. Notifikace fungují spolehlivě a všechny změny v rozpisu jdou ven okamžitě.
+                        </blockquote>
+                    </article>
+                    <article class="testi-card" data-reveal>
+                        <div class="testi-top">
+                            <img src="/img/logos/slavie.png" alt="SK Slavia">
+                            <div>
+                                <h3>SK Slavia</h3>
+                                <p>Mládežnický oddíl</p>
+                            </div>
+                        </div>
+                        <blockquote>
+                            TeamPulse působí profesionálně i směrem ven. Vlastní web a centrální data nám pomohly sjednotit celou organizaci.
+                        </blockquote>
+                    </article>
+                </div>
+
+                <div class="reference-logo-rail" data-reveal aria-label="Klubová loga">
+                    <div class="reference-logo-track">
+                        <div class="logo-marquee-group">
+                            <span class="club-logo"><img src="/img/logos/fczlin.png" alt="FC Zlín"></span>
+                            <span class="club-logo"><img src="/img/logos/trinec.png" alt="HC Třinec"></span>
+                            <span class="club-logo"><img src="/img/logos/slavie.png" alt="SK Slavia"></span>
+                            <span class="club-logo"><img src="/img/logos/sparta.png" alt="Sparta"></span>
+                            <span class="club-logo"><img src="/img/logos/rczlin.png" alt="RC Zlín"></span>
+                            <span class="club-logo"><img src="/img/logos/skb.png" alt="SKB"></span>
+                            <span class="club-logo"><img src="/img/logos/fczlin.png" alt="FC Zlín"></span>
+                            <span class="club-logo"><img src="/img/logos/trinec.png" alt="HC Třinec"></span>
+                            <span class="club-logo"><img src="/img/logos/slavie.png" alt="SK Slavia"></span>
+                            <span class="club-logo"><img src="/img/logos/sparta.png" alt="Sparta"></span>
+                            <span class="club-logo"><img src="/img/logos/rczlin.png" alt="RC Zlín"></span>
+                            <span class="club-logo"><img src="/img/logos/skb.png" alt="SKB"></span>
+                        </div>
+                        <div class="logo-marquee-group" aria-hidden="true">
+                            <span class="club-logo"><img src="/img/logos/fczlin.png" alt="FC Zlín"></span>
+                            <span class="club-logo"><img src="/img/logos/trinec.png" alt="HC Třinec"></span>
+                            <span class="club-logo"><img src="/img/logos/slavie.png" alt="SK Slavia"></span>
+                            <span class="club-logo"><img src="/img/logos/sparta.png" alt="Sparta"></span>
+                            <span class="club-logo"><img src="/img/logos/rczlin.png" alt="RC Zlín"></span>
+                            <span class="club-logo"><img src="/img/logos/skb.png" alt="SKB"></span>
+                            <span class="club-logo"><img src="/img/logos/fczlin.png" alt="FC Zlín"></span>
+                            <span class="club-logo"><img src="/img/logos/trinec.png" alt="HC Třinec"></span>
+                            <span class="club-logo"><img src="/img/logos/slavie.png" alt="SK Slavia"></span>
+                            <span class="club-logo"><img src="/img/logos/sparta.png" alt="Sparta"></span>
+                            <span class="club-logo"><img src="/img/logos/rczlin.png" alt="RC Zlín"></span>
+                            <span class="club-logo"><img src="/img/logos/skb.png" alt="SKB"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section cta-band">
+            <div class="container cta-band-wrap" data-reveal>
+                <div>
+                    <p class="eyebrow">Připraveno pro další sezonu</p>
+                    <h2>Spusťte moderní klubové řízení během několika dnů</h2>
+                    <p>Získejte přehled, kvalitu komunikace a profesionální dojem bez složité implementace.</p>
+                </div>
+                <div class="cta-band-actions">
+                    <a class="btn solid large" href="/zalozit-klub">Chci onboarding</a>
+                    <a class="btn ghost large" href="/login">Vstoupit do aplikace</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="section contact" id="kontakt">
+            <div class="container contact-grid">
+                <div class="contact-info" data-reveal>
+                    <p class="eyebrow">Kontakt</p>
+                    <h2>Spojme se a nastavme váš klub bez zdržení</h2>
+                    <p>Místo formuláře rovnou vidíte všechny cesty, jak nás zastihnout. Ozvěte se tak, jak vám to vyhovuje.</p>
+                </div>
+
+                <div class="contact-cards" data-reveal>
+                    <article class="contact-panel contact-panel-main">
+                        <div class="contact-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path d="M4 6.5C4 5.67 4.67 5 5.5 5h13c.83 0 1.5.67 1.5 1.5v11c0 .83-.67 1.5-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5v-11Z" stroke="currentColor" stroke-width="1.7"/>
+                                <path d="m5 7 7 5 7-5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <h3>E-mail podpora</h3>
+                        <a href="mailto:podpora@teampulse.cz">podpora@teampulse.cz</a>
+                        <p>Odpověď zpravidla do 2 hodin v pracovních dnech.</p>
+                    </article>
+
+                    <article class="contact-panel">
+                        <div class="contact-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path d="M7.2 3.8h2.3c.45 0 .84.3.95.73l.67 2.67a1 1 0 0 1-.3 1.02l-1.23 1.05a13.1 13.1 0 0 0 5.15 5.15l1.05-1.23a1 1 0 0 1 1.02-.3l2.67.67c.43.11.73.5.73.95v2.3A1.2 1.2 0 0 1 19.72 19C11.64 19 5 12.36 5 4.28c0-.66.54-1.2 1.2-1.2Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <h3>Telefonická linka</h3>
+                        <a href="tel:+420777000111">+420 777 000 111</a>
+                        <p>Pro urgentní situace během provozu klubu.</p>
+                    </article>
+
+                    <article class="contact-panel">
+                        <div class="contact-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.7"/>
+                                <path d="M12 8v4l2.8 1.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <h3>Onboarding slot</h3>
+                        <p>Do 1-3 dnů od potvrzení</p>
+                        <span>Společně připravíme data, role i první workflow.</span>
+                    </article>
+
+                    <article class="contact-panel contact-panel-note">
+                        <strong>Tip</strong>
+                        <p>Pošlete název klubu, sport a přibližný počet členů. Připravíme konkrétní postup na míru.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-wrap">
+            <div>
+                <a class="brand footer-brand" href="#top">
+                    <img src="/img/tp logo.png" alt="TeamPulse logo">
+                    <span>TeamPulse</span>
                 </a>
+                <p>Platforma pro moderní sportovní kluby, které chtějí řídit provoz profesionálně a bez chaosu.</p>
             </div>
-            <div class="hero-right">
-                <div class="hero-visual">
-                    <div class="red-shape"></div>
-                    <div class="laptop-mockup">
-                        <img src="/img/mockup.png" alt="TeamPulse Dashboard" class="laptop-image">
-                    </div>
-                    <div class="phone-mockup">
-                        <img src="/img/mockup2.png" alt="TeamPulse Mobile App" class="phone-image">
-                    </div>
-                </div>
+            <div>
+                <h3>Produkt</h3>
+                <a href="#platforma">Platforma</a>
+                <a href="#funkce">Funkce</a>
+                <a href="#reference">Reference</a>
             </div>
-        </div>
-        </div>
-    </section>
-
-<!-- Platforma Section -->
-<section id="platforma" class="platforma-section">
-  <div class="container">
-    <div class="section-header">
-      <h2 class="section-title">Vše, co pro snadnou správu potřebuješ</h2>
-    </div>
-
-    <!-- Tabs -->
-    <div class="platforma-tabs" role="tablist" aria-label="Funkce platformy">
-      <button class="platforma-tab active" role="tab" aria-selected="true" data-feature="profil">Uživatelský profil</button>
-    <button class="platforma-tab" role="tab" aria-selected="false" data-feature="web">Web</button>
-      <button class="platforma-tab" role="tab" aria-selected="false" data-feature="dashboard">Dashboard</button>
-      <button class="platforma-tab" role="tab" aria-selected="false" data-feature="clenove">Členové</button>
-    <button class="platforma-tab" role="tab" aria-selected="false" data-feature="nastaveni">Nastavení</button>
-      <button class="platforma-tab" role="tab" aria-selected="false" data-feature="komunikace">Komunikace</button>
-      <button class="platforma-tab" role="tab" aria-selected="false" data-feature="dochazka">Docházka</button>
-      <button class="platforma-tab" role="tab" aria-selected="false" data-feature="prihlasky">Přihlášky</button>
-
-    </div>
-
-    <!-- Content -->
-    <div class="platforma-showcase">
-      <div class="platforma-media">
-        <div class="platforma-media-frame">
-                    <div class="platforma-window-bar">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                        <div class="platforma-window-path" id="platformaWindowPath">/app/profil</div>
-                    </div>
-          <img id="platformaImage" src="/img/preview.png" alt="Ukázka funkce TeamPulse">
-        </div>
-
-        <div class="platforma-controls">
-          <button class="platforma-arrow" type="button" aria-label="Předchozí kategorie" data-dir="-1">‹</button>
-          <button class="platforma-arrow" type="button" aria-label="Další kategorie" data-dir="1">›</button>
-        </div>
-      </div>
-
-      <div class="platforma-panel">
-                <div class="platforma-panel-meta">
-                    <span class="platforma-counter" id="platformaCounter">01 / 08</span>
-                    <div class="platforma-progress-line"><span id="platformaProgress"></span></div>
-                </div>
-        <h3 id="platformaTitle">Uživatelský profil</h3>
-        <p id="platformaDesc">
-          Přehledný profil člena s fotkou, kontakty, rolí v týmu, historií plateb, dokumenty a rychlými akcemi.
-          Vše na jednom místě – bez hledání a bez papírů.
-        </p>
-
-        <ul id="platformaBullets" class="platforma-bullets">
-          <li>Fotka + základní údaje</li>
-          <li>Role, tým, kontakty</li>
-          <li>Dokumenty a historie</li>
-          <li>Rychlé akce pro správce</li>
-        </ul>
-
-                <div class="platforma-tags" id="platformaTags">
-                    <span class="platforma-tag">Přehled</span>
-                    <span class="platforma-tag">Rychlé akce</span>
-                    <span class="platforma-tag">Bez papírů</span>
-                </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-
-    <!-- Reference Section -->
-    <section id="reference" class="reference-section">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Reference</h2>
-                <p class="section-subtitle">Důvěřují nám stovky klubů a organizací</p>
-            </div>
-            <div class="testimonials-grid">
-                <div class="testimonial-card">
-                    <div class="testimonial-header">
-                        <div class="testimonial-logo">
-                            <img src="/img/logos/fczlin.png" alt="Klub logo">
-                        </div>
-                        <div class="testimonial-info">
-                            <h4>FC Zlín</h4>
-                            <p>Fotbalový klub</p>
-                        </div>
-                    </div>
-                    <p class="testimonial-text">"TeamPulse nám ušetřil desítky hodin administrativní práce. Všechno je na jednom místě a funguje to skvěle."</p>
-                    <div class="testimonial-author">
-                        <strong>Jan Novák</strong>
-                        <span>Předseda klubu</span>
-                    </div>
-                </div>
-                <div class="testimonial-card">
-                    <div class="testimonial-header">
-                        <div class="testimonial-logo">
-                            <img src="/img/logos/trinec.png" alt="Klub logo">
-                        </div>
-                        <div class="testimonial-info">
-                            <h4>HC Třinec</h4>
-                            <p>Hokejový klub</p>
-                        </div>
-                    </div>
-                    <p class="testimonial-text">"Nejlepší investice, kterou jsme udělali. Komunikace s členy je nyní mnohem jednodušší a efektivnější."</p>
-                    <div class="testimonial-author">
-                        <strong>Marie Svobodová</strong>
-                        <span>Manažerka klubu</span>
-                    </div>
-                </div>
-                <div class="testimonial-card">
-                    <div class="testimonial-header">
-                        <div class="testimonial-logo">
-                            <img src="/img/logos/slavie.png" alt="Klub logo">
-                        </div>
-                        <div class="testimonial-info">
-                            <h4>FC Slavia Praha</h4>
-                            <p>Fotbalový klub</p>
-                        </div>
-                    </div>
-                    <p class="testimonial-text">"Platforma je intuitivní a podpora je vždy ochotná pomoci. Vřele doporučujeme všem klubům."</p>
-                    <div class="testimonial-author">
-                        <strong>Petr Dvořák</strong>
-                        <span>Trenér</span>
-                    </div>
-                </div>
-            </div>
-            <div class="clients-logos">
-                <h3 class="clients-title">Mezi naše klienty patří:</h3>
-                <div class="logos-scroll-container">
-                    <div class="logos-scroll">
-                        <div class="logo-item">
-                            <img src="/img/logos/fczlin.png" alt="Klient logo">
-                        </div>
-                        <div class="logo-item">
-                            <img src="/img/logos/hokej zlin.png" alt="Klient logo">
-                        </div>
-                        <div class="logo-item">
-                            <img src="/img/logos/rczlin.png" alt="Klient logo">
-                        </div>
-                        <div class="logo-item">
-                            <img src="/img/logos/skb.png" alt="Klient logo">
-                        </div>
-                        <div class="logo-item">
-                            <img src="/img/logos/slavie.png" alt="Klient logo">
-                        </div>
-                        <div class="logo-item">
-                            <img src="/img/logos/sparta.png" alt="Klient logo">
-                        </div>
-                        <!-- Duplicate for seamless loop -->
-                        <div class="logo-item">
-                            <img src="/img/logos/trinec.png" alt="Klient logo">
-                        </div>
-                        <div class="logo-item">
-                            <img src="/img/logos/fczlin.png" alt="Klient logo">
-                        </div>
-                        <div class="logo-item">
-                            <img src="/img/logos/hokej zlin.png" alt="Klient logo">
-                        </div>
-                        <div class="logo-item">
-                            <img src="/img/logos/rczlin.png" alt="Klient logo">
-                        </div>
-                        <div class="logo-item">
-                            <img src="/img/logos/slavie.png" alt="Klient logo">
-                        </div>
-                        <div class="logo-item">
-                            <img src="/img/logos/sparta.png" alt="Klient logo">
-                        </div>
-                    </div>
-                </div>
+            <div>
+                <h3>Společnost</h3>
+                <a href="#pribeh">Jak to funguje</a>
+                <a href="#kontakt">Kontakt</a>
+                <a href="/login">Přihlášení</a>
             </div>
         </div>
-    </section>
-
-    
-
-    <!-- Proč TP Section -->
-    <section id="proc" class="why-section">
-        <div class="why-background">
-            <div class="why-red-circle"></div>
-            <div class="why-red-circle-small"></div>
-        </div>
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Proč TeamPulse?</h2>
-                <p class="section-subtitle">Výhody, které vás přesvědčí</p>
-            </div>
-            <div class="why-content-wrapper">
-                <div class="why-visual">
-                    <!-- Laptop mockup (nahrazuje původní SVG telefon) -->
-                    <div class="why-laptop-mockup">
-                        <img src="/img/mockup.png" alt="TeamPulse Dashboard" class="why-laptop-image">
-                    </div>
-                
-                </div>
-                <div class="why-grid">
-                    <div class="why-card">
-                        <div class="why-number">01</div>
-                        <h3>Jednoduchost</h3>
-                        <p>Intuitivní rozhraní, které zvládne každý. Žádné složité nastavení nebo školení.</p>
-                    </div>
-                    <div class="why-card">
-                        <div class="why-number">02</div>
-                        <h3>Spolehlivost</h3>
-                        <p>99.9% dostupnost služeb. Vaše data jsou v bezpečí a zálohována.</p>
-                    </div>
-                    <div class="why-card">
-                        <div class="why-number">03</div>
-                        <h3>Rychlost</h3>
-                        <p>Rychlá implementace a okamžitý přístup. Začnete používat během několika minut.</p>
-                    </div>
-                    <div class="why-card">
-                        <div class="why-number">04</div>
-                        <h3>Inovace</h3>
-                        <p>Pravidelné aktualizace a nové funkce. Vždy máte přístup k nejnovějším technologiím.</p>
-                    </div>
-                 
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- O nás Section -->
-    <section id="o-nas" class="about-section about-modern-section">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">O nás</h2>
-                <p class="section-subtitle">Stavíme produkt, který klubům vrací čas na sport.</p>
-            </div>
-
-            <div class="about-modern-grid">
-                <article class="about-modern-story">
-                    <h3>Od chaosu v tabulkách k jednomu chytrému workflow</h3>
-                    <p>
-                        TeamPulse vznikl přímo v klubovém prostředí. Viděli jsme desítky admin úkolů,
-                        které se opakovaly pořád dokola, a rozhodli jsme se je zautomatizovat.
-                    </p>
-                    <p>
-                        Nechceme dělat jen “další systém”. Děláme nástroj, který je rychlý, přehledný,
-                        a přirozený pro trenéry, vedení i rodiče.
-                    </p>
-                    <div class="about-modern-metrics">
-                        <div>
-                            <strong>230k+</strong>
-                            <span>aktivních členů</span>
-                        </div>
-                        <div>
-                            <strong>900+</strong>
-                            <span>klubů v provozu</span>
-                        </div>
-                        <div>
-                            <strong>24/7</strong>
-                            <span>dostupnost platformy</span>
-                        </div>
-                    </div>
-                </article>
-
-                <aside class="about-modern-timeline">
-                    <h4>Jak přemýšlíme o produktu</h4>
-                    <ol>
-                        <li>
-                            <span>1</span>
-                            <div>
-                                <strong>Posloucháme kluby</strong>
-                                <p>Každou funkci stavíme na reálné zpětné vazbě.</p>
-                            </div>
-                        </li>
-                        <li>
-                            <span>2</span>
-                            <div>
-                                <strong>Navrhujeme jednoduchost</strong>
-                                <p>Méně kliků, jasné kroky, menší chybovost.</p>
-                            </div>
-                        </li>
-                        <li>
-                            <span>3</span>
-                            <div>
-                                <strong>Iterujeme rychle</strong>
-                                <p>Vylepšení doručujeme průběžně bez složitých migrací.</p>
-                            </div>
-                        </li>
-                    </ol>
-                </aside>
-            </div>
-        </div>
-    </section>
-
-    <!-- Podpora Section -->
-    <section id="podpora" class="support-section support-modern-section">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Podpora</h2>
-                <p class="section-subtitle">Ne jen helpdesk. Partner, který řeší věci s vámi.</p>
-            </div>
-
-            <div class="support-modern-grid">
-                <div class="support-modern-channels">
-                    <article class="support-modern-card">
-                        <h3>Rychlé kanály</h3>
-                        <ul>
-                            <li>
-                                <strong>Email</strong>
-                                <span>odpověď obvykle do 2 hodin</span>
-                            </li>
-                            <li>
-                                <strong>Telefon</strong>
-                                <span>urgentní případy ve všední dny</span>
-                            </li>
-                            <li>
-                                <strong>Onboarding call</strong>
-                                <span>nastavení klubu krok za krokem</span>
-                            </li>
-                        </ul>
-                    </article>
-
-                    <article class="support-modern-card support-modern-card-accent">
-                        <h3>Co řešíme nejčastěji</h3>
-                        <p>Migrace dat, role a oprávnění, komunikace s rodiči, automatizace plateb.</p>
-                        <a href="/zalozit-klub">Domluvit onboarding</a>
-                    </article>
-                </div>
-
-                <div class="support-modern-faq">
-                    <h3>Časté dotazy</h3>
-
-                    <button class="support-faq-item active" type="button">
-                        <span>Jak rychle umíme TeamPulse nasadit?</span>
-                        <i>+</i>
-                    </button>
-                    <div class="support-faq-answer open">Většina klubů má hotovo během 1-3 dnů včetně importu členů.</div>
-
-                    <button class="support-faq-item" type="button">
-                        <span>Pomůžete nám s prvním nastavením?</span>
-                        <i>+</i>
-                    </button>
-                    <div class="support-faq-answer">Ano, onboarding vedeme společně na online hovoru a vše nastavíme spolu.</div>
-
-                    <button class="support-faq-item" type="button">
-                        <span>Je možné mít vlastní klubové barvy a logo?</span>
-                        <i>+</i>
-                    </button>
-                    <div class="support-faq-answer">Ano. Branding klubu si v administraci upravíte během pár kliknutí.</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="main-footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-column">
-                    
-                    <p>Platforma pro sportovní kluby a organizace. Zjednodušte si správu vašeho klubu.</p>
-                </div>
-                <div class="footer-column">
-                    <h4>Produkt</h4>
-                    <ul>
-                        <li><a href="#platforma">Platforma</a></li>
-                        <li><a href="#reference">Reference</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h4>Společnost</h4>
-                    <ul>
-                        <li><a href="#o-nas">O nás</a></li>
-                        <li><a href="#podpora">Podpora</a></li>
-                        <li><a href="#proc">Proč TP?</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h4>Kontakt</h4>
-                    <ul>
-                        <li>Email: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d5bcbbb3ba9581b0b4b885a0b9a6b0fbb6af">[email&#160;protected]</a></li>
-                        <li>Telefon: +420 123 456 789</li>
-                        <li>Adresa: Praha, Česká republika</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2026 TeamPulse. Všechna práva vyhrazena.</p>
-            </div>
+        <div class="footer-bottom">
+            <p>© 2026 TeamPulse. Všechna práva vyhrazena.</p>
         </div>
     </footer>
 
-
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
     <script src="/landing/script.js"></script>
 </body>
 </html>

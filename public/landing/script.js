@@ -1,404 +1,288 @@
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const href = this.getAttribute('href');
-        if (!href || href === '#') return;
+document.addEventListener("DOMContentLoaded", () => {
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const canUsePointerParallax = window.matchMedia("(pointer: fine)").matches && window.matchMedia("(min-width: 981px)").matches;
 
-        const target = document.querySelector(href);
-        if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
-    });
-});
+    const header = document.querySelector(".site-header");
+    const menuToggle = document.querySelector(".menu-toggle");
+    const mobileNav = document.querySelector(".mobile-nav");
 
-// Optimized Intersection Observer pro plynulejší animace
-const observerOptions = {
-    threshold: 0.15,
-    rootMargin: '0px 0px -100px 0px'
-};
-
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            requestAnimationFrame(() => {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-            });
-        }
-    });
-}, observerOptions);
-
-// Observe elements for scroll animations
-document.addEventListener('DOMContentLoaded', () => {
-    const animatedElements = document.querySelectorAll(
-        '.feature-card, .testimonial-card, .support-card, .why-card, .stat-card, .about-modern-story, .about-modern-timeline, .support-modern-card, .support-modern-faq'
-    );
-
-    animatedElements.forEach((el, index) => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(30px)';
-        el.style.transition = 'opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
-        el.style.transitionDelay = `${index * 0.08}s`;
-        observer.observe(el);
-    });
-
-    const faqButtons = document.querySelectorAll('.support-faq-item');
-    faqButtons.forEach((btn) => {
-        btn.addEventListener('click', () => {
-            const alreadyActive = btn.classList.contains('active');
-
-            faqButtons.forEach((otherBtn) => {
-                otherBtn.classList.remove('active');
-                const answer = otherBtn.nextElementSibling;
-                if (answer && answer.classList.contains('support-faq-answer')) {
-                    answer.classList.remove('open');
-                }
-            });
-
-            if (!alreadyActive) {
-                btn.classList.add('active');
-                const answer = btn.nextElementSibling;
-                if (answer && answer.classList.contains('support-faq-answer')) {
-                    answer.classList.add('open');
-                }
-            }
-        });
-    });
-});
-
-// CTA button functionality s plynulejší animací
-document.querySelectorAll('.btn-primary').forEach(button => {
-    button.addEventListener('click', function () {
-        requestAnimationFrame(() => {
-            this.style.transform = 'scale(0.95)';
+    if (menuToggle && mobileNav) {
+        menuToggle.addEventListener("click", () => {
+            const isOpen = menuToggle.classList.toggle("open");
+            mobileNav.classList.toggle("open", isOpen);
+            menuToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+            document.body.style.overflow = isOpen ? "hidden" : "";
         });
 
-        setTimeout(() => {
-            requestAnimationFrame(() => {
-                this.style.transform = '';
+        mobileNav.querySelectorAll("a").forEach((link) => {
+            link.addEventListener("click", () => {
+                menuToggle.classList.remove("open");
+                mobileNav.classList.remove("open");
+                menuToggle.setAttribute("aria-expanded", "false");
+                document.body.style.overflow = "";
             });
-        }, 150);
-
-        console.log('CTA button clicked');
-    });
-});
-
-// Smooth page load animation - OPTIMALIZOVÁNO
-window.addEventListener('load', () => {
-    requestAnimationFrame(() => {
-        document.body.style.opacity = '0';
-        document.body.style.transition = 'opacity 0.6s ease-in';
-
-        requestAnimationFrame(() => {
-            document.body.style.opacity = '1';
         });
-    });
-});
-
-// Hamburger menu toggle
-const hamburger = document.querySelector(".hamburger-menu");
-const navMenu = document.querySelector(".nav-menu");
-
-hamburger.addEventListener("click", () => {
-    hamburger.classList.toggle("active");
-    navMenu.classList.toggle("mobile-active");
-    document.body.style.overflow = navMenu.classList.contains("mobile-active") ? "hidden" : "";
-});
-
-// Zavřít menu při kliknutí na odkaz
-document.querySelectorAll(".nav-menu a").forEach(link => {
-    link.addEventListener("click", () => {
-        hamburger.classList.remove("active");
-        navMenu.classList.remove("mobile-active");
-        document.body.style.overflow = "";
-    });
-});
-
-// Performance optimization - throttle scroll events
-let ticking = false;
-
-window.addEventListener('scroll', () => {
-    if (!ticking) {
-        window.requestAnimationFrame(() => {
-            ticking = false;
-        });
-        ticking = true;
     }
-}, { passive: true });
 
+    document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", (event) => {
+            const href = anchor.getAttribute("href");
+            if (!href || href === "#") return;
 
-// ============================================
-// Platforma Tabs (switch content) + animace
-// ============================================
-document.addEventListener('DOMContentLoaded', () => {
-    const FEATURES = [
-        {
-            id: 'profil',
-            title: 'Uživatelský profil',
-            desc: 'Přehledný profil člena s fotkou, kontakty, rolí v týmu, historií plateb, dokumenty a rychlými akcemi. Vše na jednom místě – bez hledání a bez papírů.',
-            bullets: ['Fotka + základní údaje', 'Role, tým, kontakty', 'Dokumenty a historie', 'Rychlé akce pro správce'],
-            img: '/img/profil.png'
+            const target = document.querySelector(href);
+            if (!target) return;
+
+            event.preventDefault();
+            target.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+    });
+
+    const showcaseData = {
+        dashboard: {
+            image: "/img/web-dashboard.png",
+            route: "/app/dashboard",
+            alt: "Dashboard TeamPulse"
         },
-        {
-            id: 'web',
-            title: 'Web',
-            desc: 'Moderní klubový web navázaný na data z platformy. Jednoduše udržíš informace aktuální a bez duplicit.',
-            bullets: ['Aktuální informace bez práce navíc', 'Napojení na klubová data', 'Rychlé úpravy', 'Moderní design'],
-            img: '/img/preview.png'
+        clenove: {
+            image: "/img/clenove.png",
+            route: "/app/clenove",
+            alt: "Správa členů"
         },
-
-        {
-            id: 'dashboard',
-            title: 'Dashboard',
-            desc: 'Přehledný dashboard s klíčovými informacemi o týmu, členech, aktivitách a statistikami. Vše na jednom místě – bez hledání a bez papírů.',
-            bullets: ['Přehledný přehled', 'Klíčové informace', 'Aktivity a statistiky', 'Rychlý přístup k akcím'],
-            img: '/img/web-dashboard.png'
+        profil: {
+            image: "/img/profil.png",
+            route: "/app/profil",
+            alt: "Uživatelský profil"
         },
-        {
-            id: 'clenove',
-            title: 'Členové',
-            desc: 'Kompletní databáze členů s filtrováním, rolemi a jasnou historií. Jednoduchá správa oddílů i více týmů.',
-            bullets: ['Databáze členů a rodičů', 'Role a oprávnění', 'Štítky a filtrování', 'Historie změn'],
-            img: '/img/clenove.png'
-        },
-        {
-            id: 'nastaveni',
-            title: 'Nastavení',
-            desc: 'Uživatelské nastavení. Je možné si zde upravit barvy pro klub, nastavit notifikace a další možnosti přizpůsobení.',
-            bullets: ['Změna barev pro klub, Zapnutí dvojfaktorového ověření', 'Nastavení notifikací','Další možnosti přizpůsobení'],
-            img: '/img/nastaveni.png'
-        },
-        {
-            id: 'komunikace',
-            title: 'Komunikace',
-            desc: 'Zprávy a oznámení pro tým i rodiče. Notifikace do mobilu i e-mailu, vše přehledně na jednom místě.',
-            bullets: ['Týmová zeď / nástěnka', 'Notifikace (mobil + e-mail)', 'Skupiny a cílení', 'Připnuté informace'],
-            img: '/img/preview.png'
-        },
-        {
-            id: 'dochazka',
-            title: 'Docházka',
-            desc: 'Docházka na tréninky a zápasy bez chaosu. Přehledně vidíš potvrzení, omluvenky a kapacity.',
-            bullets: ['Potvrzení / omluvenky', 'Kapacity a limity', 'Přehled za období', 'Rychlé exporty'],
-            img: '/img/preview.png'
-        },
-
-        {
-            id: 'prihlasky',
-            title: 'Přihlášky',
-            desc: 'Online přihlášky do klubu nebo na akce. Méně papírů, více pořádku – data jdou rovnou do systému.',
-            bullets: ['Formuláře na míru', 'Automatické založení člena', 'Potvrzení e-mailem', 'Export a kontrola dat'],
-            img: '/img/preview.png'
-        }
-    ];
-
-    const tabs = Array.from(document.querySelectorAll('.platforma-tab'));
-    const titleEl = document.getElementById('platformaTitle');
-    const descEl = document.getElementById('platformaDesc');
-    const bulletsEl = document.getElementById('platformaBullets');
-    const imgEl = document.getElementById('platformaImage');
-    const tagsEl = document.getElementById('platformaTags');
-    const progressEl = document.getElementById('platformaProgress');
-    const counterEl = document.getElementById('platformaCounter');
-    const pathEl = document.getElementById('platformaWindowPath');
-
-    const arrows = Array.from(document.querySelectorAll('.platforma-arrow'));
-
-    const panelEl = document.querySelector('.platforma-panel');
-    const mediaFrameEl = document.querySelector('.platforma-media-frame');
-
-    if (!tabs.length || !titleEl || !descEl || !bulletsEl || !imgEl) return;
-
-    let activeIndex = Math.max(0, FEATURES.findIndex(f => f.id === 'profil'));
-    let animLock = false;
-
-    const getLoopIndex = (idx) => (idx + FEATURES.length) % FEATURES.length;
-
-    const routeByFeature = {
-        profil: '/app/profil',
-        web: '/app/web',
-        dashboard: '/app/dashboard',
-        clenove: '/app/clenove',
-        nastaveni: '/app/nastaveni',
-        komunikace: '/app/komunikace',
-        dochazka: '/app/dochazka',
-        prihlasky: '/app/prihlasky'
-    };
-
-    const tagsByFeature = {
-        profil: ['Profil', 'Kontakty', 'Historie'],
-        web: ['Web', 'Publikace', 'Branding'],
-        dashboard: ['Přehled', 'KPI', 'Rychlý start'],
-        clenove: ['Evidence', 'Role', 'Filtry'],
-        nastaveni: ['Barvy', '2FA', 'Notifikace'],
-        komunikace: ['Nástěnka', 'Notifikace', 'Skupiny'],
-        dochazka: ['Docházka', 'Omluvenky', 'Kapacity'],
-        prihlasky: ['Formuláře', 'Automatizace', 'Import']
-    };
-
-    const renderMeta = (featureId, idx) => {
-        const total = FEATURES.length;
-        const current = idx + 1;
-
-        if (counterEl) {
-            counterEl.textContent = `${String(current).padStart(2, '0')} / ${String(total).padStart(2, '0')}`;
-        }
-
-        if (progressEl) {
-            progressEl.style.width = `${(current / total) * 100}%`;
-        }
-
-        if (pathEl) {
-            pathEl.textContent = routeByFeature[featureId] || `/app/${featureId}`;
-        }
-
-        if (tagsEl) {
-            const tags = tagsByFeature[featureId] || [];
-            tagsEl.innerHTML = '';
-            tags.forEach(tag => {
-                const item = document.createElement('span');
-                item.className = 'platforma-tag';
-                item.textContent = tag;
-                tagsEl.appendChild(item);
-            });
+        nastaveni: {
+            image: "/img/nastaveni.png",
+            route: "/app/nastaveni",
+            alt: "Nastavení klubu"
         }
     };
 
-    const setContentInstant = (idx) => {
-        const f = FEATURES[idx];
-        if (!f) return;
+    const showcaseImage = document.getElementById("showcaseImage");
+    const showcaseRoute = document.getElementById("showcaseRoute");
+    const tabs = Array.from(document.querySelectorAll(".show-tab"));
 
-        activeIndex = idx;
+    const switchShowcase = (key) => {
+        const payload = showcaseData[key];
+        if (!payload || !showcaseImage || !showcaseRoute) return;
 
-        titleEl.textContent = f.title;
-        descEl.textContent = f.desc;
-
-        bulletsEl.innerHTML = '';
-        f.bullets.forEach(b => {
-            const li = document.createElement('li');
-            li.textContent = b;
-            bulletsEl.appendChild(li);
+        tabs.forEach((tab) => {
+            const active = tab.dataset.key === key;
+            tab.classList.toggle("active", active);
+            tab.setAttribute("aria-selected", active ? "true" : "false");
         });
 
-        imgEl.src = f.img;
-        imgEl.alt = `Ukázka: ${f.title}`;
-        renderMeta(f.id, idx);
+        if (!prefersReducedMotion && window.gsap) {
+            gsap.to(".showcase-window", { y: 10, opacity: 0.6, duration: 0.16, ease: "power2.out" });
+        }
+
+        const applyData = () => {
+            showcaseImage.src = payload.image;
+            showcaseImage.alt = payload.alt;
+            showcaseRoute.textContent = payload.route;
+
+            if (!prefersReducedMotion && window.gsap) {
+                gsap.to(".showcase-window", { y: 0, opacity: 1, duration: 0.26, ease: "power2.out" });
+            }
+        };
+
+        if (showcaseImage.complete) {
+            applyData();
+        } else {
+            showcaseImage.addEventListener("load", applyData, { once: true });
+            showcaseImage.src = payload.image;
+        }
     };
 
-    const setActiveTabUI = (featureId) => {
-        tabs.forEach(t => {
-            const isActive = t.dataset.feature === featureId;
-            t.classList.toggle('active', isActive);
-            t.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    tabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+            const key = tab.dataset.key;
+            if (key) switchShowcase(key);
         });
+    });
+
+    const counters = Array.from(document.querySelectorAll("[data-counter]"));
+
+    const compactNumber = (value) => {
+        if (value >= 100000) {
+            return `${Math.round(value / 1000)}k+`;
+        }
+
+        if (value >= 1000) {
+            return `${Math.round(value / 100) / 10}k`;
+        }
+
+        return Number.isInteger(value) ? String(value) : value.toFixed(1);
     };
 
-    const animateSwap = (nextIndex) => {
-    if (animLock) return;
+    if (header) {
+        const updateHeader = () => {
+            header.classList.toggle("scrolled", window.scrollY > 12);
+        };
+        updateHeader();
+        window.addEventListener("scroll", updateHeader, { passive: true });
+    }
 
-    const f = FEATURES[nextIndex];
-    if (!f) return;
+    if (prefersReducedMotion || !window.gsap || !window.ScrollTrigger) {
+        document.querySelectorAll("[data-reveal]").forEach((el) => {
+            el.style.opacity = "1";
+            el.style.transform = "none";
+        });
 
-    const movingRight = getLoopIndex(nextIndex - activeIndex) === 1;
+        counters.forEach((counter) => {
+            const end = Number(counter.getAttribute("data-counter"));
+            if (Number.isNaN(end)) return;
+            counter.textContent = end === 99.9 ? "99.9" : compactNumber(end);
+            if (end === 99.9) counter.textContent += "%";
+        });
 
-    setActiveTabUI(f.id);
-
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const canAnimate = panelEl && mediaFrameEl && !reduced;
-
-    if (!canAnimate) {
-        setContentInstant(nextIndex);
         return;
     }
 
-    animLock = true;
+    gsap.registerPlugin(ScrollTrigger);
 
-    panelEl.classList.toggle('slide-right', movingRight);
-    panelEl.classList.toggle('slide-left', !movingRight);
-    mediaFrameEl.classList.toggle('slide-right', movingRight);
-    mediaFrameEl.classList.toggle('slide-left', !movingRight);
+    const heroIntro = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-    mediaFrameEl.classList.add('is-switching');
+    heroIntro
+        .from(".site-header", { y: -22, opacity: 0, duration: 0.45 })
+        .from(".hero-content .eyebrow", { y: 18, opacity: 0, duration: 0.45 }, "<0.06")
+        .from(".hero-content h1", { y: 24, opacity: 0, duration: 0.58 }, "<0.04")
+        .from(".hero-lead, .hero-ctas, .hero-metrics", { y: 16, opacity: 0, duration: 0.5, stagger: 0.09 }, "<0.05")
+        .from(".red-shape", { scale: 0.9, opacity: 0, duration: 0.62 }, "<0.06")
+        .from(".laptop-mockup", { y: 24, opacity: 0, rotate: -8, duration: 0.72 }, "<0.08")
+        .from(".phone-mockup", { y: 30, opacity: 0, rotate: -2, duration: 0.72 }, "<0.1")
+        .to("[data-reveal]", {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            stagger: 0.08,
+            delay: 0.08
+        }, "<");
 
-    // animace ven
-    panelEl.classList.add('is-animating', 'fade-out');
-    mediaFrameEl.classList.add('is-animating', 'fade-out');
+    gsap.to(".bg-ribbon", {
+        x: 48,
+        duration: 8,
+        ease: "sine.inOut",
+        repeat: -1,
+        yoyo: true
+    });
 
-    setTimeout(() => {
-        activeIndex = nextIndex;
+    gsap.to(".bg-orb-c", {
+        y: -36,
+        duration: 7,
+        ease: "sine.inOut",
+        repeat: -1,
+        yoyo: true
+    });
 
-        titleEl.textContent = f.title;
-        descEl.textContent = f.desc;
+    document.querySelectorAll("[data-reveal]").forEach((element) => {
+        if (element.closest(".hero")) return;
 
-        bulletsEl.innerHTML = '';
-        f.bullets.forEach(b => {
-            const li = document.createElement('li');
-            li.textContent = b;
-            bulletsEl.appendChild(li);
-        });
+        const delay = Number(element.getAttribute("data-delay") || 0);
 
-        const finishIn = () => {
-            // animace dovnitř = odebrání fade-out (base state má transition)
-            panelEl.classList.remove('fade-out');
-            mediaFrameEl.classList.remove('fade-out');
+        gsap.fromTo(
+            element,
+            { opacity: 0, y: 28 },
+            {
+                opacity: 1,
+                y: 0,
+                duration: 0.65,
+                delay,
+                ease: "power2.out",
+                scrollTrigger: {
+                    trigger: element,
+                    start: "top 84%",
+                    once: true
+                }
+            }
+        );
+    });
 
-            setTimeout(() => {
-                panelEl.classList.remove('is-animating');
-                mediaFrameEl.classList.remove('is-animating');
-                animLock = false;
-            }, 360);
-        };
+    document.querySelectorAll("[data-parallax]").forEach((element) => {
+        const speed = Number(element.getAttribute("data-parallax") || 0.15);
 
-        // pokud se mění obrázek, počkej na load (ať se to necukne)
-        let done = false;
-        const onLoad = () => {
-            if (done) return;
-            done = true;
-            imgEl.removeEventListener('load', onLoad);
-            finishIn();
-        };
-
-        imgEl.addEventListener('load', onLoad);
-        imgEl.src = f.img;
-        imgEl.alt = `Ukázka: ${f.title}`;
-        renderMeta(f.id, nextIndex);
-
-        // fallback pro cache / rychlý load
-        setTimeout(() => {
-            if (!done) onLoad();
-        }, 120);
-
-    }, 160);
-
-    setTimeout(() => {
-        mediaFrameEl.classList.remove('is-switching');
-        panelEl.classList.remove('slide-left', 'slide-right');
-        mediaFrameEl.classList.remove('slide-left', 'slide-right');
-    }, 460);
-};
-
-
-    const render = (idx) => animateSwap(idx);
-
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            const idx = FEATURES.findIndex(f => f.id === tab.dataset.feature);
-            if (idx >= 0) render(idx);
+        gsap.to(element, {
+            yPercent: speed * -45,
+            ease: "none",
+            scrollTrigger: {
+                trigger: element,
+                start: "top bottom",
+                end: "bottom top",
+                scrub: true
+            }
         });
     });
 
-    arrows.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const dir = Number(btn.dataset.dir || 0);
-            const next = (activeIndex + dir + FEATURES.length) % FEATURES.length;
-            render(next);
+    gsap.fromTo(
+        ".contact-panel",
+        { opacity: 0, y: 18 },
+        {
+            opacity: 1,
+            y: 0,
+            duration: 0.55,
+            stagger: 0.1,
+            ease: "power2.out",
+            scrollTrigger: {
+                trigger: ".contact-cards",
+                start: "top 84%",
+                once: true
+            }
+        }
+    );
+
+    const hero = document.querySelector(".hero");
+    if (hero && canUsePointerParallax) {
+        const mouseTargets = Array.from(hero.querySelectorAll("[data-mouse-parallax]"));
+
+        const updaters = mouseTargets.map((target) => {
+            const amount = Number(target.getAttribute("data-mouse-parallax") || 12);
+            return {
+                xTo: gsap.quickTo(target, "x", { duration: 0.7, ease: "power3.out" }),
+                yTo: gsap.quickTo(target, "y", { duration: 0.7, ease: "power3.out" }),
+                amount
+            };
+        });
+
+        hero.addEventListener("mousemove", (event) => {
+            const bounds = hero.getBoundingClientRect();
+            const xRatio = (event.clientX - bounds.left) / bounds.width - 0.5;
+            const yRatio = (event.clientY - bounds.top) / bounds.height - 0.5;
+
+            updaters.forEach((item) => {
+                item.xTo(xRatio * item.amount * 2);
+                item.yTo(yRatio * item.amount * 2);
+            });
+        });
+
+        hero.addEventListener("mouseleave", () => {
+            updaters.forEach((item) => {
+                item.xTo(0);
+                item.yTo(0);
+            });
+        });
+    }
+
+    counters.forEach((counter) => {
+        const end = Number(counter.getAttribute("data-counter"));
+        if (Number.isNaN(end)) return;
+
+        const value = { number: 0 };
+
+        gsap.to(value, {
+            number: end,
+            duration: 1.4,
+            ease: "power2.out",
+            scrollTrigger: {
+                trigger: counter,
+                start: "top 86%",
+                once: true
+            },
+            onUpdate: () => {
+                const current = end === 99.9 ? Number(value.number.toFixed(1)) : Math.round(value.number);
+                counter.textContent = end === 99.9 ? `${current}%` : compactNumber(current);
+            }
         });
     });
-
-    // init
-    setActiveTabUI(FEATURES[activeIndex]?.id || 'profil');
-    setContentInstant(activeIndex);
 });
