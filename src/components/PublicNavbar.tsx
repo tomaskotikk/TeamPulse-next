@@ -23,7 +23,7 @@ export default function PublicNavbar() {
     <header className="public-nav-shell">
       <div className="public-nav-bar">
         <Link href="/landing/index.html" className="public-nav-logo" aria-label="TeamPulse domov" onClick={closeMenu}>
-          <Image src="/img/tp logo.png" alt="TeamPulse" width={62} height={62} priority />
+          <Image src="/img/tp logo.png" alt="TeamPulse" width={62} height={62} style={{ height: 'auto' }} priority />
         </Link>
 
         <nav className="public-nav-links" aria-label="Hlavní navigace">
