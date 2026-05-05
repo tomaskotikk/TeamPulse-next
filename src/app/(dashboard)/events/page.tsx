@@ -42,6 +42,7 @@ type ClubEvent = {
   ends_at: string | null
   all_day: boolean
   created_at: string
+  categoryIds?: number[]
 }
 
 type EventFormState = {
@@ -56,6 +57,15 @@ type EventFormState = {
   repeatWeekdays: number[]
   repeatEndDate: string
 }
+
+type CategoryMemberUser = {
+  id: number
+  first_name: string
+  last_name: string
+  profile_picture: string | null
+}
+
+type CategoryMembersById = Record<number, CategoryMemberUser[]>
 
 const WEEKDAYS = [
   { label: 'po', value: 1 },
@@ -157,6 +167,12 @@ export default function EventsPage() {
   const [showEditModal, setShowEditModal] = useState(false)
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false)
   const [form, setForm] = useState<EventFormState>(() => defaultForm(dateKey(new Date())))
+  const [clubCategories, setClubCategories] = useState<{ id: number; name: string; color: string; member_count: number }[]>([])
+  const [selectedCategoryIds, setSelectedCategoryIds] = useState<number[]>([])
+  const [categoryMembersById, setCategoryMembersById] = useState<CategoryMembersById>({})
+  const [categoryMembersLoading, setCategoryMembersLoading] = useState<number[]>([])
+  const [categoryMembersError, setCategoryMembersError] = useState<Record<number, string>>({})
+  const [includeUncategorized, setIncludeUncategorized] = useState(false)
 
   const canCreate = user?.role === 'manažer' || user?.role === 'trenér'
 
@@ -230,6 +246,14 @@ export default function EventsPage() {
         setUser(ctx.user)
         setThemeVars(ctx.themeVars ?? {})
 
+        if (ctx.user?.role === 'manažer' || ctx.user?.role === 'trenér') {
+          const catRes = await fetch('/api/categories', { cache: 'no-store' })
+          if (catRes.ok) {
+            const catData = await catRes.json()
+            setClubCategories(catData.categories ?? [])
+          }
+        }
+
         await loadMonthEvents(currentMonth)
       } catch (error) {
         if (mounted) {
@@ -247,6 +271,41 @@ export default function EventsPage() {
       mounted = false
     }
   }, [currentMonth, loadMonthEvents])
+
+  useEffect(() => {
+    if (selectedCategoryIds.length === 0) return
+
+    const missing = selectedCategoryIds.filter((id) => !categoryMembersById[id] && !categoryMembersLoading.includes(id))
+    if (missing.length === 0) return
+
+    setCategoryMembersLoading((prev) => [...prev, ...missing])
+
+    missing.forEach(async (categoryId) => {
+      try {
+        const res = await fetch(`/api/categories/members?category_id=${categoryId}`, { cache: 'no-store' })
+        const data = await res.json()
+        if (!res.ok) {
+          throw new Error(data.error ?? 'Nepodařilo se načíst členy kategorie.')
+        }
+
+        const members = (data.members ?? [])
+          .map((row: { users?: CategoryMemberUser | null }) => row.users ?? null)
+          .filter(Boolean) as CategoryMemberUser[]
+
+        setCategoryMembersById((prev) => ({ ...prev, [categoryId]: members }))
+        setCategoryMembersError((prev) => {
+          const next = { ...prev }
+          delete next[categoryId]
+          return next
+        })
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Nepodařilo se načíst členy.'
+        setCategoryMembersError((prev) => ({ ...prev, [categoryId]: message }))
+      } finally {
+        setCategoryMembersLoading((prev) => prev.filter((id) => id !== categoryId))
+      }
+    })
+  }, [categoryMembersById, categoryMembersLoading, selectedCategoryIds])
 
   useEffect(() => {
     function syncViewport() {
@@ -330,6 +389,12 @@ export default function EventsPage() {
     })
   }
 
+  function initialsForUser(userInfo: CategoryMemberUser) {
+    const first = userInfo.first_name?.[0] ?? ''
+    const last = userInfo.last_name?.[0] ?? ''
+    return `${first}${last}`.toUpperCase()
+  }
+
   async function createEvent(e: React.FormEvent) {
     e.preventDefault()
     setErrorMsg(null)
@@ -344,6 +409,8 @@ export default function EventsPage() {
       date: form.date,
       startTime: form.startTime,
       endTime: form.endTime,
+      categoryIds: selectedCategoryIds,
+      includeUncategorized,
       repeat: form.repeatEnabled
         ? {
             enabled: true,
@@ -371,6 +438,7 @@ export default function EventsPage() {
       setSuccessMsg(createdCount > 1 ? `Vytvořeno ${createdCount} opakovaných událostí.` : 'Událost byla vytvořena.')
       setSelectedDate(form.date)
       setForm(defaultForm(form.date))
+      setSelectedCategoryIds([])
       setShowCreateModal(false)
       await loadMonthEvents(currentMonth)
     } catch {
@@ -401,6 +469,7 @@ export default function EventsPage() {
           date: form.date,
           startTime: form.startTime,
           endTime: form.endTime,
+          categoryIds: selectedCategoryIds,
         }),
       })
 
@@ -502,6 +571,8 @@ export default function EventsPage() {
                       className={styles.createBtn}
                       onClick={() => {
                         setForm((prev) => ({ ...prev, date: selectedDate, repeatEndDate: selectedDate }))
+                        setSelectedCategoryIds([])
+                        setIncludeUncategorized(false)
                         setShowCreateModal(true)
                       }}
                     >
@@ -608,6 +679,8 @@ export default function EventsPage() {
                             className={styles.iconActionBtn}
                             onClick={() => {
                               setForm(toFormFromEvent(selectedEvent))
+                              setSelectedCategoryIds(selectedEvent.categoryIds ?? [])
+                              setIncludeUncategorized(false)
                               setShowEditModal(true)
                             }}
                             title="Upravit událost"
@@ -785,6 +858,140 @@ export default function EventsPage() {
                   <label className={styles.label}>Popis</label>
                   <textarea className={styles.textarea} value={form.description} onChange={(e) => setFormField('description', e.target.value)} />
                 </div>
+
+                {clubCategories.length > 0 && (
+                  <div className={styles.formGridFull}>
+                    <label className={styles.label}>Kategorie (kdo uvidí událost)</label>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 4 }}>
+                      {clubCategories.map((cat) => {
+                        const active = selectedCategoryIds.includes(cat.id)
+                        return (
+                          <button
+                            key={cat.id}
+                            type="button"
+                            onClick={() => setSelectedCategoryIds((prev) =>
+                              active ? prev.filter((id) => id !== cat.id) : [...prev, cat.id]
+                            )}
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 6,
+                              height: 30,
+                              padding: '0 11px',
+                              borderRadius: 8,
+                              border: `1.5px solid ${active ? cat.color : 'var(--color-border)'}`,
+                              background: active ? `${cat.color}22` : 'transparent',
+                              color: active ? cat.color : 'var(--color-text-muted)',
+                              fontSize: 12.5,
+                              fontWeight: 600,
+                              cursor: 'pointer',
+                              transition: 'all 150ms ease',
+                            }}
+                          >
+                            <span style={{ width: 8, height: 8, borderRadius: '50%', background: cat.color, flexShrink: 0 }} />
+                            {cat.name}
+                            <span style={{ fontSize: 11, opacity: 0.7 }}>{cat.member_count}</span>
+                          </button>
+                        )
+                      })}
+                      <button
+                        type="button"
+                        onClick={() => setIncludeUncategorized((prev) => !prev)}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 6,
+                          height: 30,
+                          padding: '0 11px',
+                          borderRadius: 8,
+                          border: `1.5px solid ${includeUncategorized ? 'var(--color-text-muted)' : 'var(--color-border)'}`,
+                          background: includeUncategorized ? 'rgba(128,128,128,0.15)' : 'transparent',
+                          color: includeUncategorized ? 'var(--color-text)' : 'var(--color-text-muted)',
+                          fontSize: 12.5,
+                          fontWeight: 600,
+                          cursor: 'pointer',
+                          transition: 'all 150ms ease',
+                        }}
+                      >
+                        <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--color-text-dim)', flexShrink: 0 }} />
+                        Ostatní
+                      </button>
+                    </div>
+                    {(selectedCategoryIds.length > 0 || includeUncategorized) && (
+                      <p style={{ margin: '6px 0 0', fontSize: 12.5, color: 'var(--color-text-dim)' }}>
+                        Notifikace dostanou{' '}
+                        <strong style={{ color: 'var(--color-text)' }}>
+                          {clubCategories.filter((c) => selectedCategoryIds.includes(c.id)).reduce((sum, c) => sum + (c.member_count ?? 0), 0)} hráčů
+                        </strong>
+                        {includeUncategorized ? ' + nezařazení členové' : ''}.
+                      </p>
+                    )}
+                    {selectedCategoryIds.length === 0 && !includeUncategorized && (
+                      <p style={{ margin: '6px 0 0', fontSize: 12.5, color: 'var(--color-text-dim)' }}>
+                        Nevybráno → notifikaci dostanou všichni členové klubu.
+                      </p>
+                    )}
+                    {selectedCategoryIds.length > 0 && (
+                      <div className={styles.categoryMembersWrap}>
+                        <div className={styles.categoryMembersHeader}>Hráči v kategoriích</div>
+                        <div className={styles.categoryMembersGrid}>
+                          {selectedCategoryIds.map((categoryId) => {
+                            const cat = clubCategories.find((entry) => entry.id === categoryId)
+                            const members = categoryMembersById[categoryId]
+                            const isLoading = categoryMembersLoading.includes(categoryId)
+                            const error = categoryMembersError[categoryId]
+                            return (
+                              <div key={categoryId} className={styles.categoryMembersCard}>
+                                <div className={styles.categoryMembersTitle}>
+                                  <span className={styles.categoryMembersDot} style={{ background: cat?.color ?? 'var(--color-primary)' }} />
+                                  <span>{cat?.name ?? 'Kategorie'}</span>
+                                  <span className={styles.categoryMembersCount}>
+                                    {isLoading ? 'Načítám...' : `${members?.length ?? 0} hráčů`}
+                                  </span>
+                                </div>
+
+                                {error && (
+                                  <div className={styles.categoryMembersEmpty}>{error}</div>
+                                )}
+
+                                {!error && (isLoading || !members) && (
+                                  <div className={styles.categoryMembersEmpty}>Načítám seznam hráčů…</div>
+                                )}
+
+                                {!error && members && members.length === 0 && (
+                                  <div className={styles.categoryMembersEmpty}>Kategorie zatím nemá žádné hráče.</div>
+                                )}
+
+                                {!error && members && members.length > 0 && (
+                                  <div className={styles.categoryMembersList}>
+                                    {members.map((member) => (
+                                      <div key={member.id} className={styles.categoryMemberRow}>
+                                        {member.profile_picture ? (
+                                          <img
+                                            src={`/uploads/profiles/${member.profile_picture}`}
+                                            alt=""
+                                            className={styles.categoryMemberAvatarImg}
+                                          />
+                                        ) : (
+                                          <div className={styles.categoryMemberAvatar}>
+                                            {initialsForUser(member)}
+                                          </div>
+                                        )}
+                                        <span className={styles.categoryMemberName}>
+                                          {member.first_name} {member.last_name}
+                                        </span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div className={styles.repeatWrap}>
@@ -887,6 +1094,72 @@ export default function EventsPage() {
                   <label className={styles.label}>Popis</label>
                   <textarea className={styles.textarea} value={form.description} onChange={(e) => setFormField('description', e.target.value)} />
                 </div>
+
+                {clubCategories.length > 0 && (
+                  <div className={styles.formGridFull}>
+                    <label className={styles.label}>Kategorie (kdo uvidí událost)</label>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 4 }}>
+                      {clubCategories.map((cat) => {
+                        const active = selectedCategoryIds.includes(cat.id)
+                        return (
+                          <button
+                            key={cat.id}
+                            type="button"
+                            onClick={() => setSelectedCategoryIds((prev) =>
+                              active ? prev.filter((id) => id !== cat.id) : [...prev, cat.id]
+                            )}
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 6,
+                              height: 30,
+                              padding: '0 11px',
+                              borderRadius: 8,
+                              border: `1.5px solid ${active ? cat.color : 'var(--color-border)'}`,
+                              background: active ? `${cat.color}22` : 'transparent',
+                              color: active ? cat.color : 'var(--color-text-muted)',
+                              fontSize: 12.5,
+                              fontWeight: 600,
+                              cursor: 'pointer',
+                              transition: 'all 150ms ease',
+                            }}
+                          >
+                            <span style={{ width: 8, height: 8, borderRadius: '50%', background: cat.color, flexShrink: 0 }} />
+                            {cat.name}
+                            <span style={{ fontSize: 11, opacity: 0.7 }}>{cat.member_count}</span>
+                          </button>
+                        )
+                      })}
+                      <button
+                        type="button"
+                        onClick={() => setIncludeUncategorized((prev) => !prev)}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 6,
+                          height: 30,
+                          padding: '0 11px',
+                          borderRadius: 8,
+                          border: `1.5px solid ${includeUncategorized ? 'var(--color-text-muted)' : 'var(--color-border)'}`,
+                          background: includeUncategorized ? 'rgba(128,128,128,0.15)' : 'transparent',
+                          color: includeUncategorized ? 'var(--color-text)' : 'var(--color-text-muted)',
+                          fontSize: 12.5,
+                          fontWeight: 600,
+                          cursor: 'pointer',
+                          transition: 'all 150ms ease',
+                        }}
+                      >
+                        <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--color-text-dim)', flexShrink: 0 }} />
+                        Ostatní
+                      </button>
+                    </div>
+                    {selectedCategoryIds.length === 0 && !includeUncategorized && (
+                      <p style={{ margin: '6px 0 0', fontSize: 12.5, color: 'var(--color-text-dim)' }}>
+                        Nevybráno → uvidí všichni členové klubu.
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div className={styles.actions}>

@@ -1,4 +1,4 @@
-export type UserRole = 'manažer' | 'hráč' | 'trenér' | 'admin'
+export type UserRole = 'manažer' | 'hráč' | 'trenér' | 'rodič' | 'jiné' | 'admin'
 
 export interface User {
   id: number
@@ -58,6 +58,39 @@ export interface TeamInvitation {
   role: UserRole
   expires_at: string
   used: boolean
+}
+
+export interface ClubCategory {
+  id: number
+  club_id: number
+  name: string
+  birth_year_from: number | null
+  birth_year_to: number | null
+  color: string
+  sort_order: number
+  created_at: string
+  member_count?: number
+}
+
+export interface CategoryMember {
+  id: number
+  category_id: number
+  user_id: number
+  manual_override: boolean
+  excluded: boolean
+  created_at: string
+  user?: Pick<User, 'id' | 'first_name' | 'last_name' | 'profile_picture' | 'role'>
+}
+
+export interface CategoryTemplate {
+  name: string
+  sport: string
+  categories: Array<{
+    name: string
+    birth_year_from: number | null
+    birth_year_to: number | null
+    color: string
+  }>
 }
 
 export interface ClubColors {

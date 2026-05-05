@@ -15,6 +15,7 @@ type AppUser = {
   role: string
   organization: string | null
   profile_picture: string | null
+  dateBirth?: string | null
 }
 
 export default function ProfilePage() {
@@ -23,6 +24,7 @@ export default function ProfilePage() {
   const [clubLogo, setClubLogo] = useState<string | null>(null)
   const [themeVars, setThemeVars] = useState<Record<string, string>>({})
   const [loadingContext, setLoadingContext] = useState(true)
+  const [memberCategory, setMemberCategory] = useState<{ id: number; name: string; color: string } | null>(null)
 
   const isManager = user?.role === 'manažer'
   const initials =
@@ -66,6 +68,14 @@ export default function ProfilePage() {
         setFirstName(data.user.first_name ?? '')
         setLastName(data.user.last_name ?? '')
         setPhone(data.user.phone ?? '')
+
+        const catRes = await fetch('/api/me/categories', { cache: 'no-store' })
+        if (catRes.ok) {
+          const catData = await catRes.json()
+          if (catData.categories?.length > 0) {
+            setMemberCategory(catData.categories[0])
+          }
+        }
       } catch {
         if (mounted) setErrorMsg('Nepodařilo se načíst profil.')
       } finally {
@@ -481,8 +491,16 @@ export default function ProfilePage() {
                 <div className="profile-discord-params-title">Parametry účtu</div>
                 <div className="profile-discord-meta-grid">
                   <div className="profile-discord-meta-item">
-                    <span>Stav účtu</span>
-                    <strong>Aktivní</strong>
+                    <span>Datum narození</span>
+                    <strong>
+                      {layoutUser.dateBirth
+                        ? new Date(layoutUser.dateBirth).toLocaleDateString('cs-CZ', { day: 'numeric', month: 'numeric', year: 'numeric' })
+                        : '–'}
+                    </strong>
+                  </div>
+                  <div className="profile-discord-meta-item">
+                    <span>Kategorie</span>
+                    <strong>{memberCategory?.name ?? '–'}</strong>
                   </div>
                   <div className="profile-discord-meta-item">
                     <span>Klub</span>
@@ -491,10 +509,6 @@ export default function ProfilePage() {
                   <div className="profile-discord-meta-item">
                     <span>E-mail</span>
                     <strong>{layoutUser.email}</strong>
-                  </div>
-                  <div className="profile-discord-meta-item">
-                    <span>Telefon</span>
-                    <strong>{layoutUser.phone || 'Nezadáno'}</strong>
                   </div>
                 </div>
               </div>

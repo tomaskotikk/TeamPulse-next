@@ -1,20 +1,27 @@
 document.addEventListener("DOMContentLoaded", () => {
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const canUsePointerParallax = window.matchMedia("(pointer: fine)").matches && window.matchMedia("(min-width: 981px)").matches;
+    const canUsePointerParallax = window.matchMedia("(pointer: fine)").matches &&
+                                   window.matchMedia("(min-width: 1000px)").matches;
 
+    /* ── Header scroll class ── */
     const header = document.querySelector(".site-header");
-    const menuToggle = document.querySelector(".menu-toggle");
-    const mobileNav = document.querySelector(".mobile-nav");
+    if (header) {
+        const updateHeader = () => header.classList.toggle("scrolled", window.scrollY > 8);
+        updateHeader();
+        window.addEventListener("scroll", updateHeader, { passive: true });
+    }
 
+    /* ── Mobile menu ── */
+    const menuToggle = document.querySelector(".menu-toggle");
+    const mobileNav  = document.querySelector(".mobile-nav");
     if (menuToggle && mobileNav) {
         menuToggle.addEventListener("click", () => {
             const isOpen = menuToggle.classList.toggle("open");
             mobileNav.classList.toggle("open", isOpen);
-            menuToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+            menuToggle.setAttribute("aria-expanded", String(isOpen));
             document.body.style.overflow = isOpen ? "hidden" : "";
         });
-
-        mobileNav.querySelectorAll("a").forEach((link) => {
+        mobileNav.querySelectorAll("a").forEach(link => {
             link.addEventListener("click", () => {
                 menuToggle.classList.remove("open");
                 mobileNav.classList.remove("open");
@@ -24,265 +31,279 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-        anchor.addEventListener("click", (event) => {
+    /* ── Smooth anchor scroll ── */
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", e => {
             const href = anchor.getAttribute("href");
             if (!href || href === "#") return;
-
             const target = document.querySelector(href);
             if (!target) return;
-
-            event.preventDefault();
+            e.preventDefault();
             target.scrollIntoView({ behavior: "smooth", block: "start" });
         });
     });
 
+    /* ── Showcase tabs ── */
     const showcaseData = {
-        dashboard: {
-            image: "/img/web-dashboard.png",
-            route: "/app/dashboard",
-            alt: "Dashboard TeamPulse"
-        },
-        clenove: {
-            image: "/img/clenove.png",
-            route: "/app/clenove",
-            alt: "Správa členů"
-        },
-        profil: {
-            image: "/img/profil.png",
-            route: "/app/profil",
-            alt: "Uživatelský profil"
-        },
-        nastaveni: {
-            image: "/img/nastaveni.png",
-            route: "/app/nastaveni",
-            alt: "Nastavení klubu"
-        }
+        dashboard: { image: "/img/web-dashboard.png", route: "/app/dashboard", alt: "Dashboard TeamPulse" },
+        clenove:   { image: "/img/clenove.png",        route: "/app/clenove",   alt: "Správa členů" },
+        profil:    { image: "/img/profil.png",          route: "/app/profil",    alt: "Uživatelský profil" },
+        nastaveni: { image: "/img/nastaveni.png",       route: "/app/nastaveni", alt: "Nastavení klubu" }
     };
-
-    const showcaseImage = document.getElementById("showcaseImage");
+    const showcaseImg   = document.getElementById("showcaseImage");
     const showcaseRoute = document.getElementById("showcaseRoute");
-    const tabs = Array.from(document.querySelectorAll(".story-tab"));
+    const stabs = Array.from(document.querySelectorAll(".stab"));
 
-    const switchShowcase = (key) => {
+    const switchShowcase = key => {
         const payload = showcaseData[key];
-        if (!payload || !showcaseImage || !showcaseRoute) return;
-
-        tabs.forEach((tab) => {
-            const active = tab.dataset.key === key;
-            tab.classList.toggle("active", active);
-            tab.setAttribute("aria-selected", active ? "true" : "false");
+        if (!payload || !showcaseImg || !showcaseRoute) return;
+        stabs.forEach(t => {
+            const active = t.dataset.key === key;
+            t.classList.toggle("active", active);
+            t.setAttribute("aria-selected", String(active));
         });
-
         if (!prefersReducedMotion && window.gsap) {
-            gsap.to(".showcase-window", { y: 10, opacity: 0.6, duration: 0.16, ease: "power2.out" });
-        }
-
-        const applyData = () => {
-            showcaseImage.src = payload.image;
-            showcaseImage.alt = payload.alt;
-            showcaseRoute.textContent = payload.route;
-
-            if (!prefersReducedMotion && window.gsap) {
-                gsap.to(".showcase-window", { y: 0, opacity: 1, duration: 0.26, ease: "power2.out" });
-            }
-        };
-
-        if (showcaseImage.complete) {
-            applyData();
+            gsap.to(".showcase-window", { opacity: 0.5, y: 8, duration: 0.14, ease: "power2.out", onComplete: applyData });
         } else {
-            showcaseImage.addEventListener("load", applyData, { once: true });
-            showcaseImage.src = payload.image;
+            applyData();
+        }
+        function applyData() {
+            showcaseImg.src   = payload.image;
+            showcaseImg.alt   = payload.alt;
+            showcaseRoute.textContent = payload.route;
+            if (!prefersReducedMotion && window.gsap) {
+                gsap.to(".showcase-window", { opacity: 1, y: 0, duration: 0.32, ease: "power3.out" });
+            }
         }
     };
+    stabs.forEach(tab => tab.addEventListener("click", () => tab.dataset.key && switchShowcase(tab.dataset.key)));
 
-    tabs.forEach((tab) => {
-        tab.addEventListener("click", () => {
-            const key = tab.dataset.key;
-            if (key) switchShowcase(key);
-        });
-    });
+    /* ── Proof counter (simple, no GSAP dependency) ── */
+    const proofCounters = Array.from(document.querySelectorAll("[data-counter]"));
 
-    const counters = Array.from(document.querySelectorAll("[data-counter]"));
-
-    const compactNumber = (value) => {
-        if (value >= 100000) {
-            return `${Math.round(value / 1000)}k+`;
-        }
-
-        if (value >= 1000) {
-            return `${Math.round(value / 100) / 10}k`;
-        }
-
-        return Number.isInteger(value) ? String(value) : value.toFixed(1);
-    };
-
-    if (header) {
-        const updateHeader = () => {
-            header.classList.toggle("scrolled", window.scrollY > 12);
-        };
-        updateHeader();
-        window.addEventListener("scroll", updateHeader, { passive: true });
-    }
-
+    /* ── Early out: no GSAP ── */
     if (prefersReducedMotion || !window.gsap || !window.ScrollTrigger) {
-        document.querySelectorAll("[data-reveal]").forEach((el) => {
+        document.querySelectorAll("[data-reveal]").forEach(el => {
             el.style.opacity = "1";
             el.style.transform = "none";
         });
-
-        counters.forEach((counter) => {
-            const end = Number(counter.getAttribute("data-counter"));
-            if (Number.isNaN(end)) return;
-            counter.textContent = end === 99.9 ? "99.9" : compactNumber(end);
-            if (end === 99.9) counter.textContent += "%";
+        document.querySelectorAll(".h1-line-inner").forEach(el => {
+            el.style.transform = "none";
         });
-
+        proofCounters.forEach(c => {
+            c.textContent = c.getAttribute("data-counter");
+        });
         return;
     }
 
     gsap.registerPlugin(ScrollTrigger);
 
-    const heroIntro = gsap.timeline({ defaults: { ease: "power3.out" } });
+    /* ── Split H1 lines into inner spans ── */
+    document.querySelectorAll(".h1-line").forEach(line => {
+        const text = line.textContent;
+        line.textContent = "";
+        const inner = document.createElement("span");
+        inner.className = "h1-line-inner";
+        inner.textContent = text;
+        line.appendChild(inner);
+    });
 
-    heroIntro
-        .from(".site-header", { y: -22, opacity: 0, duration: 0.45 })
-        .from(".hero-content .eyebrow", { y: 18, opacity: 0, duration: 0.45 }, "<0.06")
-        .from(".hero-content h1", { y: 24, opacity: 0, duration: 0.58 }, "<0.04")
-        .from(".hero-lead, .hero-ctas, .hero-metrics", { y: 16, opacity: 0, duration: 0.5, stagger: 0.09 }, "<0.05")
-        .from(".red-shape", { scale: 0.9, opacity: 0, duration: 0.62 }, "<0.06")
-        .from(".laptop-mockup", { y: 24, opacity: 0, rotate: -8, duration: 0.72 }, "<0.08")
-        .from(".phone-mockup", { y: 30, opacity: 0, rotate: -2, duration: 0.72 }, "<0.1")
-        .to("[data-reveal]", {
-            opacity: 1,
-            y: 0,
-            duration: 0.6,
-            stagger: 0.08,
-            delay: 0.08
-        }, "<");
+    /* ── HERO entrance ── */
+    const heroTl = gsap.timeline({ defaults: { ease: "power4.out" } });
+    heroTl
+        .from(".site-header", { y: -28, opacity: 0, duration: 0.5 })
+        .from(".hero-eyebrow", { y: 20, opacity: 0, duration: 0.5 }, "<0.1")
+        .from(".h1-line-inner", {
+            y: "110%",
+            duration: 0.82,
+            stagger: 0.1,
+            ease: "power4.out"
+        }, "<0.05")
+        .from(".hero-lead", { y: 18, opacity: 0, duration: 0.6 }, "<0.18")
+        .from(".hero-ctas", { y: 14, opacity: 0, duration: 0.55 }, "<0.08")
+        .from(".hero-trust", { y: 10, opacity: 0, duration: 0.5 }, "<0.06")
+        .from(".hero-red-form", {
+            scale: 0.82,
+            opacity: 0,
+            duration: 1.1,
+            ease: "power3.out"
+        }, "<-0.6")
+        .from(".laptop-mockup", {
+            y: 36, opacity: 0, rotate: -7, duration: 0.92, ease: "power3.out"
+        }, "<0.1")
+        .from(".phone-mockup", {
+            y: 48, opacity: 0, rotate: -4, duration: 0.92, ease: "power3.out"
+        }, "<0.12")
+        .from(".hero-scroll-hint", { opacity: 0, duration: 0.5 }, "<0.4");
 
-    gsap.to(".bg-ribbon", {
-        x: 48,
+    /* ── Orb float ── */
+    gsap.to(".hero-orb-a", {
+        y: -40, x: 20,
+        duration: 9,
+        ease: "sine.inOut",
+        repeat: -1, yoyo: true
+    });
+    gsap.to(".hero-orb-b", {
+        y: 30, x: -18,
+        duration: 11,
+        ease: "sine.inOut",
+        repeat: -1, yoyo: true,
+        delay: 1.5
+    });
+
+    /* ── Page-bg orb & ribbon float ── */
+    gsap.to(".bg-orb-a", {
+        y: -52, x: 28,
+        duration: 10,
+        ease: "sine.inOut",
+        repeat: -1, yoyo: true,
+        delay: 0.3
+    });
+    gsap.to(".bg-orb-b", {
+        y: 38, x: -22,
+        duration: 13,
+        ease: "sine.inOut",
+        repeat: -1, yoyo: true,
+        delay: 2
+    });
+    gsap.to(".bg-orb-c", {
+        y: -44,
         duration: 8,
         ease: "sine.inOut",
-        repeat: -1,
-        yoyo: true
+        repeat: -1, yoyo: true,
+        delay: 1
     });
-
-    gsap.to(".bg-orb-c", {
-        y: -36,
-        duration: 7,
+    gsap.to(".bg-ribbon", {
+        x: 56, y: -18,
+        duration: 10,
         ease: "sine.inOut",
-        repeat: -1,
-        yoyo: true
+        repeat: -1, yoyo: true,
+        delay: 0.8
     });
 
-    document.querySelectorAll("[data-reveal]").forEach((element) => {
-        if (element.closest(".hero")) return;
+    /* ── Page-bg parallax on scroll ── */
+    document.querySelectorAll("[data-parallax]").forEach(el => {
+        const speed = Number(el.getAttribute("data-parallax") || 0.15);
+        gsap.to(el, {
+            yPercent: speed * -50,
+            ease: "none",
+            scrollTrigger: {
+                trigger: "body",
+                start: "top top",
+                end: "bottom bottom",
+                scrub: true
+            }
+        });
+    });
 
-        const delay = Number(element.getAttribute("data-delay") || 0);
-
-        gsap.fromTo(
-            element,
-            { opacity: 0, y: 28 },
+    /* ── Scroll reveals ── */
+    document.querySelectorAll("[data-reveal]").forEach(el => {
+        gsap.fromTo(el,
+            { opacity: 0, y: 40 },
             {
-                opacity: 1,
-                y: 0,
-                duration: 0.65,
-                delay,
-                ease: "power2.out",
+                opacity: 1, y: 0,
+                duration: 0.78,
+                ease: "power3.out",
+                delay: Number(el.getAttribute("data-delay") || 0),
                 scrollTrigger: {
-                    trigger: element,
-                    start: "top 84%",
+                    trigger: el,
+                    start: "top 86%",
                     once: true
                 }
             }
         );
     });
 
-    document.querySelectorAll("[data-parallax]").forEach((element) => {
-        const speed = Number(element.getAttribute("data-parallax") || 0.15);
-
-        gsap.to(element, {
-            yPercent: speed * -45,
-            ease: "none",
-            scrollTrigger: {
-                trigger: element,
-                start: "top bottom",
-                end: "bottom top",
-                scrub: true
-            }
-        });
-    });
-
-    gsap.fromTo(
-        ".contact-panel",
-        { opacity: 0, y: 18 },
+    /* ── Feature rows stagger ── */
+    gsap.fromTo(".feature-row",
+        { opacity: 0, x: -24 },
         {
-            opacity: 1,
-            y: 0,
-            duration: 0.55,
-            stagger: 0.1,
-            ease: "power2.out",
+            opacity: 1, x: 0,
+            duration: 0.62,
+            stagger: 0.08,
+            ease: "power3.out",
             scrollTrigger: {
-                trigger: ".contact-cards",
-                start: "top 84%",
+                trigger: ".feature-list",
+                start: "top 80%",
                 once: true
             }
         }
     );
 
-    const hero = document.querySelector(".hero");
-    if (hero && canUsePointerParallax) {
-        const mouseTargets = Array.from(hero.querySelectorAll("[data-mouse-parallax]"));
-
-        const updaters = mouseTargets.map((target) => {
-            const amount = Number(target.getAttribute("data-mouse-parallax") || 12);
-            return {
-                xTo: gsap.quickTo(target, "x", { duration: 0.7, ease: "power3.out" }),
-                yTo: gsap.quickTo(target, "y", { duration: 0.7, ease: "power3.out" }),
-                amount
-            };
-        });
-
-        hero.addEventListener("mousemove", (event) => {
-            const bounds = hero.getBoundingClientRect();
-            const xRatio = (event.clientX - bounds.left) / bounds.width - 0.5;
-            const yRatio = (event.clientY - bounds.top) / bounds.height - 0.5;
-
-            updaters.forEach((item) => {
-                item.xTo(xRatio * item.amount * 2);
-                item.yTo(yRatio * item.amount * 2);
-            });
-        });
-
-        hero.addEventListener("mouseleave", () => {
-            updaters.forEach((item) => {
-                item.xTo(0);
-                item.yTo(0);
-            });
-        });
-    }
-
-    counters.forEach((counter) => {
+    /* ── Proof stats counter ── */
+    proofCounters.forEach(counter => {
         const end = Number(counter.getAttribute("data-counter"));
         if (Number.isNaN(end)) return;
-
-        const value = { number: 0 };
-
-        gsap.to(value, {
-            number: end,
-            duration: 1.4,
+        const val = { n: 0 };
+        gsap.to(val, {
+            n: end,
+            duration: 1.6,
             ease: "power2.out",
-            scrollTrigger: {
-                trigger: counter,
-                start: "top 86%",
-                once: true
-            },
-            onUpdate: () => {
-                const current = end === 99.9 ? Number(value.number.toFixed(1)) : Math.round(value.number);
-                counter.textContent = end === 99.9 ? `${current}%` : compactNumber(current);
-            }
+            scrollTrigger: { trigger: counter, start: "top 84%", once: true },
+            onUpdate: () => { counter.textContent = Math.round(val.n); }
         });
     });
+
+    /* ── Testimonial rows stagger ── */
+    gsap.fromTo(".testi-row",
+        { opacity: 0, x: -20 },
+        {
+            opacity: 1, x: 0,
+            duration: 0.6,
+            stagger: 0.1,
+            ease: "power3.out",
+            scrollTrigger: { trigger: ".testi-rows", start: "top 82%", once: true }
+        }
+    );
+
+    /* ── Contact methods stagger ── */
+    gsap.fromTo(".contact-method",
+        { opacity: 0, y: 16 },
+        {
+            opacity: 1, y: 0,
+            duration: 0.55,
+            stagger: 0.1,
+            ease: "power3.out",
+            scrollTrigger: { trigger: ".cta-contact-band", start: "top 84%", once: true }
+        }
+    );
+
+    /* ── CTA+contact band glow pulse ── */
+    gsap.to(".cta-contact-band", {
+        boxShadow: "0 0 0 1px oklch(47% 0.21 20 / 0.30), 0 32px 80px oklch(0% 0 0 / 0.16)",
+        duration: 2.4,
+        ease: "sine.inOut",
+        repeat: -1,
+        yoyo: true,
+        scrollTrigger: { trigger: ".cta-contact-band", start: "top 80%" }
+    });
+
+    /* ── Mouse parallax on hero ── */
+    if (canUsePointerParallax) {
+        const heroEl  = document.querySelector(".hero");
+        const targets = [
+            { el: document.querySelector(".laptop-mockup"), amount: 10 },
+            { el: document.querySelector(".phone-mockup"),  amount: 18 },
+            { el: document.querySelector(".hero-red-form"), amount: 5  }
+        ].filter(t => t.el).map(t => ({
+            ...t,
+            xTo: gsap.quickTo(t.el, "x", { duration: 0.8, ease: "power3.out" }),
+            yTo: gsap.quickTo(t.el, "y", { duration: 0.8, ease: "power3.out" })
+        }));
+
+        if (heroEl) {
+            heroEl.addEventListener("mousemove", e => {
+                const b = heroEl.getBoundingClientRect();
+                const rx = (e.clientX - b.left) / b.width  - 0.5;
+                const ry = (e.clientY - b.top)  / b.height - 0.5;
+                targets.forEach(t => {
+                    t.xTo(rx * t.amount * 2);
+                    t.yTo(ry * t.amount * 2);
+                });
+            });
+            heroEl.addEventListener("mouseleave", () => {
+                targets.forEach(t => { t.xTo(0); t.yTo(0); });
+            });
+        }
+    }
 });

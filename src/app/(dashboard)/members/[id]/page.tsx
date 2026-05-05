@@ -3,12 +3,16 @@ import Topbar from '@/components/Topbar'
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 import {
+  type AppUser,
   getClubForUser,
   getCurrentAppUser,
   getMembersForClub,
   getThemeVars,
 } from '@/lib/app-context'
+import { createAdminClient } from '@/lib/supabase/server'
 import RemoveMemberButton from '@/components/RemoveMemberButton'
+import MemberRoleEditor from '@/components/MemberRoleEditor'
+import MemberBirthDateEditor from '@/components/MemberBirthDateEditor'
 
 export default async function MemberDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -34,6 +38,22 @@ export default async function MemberDetailPage({ params }: { params: Promise<{ i
 
   // Ověřit, že je ve stejném klubu
   if (member.organization !== club.name) notFound()
+
+  const supabase = await createAdminClient()
+  const { data: catMemberships } = await supabase
+    .from('category_members')
+    .select('club_categories(id, name, color, club_id)')
+    .eq('user_id', memberId)
+    .eq('excluded', false)
+
+  type CatRow = { id: number; name: string; color: string; club_id: number }
+  const memberCategory = (catMemberships ?? [])
+    .map((m) => {
+      const cat = m.club_categories as CatRow | CatRow[] | null
+      if (!cat || Array.isArray(cat)) return null
+      return cat
+    })
+    .find((c): c is CatRow => c !== null && c.club_id === club.id) ?? null
 
   const mInitials =
     (member.first_name?.[0] ?? '').toUpperCase() +
@@ -114,8 +134,16 @@ export default async function MemberDetailPage({ params }: { params: Promise<{ i
                 <div className="profile-discord-params-title">Parametry účtu</div>
                 <div className="profile-discord-meta-grid">
                   <div className="profile-discord-meta-item">
-                    <span>Stav účtu</span>
-                    <strong>Aktivní</strong>
+                    <span>Datum narození</span>
+                    <strong>
+                      {(member as AppUser & { dateBirth?: string | null }).dateBirth
+                        ? new Date((member as AppUser & { dateBirth?: string | null }).dateBirth!).toLocaleDateString('cs-CZ', { day: 'numeric', month: 'numeric', year: 'numeric' })
+                        : '–'}
+                    </strong>
+                  </div>
+                  <div className="profile-discord-meta-item">
+                    <span>Kategorie</span>
+                    <strong>{memberCategory?.name ?? '–'}</strong>
                   </div>
                   <div className="profile-discord-meta-item">
                     <span>Klub</span>
@@ -124,10 +152,6 @@ export default async function MemberDetailPage({ params }: { params: Promise<{ i
                   <div className="profile-discord-meta-item">
                     <span>E-mail</span>
                     <strong>{member.email}</strong>
-                  </div>
-                  <div className="profile-discord-meta-item">
-                    <span>Telefon</span>
-                    <strong>{member.phone || 'Nezadáno'}</strong>
                   </div>
                 </div>
               </div>
@@ -182,6 +206,25 @@ export default async function MemberDetailPage({ params }: { params: Promise<{ i
                   : '–'}
               </span>
             </div>
+            <div className="data-row">
+              <span className="data-label">Datum narození</span>
+              {isManager ? (
+                <MemberBirthDateEditor
+                  memberId={member.id}
+                  initialDateBirth={(member as AppUser & { dateBirth?: string | null }).dateBirth ?? null}
+                />
+              ) : (
+                <span className="data-value">
+                  {(member as AppUser & { dateBirth?: string | null }).dateBirth
+                    ? new Date((member as AppUser & { dateBirth?: string | null }).dateBirth!).toLocaleDateString('cs-CZ', { day: 'numeric', month: 'numeric', year: 'numeric' })
+                    : '–'}
+                </span>
+              )}
+            </div>
+            <div className="data-row">
+              <span className="data-label">Kategorie</span>
+              <span className="data-value">{memberCategory?.name ?? '–'}</span>
+            </div>
           </div>
         </div>
 
@@ -192,7 +235,15 @@ export default async function MemberDetailPage({ params }: { params: Promise<{ i
               <h3 className="section-title">Správa člena</h3>
               <p className="section-description">Akce dostupné pro manažera</p>
             </div>
-            <div className="section-content" style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+            <div className="section-content" style={{ display: 'grid', gap: 16 }}>
+              <div>
+                <div className="form-help" style={{ marginBottom: 8 }}>Role člena</div>
+                <MemberRoleEditor
+                  memberId={member.id}
+                  initialRole={member.role}
+                  disabled={member.role === 'manažer'}
+                />
+              </div>
               <RemoveMemberButton
                 memberId={member.id}
                 memberName={`${member.first_name} ${member.last_name}`}

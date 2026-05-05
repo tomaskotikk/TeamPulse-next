@@ -164,7 +164,7 @@ export default function ClubLogoUploader({ initialLogo, isManager }: ClubLogoUpl
       })
 
       const blob = await new Promise<Blob | null>((resolve) => {
-        canvas.toBlob(resolve, 'image/jpeg', 0.9)
+        canvas.toBlob(resolve, 'image/png')
       })
 
       if (!blob) {
@@ -172,7 +172,7 @@ export default function ClubLogoUploader({ initialLogo, isManager }: ClubLogoUpl
       }
 
       const formData = new FormData()
-      formData.append('club_logo', blob, `club_logo_${Date.now()}.jpg`)
+      formData.append('club_logo', blob, `club_logo_${Date.now()}.png`)
 
       const res = await fetch('/api/club/upload-logo', {
         method: 'POST',

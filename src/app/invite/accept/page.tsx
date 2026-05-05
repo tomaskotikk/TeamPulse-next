@@ -68,6 +68,7 @@ function AcceptInviteContent() {
     const firstName = (e.currentTarget.elements.namedItem('first_name') as HTMLInputElement).value
     const lastName = (e.currentTarget.elements.namedItem('last_name') as HTMLInputElement).value
     const phone = (e.currentTarget.elements.namedItem('phone') as HTMLInputElement).value
+    const dateBirth = (e.currentTarget.elements.namedItem('dateBirth') as HTMLInputElement).value
     const password = (e.currentTarget.elements.namedItem('password') as HTMLInputElement).value
     const passwordConfirm = (e.currentTarget.elements.namedItem('password_confirm') as HTMLInputElement).value
 
@@ -80,6 +81,7 @@ function AcceptInviteContent() {
           firstName,
           lastName,
           phone,
+          dateBirth,
           password,
           passwordConfirm,
         }),
@@ -137,6 +139,18 @@ function AcceptInviteContent() {
               <div className="form-group">
                 <label htmlFor="phone" className="form-label">Telefon</label>
                 <input id="phone" name="phone" className="form-input" />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="dateBirth" className="form-label">Datum narození *</label>
+                <input
+                  id="dateBirth"
+                  name="dateBirth"
+                  type="date"
+                  className="form-input"
+                  max={new Date().toISOString().split('T')[0]}
+                  required
+                />
               </div>
 
               <div className="form-group">

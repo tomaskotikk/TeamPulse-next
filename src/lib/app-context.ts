@@ -10,6 +10,7 @@ export type AppUser = {
   profile_picture: string | null
   role: string
   organization: string | null
+  dateBirth?: string | null
   banned?: boolean
   banned_at?: string | null
   ban_reason?: string | null
@@ -121,7 +122,7 @@ export async function getCurrentAppUser() {
   const supabase = await createAdminClient()
   const { data } = await supabase
     .from('users')
-    .select('id, first_name, last_name, email, phone, profile_picture, role, organization, banned, banned_at, ban_reason, two_factor_enabled, created_at')
+    .select('id, first_name, last_name, email, phone, profile_picture, role, organization, banned, banned_at, ban_reason, two_factor_enabled, created_at, dateBirth')
     .eq('id', session.userId)
     .single()
 
@@ -159,7 +160,7 @@ export async function getMembersForClub(clubName: string) {
   const supabase = await createAdminClient()
   const { data } = await supabase
     .from('users')
-    .select('id, first_name, last_name, email, phone, profile_picture, role, organization, created_at')
+    .select('id, first_name, last_name, email, phone, profile_picture, role, organization, created_at, dateBirth')
     .eq('organization', clubName)
 
   const members = ((data ?? []) as AppUser[]).sort((a, b) => {

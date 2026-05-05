@@ -7,6 +7,7 @@ import {
   Bell,
   CalendarDays,
   ChevronLeft,
+  Layers,
   LineChart,
   LogOut,
   MessageSquare,
@@ -115,6 +116,13 @@ export default function Sidebar({ user, isManager }: SidebarProps) {
             <Users className="nav-icon" />
             <span className="nav-label">Členové</span>
           </Link>
+
+          {isManager && (
+            <Link href="/categories" className={navClass('/categories')}>
+              <Layers className="nav-icon" />
+              <span className="nav-label">Kategorie</span>
+            </Link>
+          )}
         </div>
 
         <div className="nav-section">

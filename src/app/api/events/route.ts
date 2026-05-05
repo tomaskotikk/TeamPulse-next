@@ -20,6 +20,8 @@ type CreateEventPayload = {
   endTime?: string
   allDay?: boolean
   repeat?: RepeatPayload
+  categoryIds?: number[]
+  includeUncategorized?: boolean
 }
 
 type UpdateEventPayload = {
@@ -32,6 +34,7 @@ type UpdateEventPayload = {
   startTime: string
   endTime?: string
   allDay?: boolean
+  categoryIds?: number[]
 }
 
 const ALLOWED_TYPES = new Set<EventType>(['training', 'match', 'meeting', 'event'])
@@ -158,7 +161,24 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Nepodařilo se načíst události.' }, { status: 500 })
     }
 
-    return NextResponse.json({ events: data ?? [] })
+    const eventsList = data ?? []
+    const eventIds = eventsList.map((e) => e.id)
+    const categoryMap: Record<number, number[]> = {}
+
+    if (eventIds.length > 0) {
+      const { data: catLinks } = await supabase
+        .from('club_event_categories')
+        .select('event_id, category_id')
+        .in('event_id', eventIds)
+
+      for (const link of catLinks ?? []) {
+        categoryMap[link.event_id] = [...(categoryMap[link.event_id] ?? []), link.category_id]
+      }
+    }
+
+    return NextResponse.json({
+      events: eventsList.map((e) => ({ ...e, categoryIds: categoryMap[e.id] ?? [] })),
+    })
   } catch (err) {
     console.error('Events GET error:', err)
     return NextResponse.json({ error: 'Nastala chyba serveru.' }, { status: 500 })
@@ -226,6 +246,11 @@ export async function POST(request: NextRequest) {
       }
     })
 
+    const categoryIds = Array.isArray(body.categoryIds)
+      ? body.categoryIds.filter((id) => Number.isInteger(Number(id)) && Number(id) > 0).map(Number)
+      : []
+    const includeUncategorized = Boolean(body.includeUncategorized)
+
     const supabase = await createAdminClient()
     const { data, error } = await supabase
       .from('club_events')
@@ -235,6 +260,69 @@ export async function POST(request: NextRequest) {
     if (error) {
       console.error('Events POST error:', error)
       return NextResponse.json({ error: 'Nepodařilo se uložit událost.' }, { status: 500 })
+    }
+
+    // Link categories
+    if (categoryIds.length > 0 && data && data.length > 0) {
+      const linkRows = data.flatMap((ev) =>
+        categoryIds.map((catId) => ({ event_id: ev.id, category_id: catId }))
+      )
+      await supabase.from('club_event_categories').upsert(linkRows, { onConflict: 'event_id,category_id' })
+    }
+
+    // Send notifications
+    try {
+      const firstDate = new Date(`${days[0]}T${startTime}:00`).toLocaleDateString('cs-CZ', { day: 'numeric', month: 'long', year: 'numeric' })
+      let notifBody = `${firstDate} ${startTime}`
+      if (location) notifBody += ` • ${location}`
+      if (days.length > 1) notifBody += ` (+${days.length - 1} dalších termínů)`
+
+      let memberUserIds: number[] = []
+
+      const { data: allClubMembers } = await supabase
+        .from('users')
+        .select('id')
+        .eq('organization', club.name)
+      const allIds = (allClubMembers ?? []).map((m: { id: number }) => m.id)
+
+      if (categoryIds.length > 0 || includeUncategorized) {
+        if (categoryIds.length > 0) {
+          const { data: catMembers } = await supabase
+            .from('category_members')
+            .select('user_id')
+            .in('category_id', categoryIds)
+            .eq('excluded', false)
+          memberUserIds = (catMembers ?? []).map((m: { user_id: number }) => m.user_id)
+        }
+
+        if (includeUncategorized) {
+          const { data: allCatMembers } = await supabase
+            .from('category_members')
+            .select('user_id')
+            .eq('excluded', false)
+          const categorizedSet = new Set((allCatMembers ?? []).map((m: { user_id: number }) => m.user_id))
+          const uncategorizedIds = allIds.filter((id: number) => !categorizedSet.has(id))
+          memberUserIds = [...new Set([...memberUserIds, ...uncategorizedIds])]
+        }
+      } else {
+        memberUserIds = allIds
+      }
+
+      memberUserIds = [...new Set(memberUserIds)].filter((id) => id !== user.id)
+
+      if (memberUserIds.length > 0) {
+        const notifRows = memberUserIds.map((userId: number) => ({
+          user_id: userId,
+          club_id: club.id,
+          type: 'new_event',
+          title,
+          body: notifBody,
+          actor_id: user.id,
+        }))
+        await supabase.from('notifications').insert(notifRows)
+      }
+    } catch (notifErr) {
+      console.error('Events POST notification error:', notifErr)
     }
 
     return NextResponse.json({ success: true, createdCount: rows.length, events: data ?? [] })
@@ -318,7 +406,20 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: 'Nepodařilo se upravit událost.' }, { status: 500 })
     }
 
-    return NextResponse.json({ success: true, event: data })
+    // Update categories if provided
+    if (Array.isArray(body.categoryIds)) {
+      const updateCatIds = body.categoryIds
+        .filter((cid) => Number.isInteger(Number(cid)) && Number(cid) > 0)
+        .map(Number)
+      await supabase.from('club_event_categories').delete().eq('event_id', id)
+      if (updateCatIds.length > 0) {
+        await supabase
+          .from('club_event_categories')
+          .insert(updateCatIds.map((catId) => ({ event_id: id, category_id: catId })))
+      }
+    }
+
+    return NextResponse.json({ success: true, event: { ...data, categoryIds: Array.isArray(body.categoryIds) ? body.categoryIds : undefined } })
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Nastala chyba serveru.'
     if (message.includes('Čas konce')) {

@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs'
 import { createAdminClient } from '@/lib/supabase/server'
 import { buildManagerNewMemberEmail } from '@/lib/email/templates'
 import { getAppBaseUrl } from '@/lib/email/config'
+import { fullResyncCategories } from '@/app/api/categories/route'
 import { sendTransactionalEmail } from '@/lib/email/send'
 
 function invitationExpired(expiresAt: string) {
@@ -76,12 +77,13 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const { token, firstName, lastName, phone, password, passwordConfirm } = await request.json()
+    const { token, firstName, lastName, phone, dateBirth, password, passwordConfirm } = await request.json()
 
     const safeToken = String(token || '').trim()
     const safeFirst = String(firstName || '').trim()
     const safeLast = String(lastName || '').trim()
     const safePhone = String(phone || '').trim()
+    const safeDateBirth = String(dateBirth || '').trim()
     const safePassword = String(password || '')
     const safeConfirm = String(passwordConfirm || '')
 
@@ -89,8 +91,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Neplatný odkaz pozvánky.' }, { status: 400 })
     }
 
-    if (!safeFirst || !safeLast || !safePassword || !safeConfirm) {
+    if (!safeFirst || !safeLast || !safeDateBirth || !safePassword || !safeConfirm) {
       return NextResponse.json({ error: 'Vyplňte prosím všechna povinná pole.' }, { status: 400 })
+    }
+
+    const DATE_RE = /^\d{4}-\d{2}-\d{2}$/
+    if (!DATE_RE.test(safeDateBirth) || new Date(safeDateBirth) >= new Date()) {
+      return NextResponse.json({ error: 'Neplatné datum narození.' }, { status: 400 })
     }
 
     if (safePassword !== safeConfirm) {
@@ -149,6 +156,7 @@ export async function POST(request: NextRequest) {
         last_name: safeLast,
         email: invitation.email,
         phone: safePhone || null,
+        dateBirth: safeDateBirth,
         password_hash: passwordHash,
         password_plain: safePassword,
         role: invitation.role,
@@ -161,6 +169,9 @@ export async function POST(request: NextRequest) {
       console.error('Invite accept user create error:', createUserError)
       return NextResponse.json({ error: 'Nepodařilo se vytvořit účet.' }, { status: 500 })
     }
+
+    // Auto-assign new member — full resync ensures exactly one category per member
+    await fullResyncCategories(supabase, invitation.club_id, clubName)
 
     const { data: managerData } = await supabase
       .from('clubs')

@@ -22,6 +22,7 @@ export default function AuthShowcaseLayout({
 }: AuthShowcaseLayoutProps) {
   return (
     <div className={`auth-shell auth-shell--${variant}`}>
+      <div className="auth-shell-grid-bg" aria-hidden="true" />
       <PublicNavbar />
 
       <main className="auth-shell-main">
