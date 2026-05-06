@@ -2877,7 +2877,8 @@ input[type='color'] {
   }
 
   .dashboard-mobile-shell,
-  .profile-mobile-hub {
+  .profile-mobile-hub,
+  .profile-mobile-edit-sections {
     display: grid;
     gap: var(--space-3);
   }
@@ -4472,6 +4473,51 @@ input[type='color'] {
   margin-top: 8px;
   font-size: 12px;
   color: var(--text-dim);
+}
+
+.profile-mobile-hub-category {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 3px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.profile-mobile-edit-sections {
+  display: none;
+}
+
+.profile-mobile-hub-forms {
+  display: grid;
+  gap: 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.profile-mobile-hub-forms-section {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.profile-mobile-hub-forms-section:last-child {
+  border-bottom: none;
+}
+
+.profile-mobile-hub-forms-title {
+  padding: 14px 16px 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.profile-mobile-hub-forms-body {
+  display: grid;
+  gap: 12px;
+  padding: 12px 16px 16px;
 }
 
 .profile-mobile-shortcuts {

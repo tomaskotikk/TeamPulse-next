@@ -122,6 +122,7 @@ export default function ProfilePage() {
   async function handleChangePassword(e: React.FormEvent) {
     e.preventDefault()
     const form = e.currentTarget as HTMLFormElement
+    const current = (form.elements.namedItem('current_password') as HTMLInputElement).value
     const next = (form.elements.namedItem('new_password') as HTMLInputElement).value
     const confirm = (form.elements.namedItem('confirm_password') as HTMLInputElement).value
 
@@ -130,7 +131,17 @@ export default function ProfilePage() {
 
     if (next.length < 6) { setErrorMsg('Nové heslo musí mít alespoň 6 znaků.'); return }
     if (next !== confirm) { setErrorMsg('Nová hesla se neshodují.'); return }
-    // TODO: API call
+
+    const res = await fetch('/api/profile/change-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ currentPassword: current, newPassword: next, confirmPassword: confirm }),
+    })
+    const data = await res.json()
+    if (!res.ok) {
+      setErrorMsg(data.error ?? 'Nepodařilo se změnit heslo.')
+      return
+    }
     setSuccessMsg('Heslo bylo úspěšně změněno.')
     form.reset()
   }
@@ -373,6 +384,11 @@ export default function ProfilePage() {
             <div className="profile-mobile-hub-info">
               <div className="profile-mobile-hub-name">{layoutUser.first_name} {layoutUser.last_name}</div>
               <div className="profile-mobile-hub-meta">{layoutUser.role} • {clubName}</div>
+              {memberCategory && (
+                <div className="profile-mobile-hub-category" style={{ backgroundColor: memberCategory.color || 'var(--color-primary)' }}>
+                  {memberCategory.name}
+                </div>
+              )}
             </div>
           </div>
 
@@ -398,11 +414,176 @@ export default function ProfilePage() {
               <span aria-hidden="true">›</span>
             </Link>
             {isManager && (
-              <Link href="/invite" className="profile-mobile-shortcut-item">
-                <span>Pozvat členy</span>
-                <span aria-hidden="true">›</span>
-              </Link>
+              <>
+                <Link href="/invite" className="profile-mobile-shortcut-item">
+                  <span>Pozvat členy</span>
+                  <span aria-hidden="true">›</span>
+                </Link>
+                <Link href="/categories" className="profile-mobile-shortcut-item">
+                  <span>Kategorie</span>
+                  <span aria-hidden="true">›</span>
+                </Link>
+              </>
             )}
+          </div>
+
+          <div className="profile-mobile-hub-forms">
+            <div className="profile-mobile-hub-forms-section">
+              <div className="profile-mobile-hub-forms-title">Osobní údaje</div>
+              <form onSubmit={handleUpdateProfile} className="profile-mobile-hub-forms-body">
+                <div className="form-group">
+                  <label htmlFor="mh_first_name" className="form-label">Jméno *</label>
+                  <input
+                    type="text"
+                    id="mh_first_name"
+                    className="form-input"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="mh_last_name" className="form-label">Příjmení *</label>
+                  <input
+                    type="text"
+                    id="mh_last_name"
+                    className="form-input"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">E-mail</label>
+                  <input type="email" className="form-input" value={layoutUser.email} disabled />
+                  <p className="form-help">E-mail nelze změnit</p>
+                </div>
+                <div className="form-group">
+                  <label htmlFor="mh_phone" className="form-label">Telefon</label>
+                  <input
+                    type="tel"
+                    id="mh_phone"
+                    className="form-input"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="+420 777 123 456"
+                  />
+                </div>
+                <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
+                  Uložit změny
+                </button>
+              </form>
+            </div>
+
+            <div className="profile-mobile-hub-forms-section">
+              <div className="profile-mobile-hub-forms-title">Změna hesla</div>
+              <form onSubmit={handleChangePassword} className="profile-mobile-hub-forms-body">
+                <div className="form-group">
+                  <label htmlFor="mh_current_password" className="form-label">Současné heslo *</label>
+                  <input type="password" id="mh_current_password" name="current_password" className="form-input" required />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="mh_new_password" className="form-label">Nové heslo *</label>
+                  <input type="password" id="mh_new_password" name="new_password" className="form-input" minLength={6} required />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="mh_confirm_password" className="form-label">Potvrdit nové heslo *</label>
+                  <input type="password" id="mh_confirm_password" name="confirm_password" className="form-input" required />
+                </div>
+                <p className="form-help" style={{ marginBottom: 12 }}>Alespoň 6 znaků, kombinace písmen a číslic</p>
+                <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
+                  Změnit heslo
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile-only edit sections */}
+        <div className="profile-mobile-edit-sections">
+          <div className="section">
+            <div className="section-header">
+              <h3 className="section-title">Osobní údaje</h3>
+              <p className="section-description">Aktualizujte své základní informace</p>
+            </div>
+            <div className="section-content">
+              <form onSubmit={handleUpdateProfile} className="profile-details-form">
+                <div className="form-group profile-form-group-shell">
+                  <label htmlFor="m_first_name" className="form-label">Jméno *</label>
+                  <input
+                    type="text"
+                    id="m_first_name"
+                    className="form-input"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="form-group profile-form-group-shell">
+                  <label htmlFor="m_last_name" className="form-label">Příjmení *</label>
+                  <input
+                    type="text"
+                    id="m_last_name"
+                    className="form-input"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="form-group profile-form-group-shell">
+                  <label className="form-label">E-mail</label>
+                  <input type="email" className="form-input" value={layoutUser.email} disabled />
+                  <p className="form-help">E-mail nelze změnit</p>
+                </div>
+                <div className="form-group profile-form-group-shell">
+                  <label htmlFor="m_phone" className="form-label">Telefon</label>
+                  <input
+                    type="tel"
+                    id="m_phone"
+                    className="form-input"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="+420 777 123 456"
+                  />
+                </div>
+                <div className="profile-form-actions">
+                  <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
+                    Uložit změny
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <div className="section">
+            <div className="section-header">
+              <h3 className="section-title">Změna hesla</h3>
+              <p className="section-description">Aktualizujte své přihlašovací heslo</p>
+            </div>
+            <div className="section-content">
+              <form onSubmit={handleChangePassword} className="profile-security-form">
+                <div className="form-group profile-form-group-shell">
+                  <label htmlFor="m_current_password" className="form-label">Současné heslo *</label>
+                  <input type="password" id="m_current_password" name="current_password" className="form-input" required />
+                </div>
+                <div className="form-group profile-form-group-shell">
+                  <label htmlFor="m_new_password" className="form-label">Nové heslo *</label>
+                  <input type="password" id="m_new_password" name="new_password" className="form-input" minLength={6} required />
+                </div>
+                <div className="form-group profile-form-group-shell">
+                  <label htmlFor="m_confirm_password" className="form-label">Potvrdit nové heslo *</label>
+                  <input type="password" id="m_confirm_password" name="confirm_password" className="form-input" required />
+                </div>
+                <div className="profile-password-hint">
+                  Použijte alespoň 6 znaků, ideálně kombinaci písmen, číslic a speciálních znaků.
+                </div>
+                <div className="profile-form-actions">
+                  <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
+                    Změnit heslo
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
 

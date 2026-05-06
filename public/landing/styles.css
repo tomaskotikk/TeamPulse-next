@@ -355,6 +355,8 @@ h1, h2, h3 { letter-spacing: -0.025em; }
 .h1-line {
     display: block;
     overflow: hidden;
+    padding-top: 0.14em;
+    margin-top: -0.14em;
     padding-bottom: 0.06em;
 }
 .h1-line-inner {
