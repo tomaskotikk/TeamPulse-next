@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   Bell,
   CalendarDays,
@@ -35,10 +35,43 @@ export default function Sidebar({ user, isManager }: SidebarProps) {
     return window.localStorage.getItem('tp-sidebar-collapsed') === '1'
   })
   const canSeeGraphs = user.role === 'manažer' || user.role === 'trenér'
+  const navRef = useRef<HTMLElement>(null)
+  const pillRef = useRef<HTMLDivElement>(null)
+  const firstRender = useRef(true)
 
   useEffect(() => {
     window.localStorage.setItem('tp-sidebar-collapsed', collapsed ? '1' : '0')
   }, [collapsed])
+
+  useEffect(() => {
+    const nav = navRef.current
+    const pill = pillRef.current
+    if (!nav || !pill) return
+
+    const active = nav.querySelector('.nav-item.active') as HTMLElement | null
+    if (!active) {
+      pill.style.opacity = '0'
+      return
+    }
+
+    const navRect = nav.getBoundingClientRect()
+    const activeRect = active.getBoundingClientRect()
+    const y = activeRect.top - navRect.top + nav.scrollTop
+
+    if (firstRender.current) {
+      firstRender.current = false
+      pill.style.transition = 'none'
+      pill.style.transform = `translateY(${y}px)`
+      pill.style.height = `${activeRect.height}px`
+      pill.style.opacity = '1'
+      void pill.offsetHeight
+      pill.style.transition = ''
+    } else {
+      pill.style.transform = `translateY(${y}px)`
+      pill.style.height = `${activeRect.height}px`
+      pill.style.opacity = '1'
+    }
+  }, [pathname])
 
   const initials =
     (user.first_name?.[0] ?? '').toUpperCase() +
@@ -70,7 +103,8 @@ export default function Sidebar({ user, isManager }: SidebarProps) {
         </button>
       </div>
 
-      <nav className="sidebar-nav">
+      <nav className="sidebar-nav" ref={navRef}>
+        <div className="nav-active-pill" ref={pillRef} aria-hidden="true" />
         <div className="nav-section">
           <div className="nav-section-title">Hlavní</div>
 

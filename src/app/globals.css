@@ -268,6 +268,21 @@ textarea:focus-visible {
   flex: 1;
   overflow-y: auto;
   padding: var(--space-4) 0;
+  position: relative;
+}
+
+.nav-active-pill {
+  position: absolute;
+  left: var(--space-2);
+  right: var(--space-2);
+  top: 0;
+  border-radius: 999px;
+  background: linear-gradient(140deg, color-mix(in srgb, var(--color-primary) 94%, #fff 6%) 0%, color-mix(in srgb, var(--color-primary-hover) 92%, #000 8%) 100%);
+  box-shadow: 0 12px 24px -20px color-mix(in srgb, var(--color-primary) 80%, transparent);
+  pointer-events: none;
+  opacity: 0;
+  z-index: 0;
+  transition: transform 280ms cubic-bezier(0.4, 0, 0.2, 1), height 280ms cubic-bezier(0.4, 0, 0.2, 1), opacity 150ms ease;
 }
 
 .nav-section {
@@ -296,7 +311,9 @@ textarea:focus-visible {
   padding: 0 var(--space-3);
   color: var(--color-text-muted);
   text-decoration: none;
-  transition: background var(--fast), color var(--fast), transform var(--fast);
+  position: relative;
+  z-index: 1;
+  transition: color 200ms cubic-bezier(0.4, 0, 0.2, 1), transform var(--fast);
 }
 
 .nav-item:hover {
@@ -304,13 +321,15 @@ textarea:focus-visible {
   color: var(--color-text);
 }
 
+.nav-item.active:hover {
+  background: transparent;
+}
+
 .nav-item:active {
   transform: translateY(1px);
 }
 
 .nav-item.active {
-  background: linear-gradient(140deg, color-mix(in srgb, var(--color-primary) 94%, #fff 6%) 0%, color-mix(in srgb, var(--color-primary-hover) 92%, #000 8%) 100%);
-  box-shadow: 0 12px 24px -20px color-mix(in srgb, var(--color-primary) 80%, transparent);
   color: #fff;
 }
 
