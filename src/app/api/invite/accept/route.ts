@@ -158,7 +158,6 @@ export async function POST(request: NextRequest) {
         phone: safePhone || null,
         dateBirth: safeDateBirth,
         password_hash: passwordHash,
-        password_plain: safePassword,
         role: invitation.role,
         organization: clubName,
       })

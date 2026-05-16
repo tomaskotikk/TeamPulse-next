@@ -25,7 +25,6 @@ type PendingRegistration = {
   email: string
   phone: string | null
   password_hash: string
-  password_plain: string | null
   expires_at: string
 }
 
@@ -78,7 +77,6 @@ export async function POST(request: NextRequest) {
         role: 'manažer',
         organization: pending.club_name,
         password_hash: pending.password_hash,
-        password_plain: pending.password_plain,
       })
       .select('id, email, role')
       .single()
