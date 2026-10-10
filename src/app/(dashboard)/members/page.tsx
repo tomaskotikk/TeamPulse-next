@@ -1,6 +1,8 @@
 import DashboardLayout from '@/components/DashboardLayout'
 import Topbar from '@/components/Topbar'
 import MembersDirectory from './MembersDirectory'
+import MembersTable, { type MemberCategory } from './MembersTable'
+import { createAdminClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import {
@@ -21,6 +23,28 @@ export default async function MembersPage() {
   const members = await getMembersForClub(club.name)
   const themeVars = getThemeVars(club)
 
+  const supabase = await createAdminClient()
+  const { data: categoryRows } = await supabase
+    .from('club_categories')
+    .select('id, name, color')
+    .eq('club_id', club.id)
+    .order('sort_order', { ascending: true })
+  const categories = (categoryRows ?? []) as MemberCategory[]
+  const categoryByMember: Record<number, MemberCategory> = {}
+
+  if (categories.length > 0) {
+    const byId = new Map(categories.map((c) => [c.id, c]))
+    const { data: memberships } = await supabase
+      .from('category_members')
+      .select('category_id, user_id')
+      .in('category_id', categories.map((c) => c.id))
+      .eq('excluded', false)
+    for (const m of memberships ?? []) {
+      const cat = byId.get(m.category_id)
+      if (cat && !categoryByMember[m.user_id]) categoryByMember[m.user_id] = cat
+    }
+  }
+
   return (
     <DashboardLayout user={user} isManager={isManager} themeVars={themeVars}>
       <Topbar
@@ -38,7 +62,17 @@ export default async function MembersPage() {
         backHref="/dashboard"
       />
 
-      <div className="app-content">
+      <div className="app-content desktop-only">
+        <MembersTable
+          members={members}
+          categoryByMember={categoryByMember}
+          categories={categories}
+          currentUserId={user.id}
+          isManager={isManager}
+        />
+      </div>
+
+      <div className="app-content mobile-only">
         <div className="page-intro">
           <div className="page-intro-meta">Soupiska klubu</div>
           <h2 className="content-title">Tým • {members.length} členů</h2>

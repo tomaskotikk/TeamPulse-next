@@ -263,19 +263,19 @@ export default function DesktopOverview({ userName, club, members, isManager, cu
 
   const heroContent = isManager
     ? {
-        title: `Vítejte zpět, ${userName}. ${clubState.name} je připravený na další růst.`,
-        subtitle: 'Přehled výkonu, složení týmu a klíčových metrik na jednom místě. Dashboard je optimalizovaný pro rychlé rozhodování vedení moderního klubu.',
+        title: `Přehled klubu ${clubState.name}`,
+        subtitle: 'Složení týmu, docházka a klíčové ukazatele klubu na jednom místě.',
         membersLabel: 'Otevřít správu členů',
       }
     : canSeeAnalytics
       ? {
-          title: `Vítejte zpět, ${userName}. ${clubState.name} má prostor na další progres.`,
-          subtitle: 'Sledujte vývoj týmu, docházku a klíčové signály, které pomáhají trenérskému vedení plánovat další kroky.',
+          title: `Trenérský přehled · ${clubState.name}`,
+          subtitle: 'Vývoj týmu, docházka a podklady pro plánování tréninků.',
           membersLabel: 'Otevřít členy týmu',
         }
       : {
-          title: `Vítejte zpět, ${userName}. Dnes makáme za ${clubState.name}.`,
-          subtitle: 'Tady najdete vše důležité pro hráče: přehled klubu, spoluhráče a rychlé odkazy na denní fungování týmu.',
+          title: clubState.name,
+          subtitle: 'Přehled klubu, spoluhráči a odkazy na denní fungování týmu.',
           membersLabel: 'Prohlédnout spoluhráče',
         }
 
@@ -1041,6 +1041,7 @@ export default function DesktopOverview({ userName, club, members, isManager, cu
       <section className={styles.hero}>
         <div className={styles.heroTop}>
           <div>
+            <p className={styles.heroEyebrow}>Dobrý den, {userName}</p>
             <h2 className={styles.heroTitle}>{heroContent.title}</h2>
             <p className={styles.heroSubtitle}>{heroContent.subtitle}</p>
           </div>

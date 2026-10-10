@@ -1,7 +1,17 @@
 import Link from 'next/link'
-import Image from 'next/image'
 import { ReactNode } from 'react'
 import PublicNavbar from '@/components/PublicNavbar'
+
+/** Desktop-only product composition (same arrangement as the landing hero). */
+export function AuthShowcaseStage() {
+  return (
+    <div className="auth-stage" aria-hidden="true">
+      <div className="auth-stage-circle" />
+      <img src="/img/mockup4.png" alt="" className="auth-stage-laptop" />
+      <img src="/img/mockup5.png" alt="" className="auth-stage-phone" />
+    </div>
+  )
+}
 
 type AuthShowcaseLayoutProps = {
   title: string
@@ -25,6 +35,12 @@ export default function AuthShowcaseLayout({
       <div className="auth-shell-grid-bg" aria-hidden="true" />
       <PublicNavbar />
 
+      {/* desktop only: brand mark above the form (the public navbar is hidden there) */}
+      <Link href="/landing/index.html" className="auth-shell-brand" aria-label="TeamPulse domov">
+        <img src="/tp-logo.png" alt="" />
+        <span>TeamPulse</span>
+      </Link>
+
       <main className="auth-shell-main">
         <div className="auth-shell-back-wrap">
           <Link href={backHref} className="auth-shell-back">
@@ -43,14 +59,12 @@ export default function AuthShowcaseLayout({
 
           <aside className="auth-shell-visual" aria-hidden="true">
             <div className="auth-shell-circle" />
-            <Image
-              src="/img/mockup2.png"
-              alt="TeamPulse aplikace"
-              width={560}
-              height={920}
-              className="auth-shell-mockup"
-              priority
-            />
+            <div className="auth-shell-visual-copy">
+              <p className="auth-shell-visual-eyebrow">Správa klubu bez tabulek</p>
+              <p className="auth-shell-visual-title">Členové, program a komunikace klubu na jednom místě.</p>
+            </div>
+            <img src="/img/mockup2.png" alt="" className="auth-shell-mockup" />
+            <AuthShowcaseStage />
           </aside>
         </section>
       </main>

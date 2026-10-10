@@ -5009,3 +5009,682 @@ input[type='color'] {
 .app-sidebar.collapsed .nav-count {
   display: none;
 }
+
+/* ══ Auth: desktop split layout (≥1024px). Mobile keeps the stacked layout above. ══ */
+.auth-shell-brand,
+.auth-shell-visual-copy {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .auth-shell {
+    --auth-ink: oklch(18% 0.012 260);
+    --auth-ink-soft: oklch(47% 0.014 260);
+    --auth-line: oklch(89% 0.008 260);
+    --auth-surface: oklch(98.6% 0.003 260);
+    --auth-field: oklch(100% 0 0 / 0.9);
+    --auth-panel: oklch(14% 0.014 260);
+    --auth-panel-ink: oklch(95% 0.006 260);
+    --auth-panel-soft: oklch(68% 0.012 260);
+
+    display: grid;
+    grid-template-columns: minmax(520px, 5fr) minmax(0, 6fr);
+    grid-template-rows: auto 1fr auto auto auto auto 1.2fr;
+    min-height: 100vh;
+    background: var(--auth-surface);
+    color: var(--auth-ink);
+    overflow: visible;
+  }
+
+  .auth-shell::before,
+  .auth-shell::after,
+  .auth-shell-grid-bg,
+  .auth-shell .site-header,
+  .auth-shell-intro p,
+  .auth-shell .auth-form-panel > h2,
+  .auth-shell-circle {
+    display: none;
+  }
+
+  .auth-shell-intro {
+    grid-column: 1;
+    grid-row: 4;
+    justify-self: center;
+    width: min(440px, calc(100% - 96px));
+    margin: 0 0 8px;
+    text-align: left;
+    animation: none;
+  }
+
+  .auth-shell-intro h1 {
+    margin: 0;
+    font-family: 'Sora', 'IBM Plex Sans', sans-serif;
+    font-size: 30px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    line-height: 1.2;
+    color: var(--auth-ink);
+  }
+
+  .auth-shell-card:has(.onb-steps) ~ .auth-shell-intro,
+  .auth-shell:has(.onb-steps) .auth-shell-intro {
+    width: min(560px, calc(100% - 96px));
+  }
+
+  .auth-shell-main,
+  .auth-shell-grid {
+    display: contents;
+  }
+
+  .auth-shell-brand,
+  .auth-shell-back-wrap,
+  .auth-shell-card {
+    grid-column: 1;
+    justify-self: center;
+    width: min(440px, calc(100% - 96px));
+  }
+
+  .auth-shell-brand {
+    grid-row: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding-top: 36px;
+    color: var(--auth-ink);
+    font-family: 'Sora', 'IBM Plex Sans', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .auth-shell-brand img {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+  }
+
+  .auth-shell-back-wrap {
+    grid-row: 3;
+    margin: 0 0 20px;
+  }
+
+  .auth-shell-back {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--auth-ink-soft);
+  }
+
+  .auth-shell-back span {
+    font-size: 18px;
+  }
+
+  .auth-shell-card {
+    grid-row: 5;
+    padding: 0;
+    background: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    animation: none;
+  }
+
+  .auth-shell-card:has(.onb-steps) {
+    width: min(560px, calc(100% - 96px));
+  }
+
+  /* right showcase panel */
+  .auth-shell-visual {
+    grid-column: 2;
+    grid-row: 1 / -1;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    justify-content: stretch;
+    justify-items: start;
+    padding: 72px 0 0 64px;
+    border: 0;
+    border-radius: 0;
+    background: var(--auth-panel);
+    animation: none;
+    overflow: hidden;
+  }
+
+  .auth-shell--login .auth-shell-visual {
+    min-height: 0;
+  }
+
+  .auth-shell--login .auth-shell-visual::after {
+    display: none;
+  }
+
+  .auth-shell-visual-copy {
+    display: block;
+    max-width: 30ch;
+    position: relative;
+    z-index: 2;
+  }
+
+  .auth-shell-visual-eyebrow {
+    margin: 0 0 14px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: oklch(66% 0.17 25);
+  }
+
+  .auth-shell-visual-title {
+    margin: 0;
+    font-family: 'Sora', 'IBM Plex Sans', sans-serif;
+    font-size: 30px;
+    font-weight: 600;
+    line-height: 1.22;
+    letter-spacing: -0.01em;
+    color: var(--auth-panel-ink);
+  }
+
+  .auth-shell-visual picture {
+    align-self: end;
+    justify-self: end;
+    width: 100%;
+  }
+
+  .auth-shell-mockup,
+  .auth-shell--login .auth-shell-mockup {
+    display: block;
+    display: none;
+    filter: none;
+    animation: none;
+  }
+
+  /* form typography on the light column */
+  .auth-shell .auth-form-panel h2 {
+    margin-bottom: 8px;
+    font-family: 'Sora', 'IBM Plex Sans', sans-serif;
+    font-size: 30px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    color: var(--auth-ink);
+  }
+
+  .auth-shell .auth-form-panel p.auth-note {
+    margin-bottom: 28px;
+    color: var(--auth-ink-soft);
+  }
+
+  .auth-shell .auth-form-panel .form-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--auth-ink);
+  }
+
+  .auth-shell .auth-form-panel .form-input,
+  .auth-shell .auth-form-panel .form-select {
+    height: 44px;
+    padding: 0 14px;
+    border-radius: 8px;
+    border-color: var(--auth-line);
+    background: var(--auth-field);
+    transition: border-color 150ms ease, box-shadow 150ms ease;
+  }
+
+  .auth-shell .auth-form-panel textarea.form-input {
+    height: auto;
+    padding: 10px 14px;
+  }
+
+  .auth-shell .auth-form-panel .form-input:hover,
+  .auth-shell .auth-form-panel .form-select:hover {
+    border-color: oklch(78% 0.01 260);
+  }
+
+  .auth-shell .auth-form-panel .form-input:focus,
+  .auth-shell .auth-form-panel .form-select:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-primary-muted);
+  }
+
+  .auth-shell .auth-form-panel .auth-btn-primary,
+  .auth-shell .auth-form-panel .auth-btn-ghost {
+    height: 46px;
+    padding: 0 18px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    transition: background-color 150ms ease;
+  }
+
+  .auth-shell .auth-form-panel .auth-feedback {
+    border-radius: 8px;
+  }
+
+  .auth-shell .auth-form-panel .auth-switch {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--auth-line);
+  }
+}
+
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .auth-shell-card {
+    animation: authDesktopIn 320ms cubic-bezier(0.25, 1, 0.5, 1) both;
+  }
+
+  @keyframes authDesktopIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: none; }
+  }
+}
+
+@media (min-width: 1024px) {
+  .auth-shell .auth-form-panel .auth-switch + .auth-switch {
+    margin-top: 8px;
+    padding-top: 0;
+    border-top: 0;
+  }
+}
+
+/* ══ Club registration: desktop split layout (≥1024px) ══ */
+@media (min-width: 1024px) {
+  .club-create-page {
+    display: grid;
+    grid-template-columns: minmax(560px, 6fr) minmax(0, 5fr);
+    grid-template-rows: auto auto 1fr;
+    min-height: 100vh;
+    background: oklch(98.6% 0.003 260);
+    color: oklch(18% 0.012 260);
+    overflow: visible;
+  }
+
+  .club-create-bg-grid,
+  .club-create-orb,
+  .club-create-page .site-header {
+    display: none;
+  }
+
+  .club-create-main,
+  .club-create-grid {
+    display: contents;
+  }
+
+  .club-create-hero,
+  .club-create-card {
+    grid-column: 1;
+    justify-self: center;
+    width: min(600px, calc(100% - 96px));
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+  }
+
+  .club-create-hero {
+    grid-row: 1;
+    padding-top: 64px;
+    margin-bottom: 28px;
+  }
+
+  .club-create-hero h1 {
+    font-family: 'Sora', 'IBM Plex Sans', sans-serif;
+    font-size: 32px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    line-height: 1.15;
+  }
+
+  .club-create-hero p {
+    max-width: 60ch;
+    color: oklch(47% 0.014 260);
+  }
+
+  .club-create-card {
+    grid-row: 2;
+    padding-bottom: 64px;
+  }
+
+  .club-create-page .form-input {
+    height: 44px;
+    border-radius: 8px;
+    border-color: oklch(89% 0.008 260);
+  }
+
+  .club-create-btn {
+    height: 46px;
+    border-radius: 8px;
+  }
+
+  /* right panel: progress + product shot */
+  .club-create-side {
+    grid-column: 2;
+    grid-row: 1 / -1;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    padding: 72px 56px 0;
+    background: oklch(14% 0.014 260);
+    color: oklch(95% 0.006 260);
+    overflow: hidden;
+  }
+
+  .club-create-side-card,
+  .club-create-side-note {
+    padding: 0;
+    border: 0;
+    background: none;
+  }
+
+  .club-create-side-card h3,
+  .club-create-side-note h4 {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: oklch(66% 0.17 25);
+  }
+
+  .club-create-map {
+    margin-top: 20px;
+    gap: 18px;
+  }
+
+  .club-create-map-step {
+    opacity: 0.5;
+  }
+
+  .club-create-map-step strong {
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .club-create-map-step p,
+  .club-create-side-note p {
+    font-size: 14px;
+    color: oklch(68% 0.012 260);
+  }
+
+  .club-create-side-note p {
+    max-width: 34ch;
+  }
+
+  .club-create-map-dot {
+    width: 30px;
+    height: 30px;
+    border-color: oklch(40% 0.014 260);
+    color: oklch(80% 0.01 260);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .club-create-map-step.done .club-create-map-dot,
+  .club-create-map-step.active .club-create-map-dot {
+    border-color: var(--color-primary);
+    background: var(--color-primary);
+    color: oklch(99% 0.003 260);
+  }
+}
+
+
+/* Desktop/mobile variant switch for pages that render two layouts */
+@media (max-width: 1023px) {
+  .desktop-only {
+    display: none !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .mobile-only {
+    display: none !important;
+  }
+}
+
+
+/* ══ App shell: desktop refinement (≥1024px). Same look, calmer: half-strength
+   gradients, no glow shadows, tighter type. Mobile (<1024px) untouched. ══ */
+@media (min-width: 1024px) {
+  body:has(.app-layout) {
+    --ui-gradient-main: linear-gradient(135deg, rgba(var(--color-primary-rgb), calc((var(--ui-gradient-strength) / 100) * 0.11 * var(--ui-gradient-enabled))) 0%, transparent 46%);
+    --ui-gradient-accent: radial-gradient(520px 240px at 8% 0%, rgba(var(--color-primary-rgb), calc((var(--ui-gradient-strength) / 100) * 0.08 * var(--ui-gradient-enabled))) 0%, transparent 72%);
+    --ui-gradient-accent-soft: radial-gradient(420px 220px at 100% 0%, rgba(var(--color-primary-rgb), calc((var(--ui-gradient-soft-strength) / 100) * 0.06 * var(--ui-gradient-enabled))) 0%, transparent 74%);
+    --ui-soft-shadow: none;
+
+    background:
+      radial-gradient(1000px 380px at 16% -8%, rgba(var(--color-primary-rgb), 0.07) 0%, rgba(var(--color-primary-rgb), 0) 58%),
+      var(--color-bg);
+  }
+
+  .app-layout .topbar-title {
+    font-size: 17px;
+    font-weight: 600;
+  }
+
+  .app-layout .nav-active-pill,
+  .app-layout .topbar-btn.primary,
+  .app-layout .btn-primary {
+    box-shadow: none;
+  }
+
+  .app-layout .nav-label {
+    font-weight: 500;
+  }
+
+  .app-layout .nav-item.active .nav-label {
+    font-weight: 600;
+  }
+
+  .app-layout .content-title {
+    font-size: 26px;
+    font-weight: 600;
+  }
+
+  .app-layout .section-title {
+    font-size: 17px;
+    font-weight: 600;
+  }
+
+  .app-layout .page-intro-meta {
+    letter-spacing: 0.05em;
+  }
+}
+
+/* Sport line-art pattern (football + rugby ball) for the dark auth panels */
+:root {
+  --sport-pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260' viewBox='0 0 260 260' fill='none' stroke='white' stroke-opacity='0.07' stroke-width='1.5' stroke-linejoin='round'%3E%3Ccircle cx='62' cy='64' r='28'/%3E%3Cpath d='M62 54l9.5 6.9-3.6 11.2H56.1l-3.6-11.2z'/%3E%3Cpath d='M62 54V36M71.5 60.9l17-5.5M67.9 72.1l10.5 14.5M56.1 72.1L45.6 86.6M52.5 60.9l-17-5.5'/%3E%3Cg transform='rotate(-32 186 186)'%3E%3Cellipse cx='186' cy='186' rx='40' ry='23'/%3E%3Cpath d='M150 186h72M176 180v12M183 180v12M190 180v12M197 180v12'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+@media (min-width: 1024px) {
+
+  .club-create-side > * {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+/* ══ Auth showcase stage (desktop): landing-hero composition + ambient motion ══ */
+.auth-stage {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .auth-shell-visual,
+  .club-create-side {
+    isolation: isolate;
+  }
+
+  /* drifting sport line-art */
+  .auth-shell-visual::before,
+  .club-create-side::before {
+    content: '';
+    position: absolute;
+    inset: -260px;
+    z-index: -1;
+    background: var(--sport-pattern) 0 0 / 260px 260px repeat;
+    pointer-events: none;
+  }
+
+  /* slow red ambient light behind the composition */
+  .auth-shell--login .auth-shell-visual::after,
+  .auth-shell-visual::after,
+  .club-create-side::after {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 720px;
+    height: 720px;
+    right: -260px;
+    bottom: -300px;
+    z-index: -1;
+    border-radius: 50%;
+    background: radial-gradient(circle, oklch(47% 0.21 20 / 0.16) 0%, transparent 65%);
+    transform: none;
+    animation: none;
+    pointer-events: none;
+  }
+
+  /* Exact landing hero arrangement, expressed relative to a 576 x 580 stage
+     (landing: circle 480px right -60px, laptop 700px rotate -4deg, phone 260px
+     right -42px rotate -8deg). */
+  .auth-stage {
+    display: block;
+    position: absolute;
+    left: 10%;
+    bottom: 5%;
+    width: 66%;
+    aspect-ratio: 576 / 580;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .auth-stage-circle {
+    position: absolute;
+    width: 83.3%;
+    aspect-ratio: 1;
+    right: -10.4%;
+    top: 50%;
+    transform: translateY(-50%);
+    border-radius: 50%;
+    background: oklch(47% 0.21 20);
+    opacity: 0.92;
+    filter: blur(1px);
+  }
+
+  .auth-stage-laptop {
+    position: absolute;
+    left: 0;
+    top: 4%;
+    width: 121.5%;
+    max-width: none;
+    transform: rotate(-4deg);
+    filter: drop-shadow(0 28px 52px oklch(0% 0 0 / 0.38));
+  }
+
+  .auth-stage-phone {
+    position: absolute;
+    right: -7.3%;
+    top: 8%;
+    width: 45.1%;
+    max-width: none;
+    transform: rotate(-8deg);
+    filter: drop-shadow(0 22px 40px oklch(0% 0 0 / 0.42));
+  }
+
+  .club-create-side .auth-stage {
+    left: 8%;
+    bottom: 3%;
+    width: 60%;
+  }
+
+  /* light form column: faint drifting pattern + soft corner glow */
+  .auth-shell::before,
+  .club-create-page::before {
+    content: '';
+    display: block;
+    position: fixed;
+    inset: 0;
+    width: auto;
+    height: auto;
+    left: 0;
+    top: 0;
+    border-radius: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(640px 420px at 0% 100%, color-mix(in srgb, var(--color-primary) 9%, transparent) 0%, transparent 70%);
+    animation: none;
+  }
+
+  .auth-shell > *,
+  .club-create-page > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .auth-shell > .auth-shell-main,
+  .club-create-page > .club-create-main {
+    position: static;
+  }
+}
+
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .auth-shell-visual::before,
+  .club-create-side::before {
+    animation: sportDrift 48s linear infinite;
+  }
+
+  .auth-shell-visual::after,
+  .club-create-side::after {
+    animation: authGlow 9s ease-in-out infinite alternate;
+  }
+
+  .auth-stage-laptop {
+    animation: stageFloatLaptop 7s ease-in-out infinite;
+  }
+
+  .auth-stage-phone {
+    animation: stageFloatPhone 6s ease-in-out infinite;
+    animation-delay: -2s;
+  }
+
+
+  .auth-shell::before,
+  .club-create-page::before {
+    animation: authGlowLight 12s ease-in-out infinite alternate;
+  }
+
+  @keyframes sportDrift {
+    from { transform: translate3d(0, 0, 0); }
+    to { transform: translate3d(260px, 260px, 0); }
+  }
+
+  @keyframes authGlow {
+    from { transform: translate3d(0, 0, 0) scale(1); opacity: 0.8; }
+    to { transform: translate3d(-60px, -40px, 0) scale(1.08); opacity: 1; }
+  }
+
+  @keyframes authGlowLight {
+    from { opacity: 0.6; transform: translate3d(0, 0, 0); }
+    to { opacity: 1; transform: translate3d(40px, -30px, 0); }
+  }
+
+  @keyframes stageFloatLaptop {
+    0%, 100% { transform: rotate(-4deg) translate3d(0, 0, 0); }
+    50% { transform: rotate(-4deg) translate3d(0, -10px, 0); }
+  }
+
+  @keyframes stageFloatPhone {
+    0%, 100% { transform: rotate(-8deg) translate3d(0, 0, 0); }
+    50% { transform: rotate(-7deg) translate3d(0, -16px, 0); }
+  }
+
+  @keyframes stageCircle {
+    from { transform: translateY(-50%) scale(1); }
+    to { transform: translateY(-50%) scale(1.04); }
+  }
+}

@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { FormEvent, useEffect, useRef, useState } from 'react'
 import PublicNavbar from '@/components/PublicNavbar'
+import { AuthShowcaseStage } from '@/components/AuthShowcaseLayout'
 
 type RegisterFormState = {
   club_name: string
@@ -289,6 +290,8 @@ export default function CreateClubPage() {
               <h4>Proč TeamPulse</h4>
               <p>Správa členů, komunikace, dokumenty i klubové procesy na jednom místě.</p>
             </div>
+
+            <AuthShowcaseStage />
           </aside>
 
           <div className="club-create-card">
