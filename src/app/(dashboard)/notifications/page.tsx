@@ -37,6 +37,7 @@ function timeAgo(iso: string) {
 function typeLabel(type: string) {
   if (type === 'new_message') return 'Nová zpráva'
   if (type === 'member_joined') return 'Nový člen'
+  if (type === 'player_application') return 'Přihláška hráče'
   return 'Notifikace'
 }
 

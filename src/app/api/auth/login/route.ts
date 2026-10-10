@@ -6,6 +6,13 @@ import { clearRememberedDeviceCookie, createRememberedDevice } from '@/lib/auth/
 import { generateTwoFactorCode, getTwoFactorExpiryIso, hashTwoFactorCode } from '@/lib/auth/two-factor'
 import { buildTwoFactorCodeEmail } from '@/lib/email/templates'
 import { EmailSendError, sendTransactionalEmail } from '@/lib/email/send'
+import { findLatestApplicationByEmail } from '@/lib/onboarding/applications'
+
+const APPLICATION_STATUS_MESSAGES: Record<string, string> = {
+  pending_manager: 'Váš účet čeká na schválení klubem.',
+  pending_parent: 'Váš účet čeká na registraci rodiče. Rodiči přišel e-mail s odkazem.',
+  rejected: 'Vaše přihláška do klubu nebyla schválena. Kontaktujte prosím vedení klubu.',
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -25,6 +32,12 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (!profile) {
+      const application = await findLatestApplicationByEmail(supabase, safeEmail)
+      const statusMessage = application ? APPLICATION_STATUS_MESSAGES[application.status] : undefined
+      // only reveal the application state to someone who knows its password
+      if (statusMessage && application && await bcrypt.compare(String(password), application.password_hash)) {
+        return NextResponse.json({ error: statusMessage }, { status: 403 })
+      }
       return NextResponse.json({ error: 'Neplatný e-mail nebo heslo.' }, { status: 401 })
     }
 

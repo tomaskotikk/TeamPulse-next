@@ -9,6 +9,11 @@ import {
   getThemeVars,
 } from '@/lib/app-context'
 import DesktopOverview from '@/components/dashboard/DesktopOverview'
+import PendingApplicationsCard from '@/components/dashboard/PendingApplicationsCard'
+import ParentOverview from '@/components/parent/ParentOverview'
+import { createAdminClient } from '@/lib/supabase/server'
+import { getManagedClub, listApplicationsForClub } from '@/lib/onboarding/applications'
+import { getChildrenForParent, getSelectedChild } from '@/lib/parent'
 
 export default async function DashboardPage() {
   const user = await getCurrentAppUser()
@@ -26,11 +31,38 @@ export default async function DashboardPage() {
   const userName = `${user.first_name} ${user.last_name}`
   const clubName = club?.name ?? user.organization ?? 'Bez klubu'
 
+  if (user.role === 'rodič' && club) {
+    const children = await getChildrenForParent(user.id)
+    const selected = await getSelectedChild(children)
+
+    return (
+      <DashboardLayout user={user} isManager={false} themeVars={themeVars}>
+        <Topbar title="Přehled" />
+        <div className="app-content">
+          <ParentOverview
+            parentFirstName={user.first_name}
+            clubId={club.id}
+            clubName={club.name}
+            items={children}
+            selected={selected}
+          />
+        </div>
+      </DashboardLayout>
+    )
+  }
+
+  const managedClub = isManager ? await getManagedClub(user) : null
+  const pendingApplications = managedClub
+    ? (await listApplicationsForClub(await createAdminClient(), managedClub.id)).filter((a) => a.status === 'pending_manager')
+    : []
+
   return (
     <DashboardLayout user={user} isManager={isManager} themeVars={themeVars}>
       <Topbar title="Dashboard" />
 
       <div className="app-content dashboard-home">
+        <PendingApplicationsCard applications={pendingApplications} />
+
         <div className="dashboard-mobile-shell">
           <section className="mobile-home-hero">
             <div className="mobile-home-hero-gradient" />

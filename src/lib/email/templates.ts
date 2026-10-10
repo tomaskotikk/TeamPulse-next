@@ -100,7 +100,7 @@ export function buildClubInviteEmail(input: {
   inviterName: string
   role: string
   inviteUrl: string
-  expiresHours: number
+  expiresLabel: string
 }): EmailContent {
   const safeClubName = escapeHtml(input.clubName)
   const safeInviterName = escapeHtml(input.inviterName)
@@ -128,14 +128,14 @@ export function buildClubInviteEmail(input: {
           <div style="margin:0 0 8px;color:#6e6e73;font-size:13px;font-weight:600;">Pokud tlačítko nefunguje, použij tento odkaz:</div>
           <a href="${safeInviteUrl}" style="color:#E43432;font-size:13px;word-break:break-all;text-decoration:none;">${safeInviteUrl}</a>
         </div>
-        <p style="margin:0;color:#6e6e73;font-size:14px;line-height:1.6;">Tento odkaz vyprší za ${input.expiresHours} hodinu. Pokud jsi tuto pozvánku nečekal(a), email ignoruj.</p>
+        <p style="margin:0;color:#6e6e73;font-size:14px;line-height:1.6;">Tento odkaz platí ${input.expiresLabel}. Pokud jsi tuto pozvánku nečekal(a), email ignoruj.</p>
       `
     ),
     text: joinText([
       'Dobrý den,',
       `${input.inviterName} vás zve do klubu ${input.clubName} jako ${input.role}.`,
       `Přijmout pozvánku: ${input.inviteUrl}`,
-      `Odkaz vyprší za ${input.expiresHours} hodinu.`,
+      `Odkaz platí ${input.expiresLabel}.`,
     ]),
   }
 }
@@ -508,6 +508,172 @@ export function buildManagerNewMemberEmail(input: {
       `Email: ${input.memberEmail}`,
       `Telefon: ${input.memberPhone || 'Neuvedeno'}`,
       `Členové klubu: ${input.membersUrl}`,
+    ]),
+  }
+}
+
+function renderButton(url: string, label: string) {
+  const safeUrl = escapeHtml(url)
+  return `
+        <div style="text-align:center;margin:0 0 24px;">
+          <a href="${safeUrl}" style="display:inline-block;padding:15px 32px;background:#E43432;color:#ffffff;text-decoration:none;border-radius:10px;font-weight:600;font-size:16px;">${escapeHtml(label)}</a>
+        </div>
+        <div style="margin:0 0 24px;padding:18px 20px;background:#f5f5f7;border-radius:10px;">
+          <div style="margin:0 0 8px;color:#6e6e73;font-size:13px;font-weight:600;">Pokud tlačítko nefunguje, použij tento odkaz:</div>
+          <a href="${safeUrl}" style="color:#E43432;font-size:13px;word-break:break-all;text-decoration:none;">${safeUrl}</a>
+        </div>`
+}
+
+function renderParagraph(html: string) {
+  return `<p style="margin:0 0 16px;color:#4a4a4a;font-size:16px;line-height:1.7;">${html}</p>`
+}
+
+function renderHeading(text: string) {
+  return `<h2 style="margin:0 0 16px;font-size:24px;color:#1d1d1f;">${escapeHtml(text)}</h2>`
+}
+
+export function buildManagerNewApplicationEmail(input: {
+  managerFirstName: string
+  clubName: string
+  playerName: string
+  isMinor: boolean
+  applicationUrl: string
+}): EmailContent {
+  const intro = `${escapeHtml(input.playerName)} odeslal(a) přihlášku do klubu <strong>${escapeHtml(input.clubName)}</strong>.`
+  const next = input.isMinor
+    ? 'Hráč je nezletilý. Před schválením prosím zkontrolujte e-mail rodiče.'
+    : 'Po kontrole údajů přihlášku schvalte nebo zamítněte.'
+
+  return {
+    subject: `Nová přihláška hráče – ${input.playerName}`,
+    html: renderEmailLayout(
+      'Nová přihláška hráče',
+      `${input.playerName} čeká na schválení`,
+      `
+        ${renderHeading('Nová přihláška hráče')}
+        ${renderParagraph(`Dobrý den ${escapeHtml(input.managerFirstName)},`)}
+        ${renderParagraph(intro)}
+        ${renderParagraph(escapeHtml(next))}
+        ${renderButton(input.applicationUrl, 'Otevřít přihlášku')}
+      `
+    ),
+    text: joinText([
+      `Dobrý den ${input.managerFirstName},`,
+      `${input.playerName} odeslal(a) přihlášku do klubu ${input.clubName}.`,
+      next,
+      `Přihláška: ${input.applicationUrl}`,
+    ]),
+  }
+}
+
+export function buildParentRegistrationEmail(input: {
+  parentFirstName: string
+  childName: string
+  clubName: string
+  registerUrl: string
+  expiresDays: number
+}): EmailContent {
+  return {
+    subject: `Registrace rodiče – ${input.childName}, ${input.clubName}`,
+    html: renderEmailLayout(
+      'Registrace rodiče',
+      `Dokončete registraci, aby se aktivoval účet hráče ${input.childName}`,
+      `
+        ${renderHeading('Registrace rodiče')}
+        ${renderParagraph(`Dobrý den ${escapeHtml(input.parentFirstName)},`)}
+        ${renderParagraph(`<strong>${escapeHtml(input.childName)}</strong> se registruje do klubu <strong>${escapeHtml(input.clubName)}</strong> a uvedl(a) vás jako zákonného zástupce.`)}
+        ${renderParagraph('Po vaší registraci se aktivuje účet hráče i váš rodičovský účet. Uvidíte v něm tréninky, zápasy a údaje svého dítěte.')}
+        ${renderButton(input.registerUrl, 'Dokončit registraci')}
+        <p style="margin:0;color:#6e6e73;font-size:14px;line-height:1.6;">Odkaz platí ${input.expiresDays} dní. Pokud o registraci nevíte, kontaktujte klub.</p>
+      `
+    ),
+    text: joinText([
+      `Dobrý den ${input.parentFirstName},`,
+      `${input.childName} se registruje do klubu ${input.clubName} a uvedl(a) vás jako zákonného zástupce.`,
+      `Dokončit registraci: ${input.registerUrl}`,
+      `Odkaz platí ${input.expiresDays} dní.`,
+    ]),
+  }
+}
+
+export function buildParentChildLinkedEmail(input: {
+  parentFirstName: string
+  childName: string
+  clubName: string
+  loginUrl: string
+}): EmailContent {
+  return {
+    subject: `${input.childName} byl(a) přidán(a) k vašemu účtu`,
+    html: renderEmailLayout(
+      'Dítě přidáno k účtu',
+      `${input.childName} je nyní propojen(a) s vaším účtem`,
+      `
+        ${renderHeading('Dítě přidáno k účtu')}
+        ${renderParagraph(`Dobrý den ${escapeHtml(input.parentFirstName)},`)}
+        ${renderParagraph(`klub <strong>${escapeHtml(input.clubName)}</strong> schválil přihlášku hráče <strong>${escapeHtml(input.childName)}</strong>. Hráč je nyní propojen s vaším rodičovským účtem.`)}
+        ${renderButton(input.loginUrl, 'Přihlásit se')}
+      `
+    ),
+    text: joinText([
+      `Dobrý den ${input.parentFirstName},`,
+      `klub ${input.clubName} schválil přihlášku hráče ${input.childName}. Hráč je nyní propojen s vaším účtem.`,
+      `Přihlášení: ${input.loginUrl}`,
+    ]),
+  }
+}
+
+export function buildPlayerApprovedEmail(input: {
+  firstName: string
+  clubName: string
+  loginUrl: string
+}): EmailContent {
+  return {
+    subject: `Účet v klubu ${input.clubName} je aktivní`,
+    html: renderEmailLayout(
+      'Účet je aktivní',
+      `Vítej v klubu ${input.clubName}`,
+      `
+        ${renderHeading('Účet je aktivní')}
+        ${renderParagraph(`Ahoj ${escapeHtml(input.firstName)},`)}
+        ${renderParagraph(`tvoje registrace do klubu <strong>${escapeHtml(input.clubName)}</strong> je dokončená. Teď se můžeš přihlásit.`)}
+        ${renderButton(input.loginUrl, 'Přihlásit se')}
+      `
+    ),
+    text: joinText([
+      `Ahoj ${input.firstName},`,
+      `tvoje registrace do klubu ${input.clubName} je dokončená.`,
+      `Přihlášení: ${input.loginUrl}`,
+    ]),
+  }
+}
+
+export function buildPlayerApplicationRejectedEmail(input: {
+  firstName: string
+  clubName: string
+  reason: string | null
+}): EmailContent {
+  const reasonHtml = input.reason
+    ? renderParagraph(`Důvod: ${escapeHtml(input.reason)}`)
+    : ''
+
+  return {
+    subject: `Přihláška do klubu ${input.clubName} nebyla schválena`,
+    html: renderEmailLayout(
+      'Přihláška nebyla schválena',
+      `Klub ${input.clubName} přihlášku neschválil`,
+      `
+        ${renderHeading('Přihláška nebyla schválena')}
+        ${renderParagraph(`Ahoj ${escapeHtml(input.firstName)},`)}
+        ${renderParagraph(`klub <strong>${escapeHtml(input.clubName)}</strong> tvoji přihlášku neschválil.`)}
+        ${reasonHtml}
+        ${renderParagraph('Pokud jde o omyl, kontaktuj prosím vedení klubu.')}
+      `
+    ),
+    text: joinText([
+      `Ahoj ${input.firstName},`,
+      `klub ${input.clubName} tvoji přihlášku neschválil.`,
+      input.reason ? `Důvod: ${input.reason}` : undefined,
+      'Pokud jde o omyl, kontaktuj prosím vedení klubu.',
     ]),
   }
 }

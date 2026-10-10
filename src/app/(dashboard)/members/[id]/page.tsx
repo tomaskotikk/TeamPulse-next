@@ -13,6 +13,8 @@ import { createAdminClient } from '@/lib/supabase/server'
 import RemoveMemberButton from '@/components/RemoveMemberButton'
 import MemberRoleEditor from '@/components/MemberRoleEditor'
 import MemberBirthDateEditor from '@/components/MemberBirthDateEditor'
+import { getMemberProfile, getProfileAccess } from '@/lib/member-profiles'
+import { getParentsForChild } from '@/lib/parent'
 
 export default async function MemberDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -54,6 +56,11 @@ export default async function MemberDetailPage({ params }: { params: Promise<{ i
       return cat
     })
     .find((c): c is CatRow => c !== null && c.club_id === club.id) ?? null
+
+  const profileAccess = await getProfileAccess(user, memberId)
+  const [memberProfile, memberParents] = profileAccess.canView
+    ? await Promise.all([getMemberProfile(memberId), getParentsForChild(memberId)])
+    : [null, []]
 
   const mInitials =
     (member.first_name?.[0] ?? '').toUpperCase() +
@@ -158,6 +165,57 @@ export default async function MemberDetailPage({ params }: { params: Promise<{ i
             </div>
           </div>
         </section>
+
+        {profileAccess.canView && (memberProfile || memberParents.length > 0) && (
+          <div className="section">
+            <div className="section-header">
+              <h3 className="section-title">Zdraví a kontakty</h3>
+              <p className="section-description">Vidí jen vedení klubu, trenéři a rodiče.</p>
+            </div>
+            <div className="section-content">
+              {memberProfile && (
+                <>
+                  <div className="data-row">
+                    <span className="data-label">Adresa</span>
+                    <span className="data-value">
+                      {memberProfile.street ? `${memberProfile.street}, ${memberProfile.zip ?? ''} ${memberProfile.city ?? ''}` : '–'}
+                    </span>
+                  </div>
+                  <div className="data-row">
+                    <span className="data-label">Zdravotní pojišťovna</span>
+                    <span className="data-value">{memberProfile.health_insurance ?? '–'}</span>
+                  </div>
+                  <div className="data-row">
+                    <span className="data-label">Alergie a omezení</span>
+                    <span className="data-value" style={{ whiteSpace: 'pre-wrap' }}>{memberProfile.health_notes || 'Neuvedeno'}</span>
+                  </div>
+                  {memberProfile.emergency_name && (
+                    <div className="data-row">
+                      <span className="data-label">Nouzový kontakt</span>
+                      <span className="data-value">
+                        {memberProfile.emergency_name}
+                        {memberProfile.emergency_phone ? <> · <a href={`tel:${memberProfile.emergency_phone}`}>{memberProfile.emergency_phone}</a></> : null}
+                      </span>
+                    </div>
+                  )}
+                  <div className="data-row">
+                    <span className="data-label">Souhlas s fotografiemi</span>
+                    <span className="data-value">{memberProfile.consent_photos ? 'Ano' : 'Ne'}</span>
+                  </div>
+                </>
+              )}
+              {memberParents.map((p) => (
+                <div className="data-row" key={p.id}>
+                  <span className="data-label">Rodič</span>
+                  <span className="data-value">
+                    {p.first_name} {p.last_name} · <a href={`mailto:${p.email}`}>{p.email}</a>
+                    {p.phone ? <> · <a href={`tel:${p.phone}`}>{p.phone}</a></> : null}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="section">
           <div className="section-header">

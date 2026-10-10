@@ -71,3 +71,7 @@ export function getEmailVerificationUrl(token: string) {
   const base = process.env.EMAIL_VERIFICATION_URL_BASE || `${getAppBaseUrl()}/verify-email`
   return `${trimTrailingSlash(base)}?token=${encodeURIComponent(token)}`
 }
+
+export function getParentRegisterUrl(token: string) {
+  return `${getAppBaseUrl()}/parent/register?token=${encodeURIComponent(token)}`
+}

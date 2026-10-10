@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import { createAdminClient } from '@/lib/supabase/server'
-import { buildManagerNewMemberEmail } from '@/lib/email/templates'
+import { buildManagerNewApplicationEmail, buildManagerNewMemberEmail } from '@/lib/email/templates'
 import { getAppBaseUrl } from '@/lib/email/config'
 import { fullResyncCategories } from '@/app/api/categories/route'
 import { sendTransactionalEmail } from '@/lib/email/send'
+import { escapeLike, findOpenApplicationByEmail } from '@/lib/onboarding/applications'
+import { isMinor, parseApplication } from '@/lib/onboarding/validation'
 
 function invitationExpired(expiresAt: string) {
   return new Date(expiresAt).getTime() < Date.now()
@@ -67,6 +69,7 @@ export async function GET(request: NextRequest) {
         role: invitation.role,
         club_name: getClubName(invitation),
         expires_at: invitation.expires_at,
+        requires_application: invitation.role === 'hráč',
       },
     })
   } catch (err) {
@@ -77,7 +80,166 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const { token, firstName, lastName, phone, dateBirth, password, passwordConfirm } = await request.json()
+    const body = (await request.json().catch(() => ({}))) as Record<string, unknown>
+    const safeToken = String(body.token || '').trim()
+
+    if (!safeToken) {
+      return NextResponse.json({ error: 'Neplatný odkaz pozvánky.' }, { status: 400 })
+    }
+
+    const invitation = await getInvitationByToken(safeToken)
+
+    if (invitation?.role === 'hráč') {
+      return submitPlayerApplication(invitation, body)
+    }
+
+    return acceptInvite(body)
+  } catch (err) {
+    console.error('Invite accept POST error:', err)
+    return NextResponse.json({ error: 'Nastala chyba serveru.' }, { status: 500 })
+  }
+}
+
+type Invitation = NonNullable<Awaited<ReturnType<typeof getInvitationByToken>>>
+
+async function getClubManager(clubId: number) {
+  const supabase = await createAdminClient()
+  const { data } = await supabase
+    .from('clubs')
+    .select('owner_user_id, users!clubs_owner_user_id_fkey(first_name, email)')
+    .eq('id', clubId)
+    .maybeSingle()
+
+  const row = data as
+    | {
+        owner_user_id: number
+        users:
+          | { first_name: string | null; email: string | null }
+          | { first_name: string | null; email: string | null }[]
+          | null
+      }
+    | null
+
+  if (!row) return null
+  const managerUser = Array.isArray(row.users) ? row.users[0] : row.users
+  return { userId: row.owner_user_id, firstName: managerUser?.first_name ?? null, email: managerUser?.email ?? null }
+}
+
+async function submitPlayerApplication(invitation: Invitation, body: Record<string, unknown>) {
+  if (invitation.used) {
+    return NextResponse.json({ error: 'Tato pozvánka již byla použita.' }, { status: 409 })
+  }
+
+  if (invitationExpired(invitation.expires_at)) {
+    return NextResponse.json({ error: 'Tato pozvánka vypršela. Kontaktujte prosím manažera klubu.' }, { status: 410 })
+  }
+
+  const parsed = parseApplication(body, invitation.email)
+  if (!parsed.ok) {
+    return NextResponse.json({ error: parsed.error }, { status: 400 })
+  }
+  const data = parsed.data
+
+  const supabase = await createAdminClient()
+
+  const { data: existingUser } = await supabase
+    .from('users')
+    .select('id')
+    .ilike('email', escapeLike(invitation.email))
+    .maybeSingle()
+
+  if (existingUser) {
+    return NextResponse.json({ error: 'Účet s tímto e-mailem už existuje.' }, { status: 409 })
+  }
+
+  if (await findOpenApplicationByEmail(supabase, invitation.email)) {
+    return NextResponse.json({ error: 'Přihláška s tímto e-mailem už čeká na schválení.' }, { status: 409 })
+  }
+
+  const { data: claimRecord } = await supabase
+    .from('team_invitations')
+    .update({ used: true })
+    .eq('id', invitation.id)
+    .eq('used', false)
+    .select('id')
+    .maybeSingle()
+
+  if (!claimRecord) {
+    return NextResponse.json({ error: 'Tato pozvánka již byla použita.' }, { status: 409 })
+  }
+
+  const passwordHash = await bcrypt.hash(data.password, 12)
+
+  const { data: application, error: insertError } = await supabase
+    .from('player_applications')
+    .insert({
+      club_id: invitation.club_id,
+      invitation_id: invitation.id,
+      email: invitation.email.toLowerCase(),
+      password_hash: passwordHash,
+      first_name: data.firstName,
+      last_name: data.lastName,
+      date_birth: data.dateBirth,
+      phone: data.phone,
+      street: data.street,
+      city: data.city,
+      zip: data.zip,
+      health_insurance: data.healthInsurance,
+      health_notes: data.healthNotes,
+      emergency_name: data.emergencyName,
+      emergency_phone: data.emergencyPhone,
+      parent_first_name: data.parentFirstName,
+      parent_last_name: data.parentLastName,
+      parent_email: data.parentEmail,
+      parent_phone: data.parentPhone,
+      consent_gdpr: data.consentGdpr,
+      consent_photos: data.consentPhotos,
+      status: 'pending_manager',
+    })
+    .select('id')
+    .single()
+
+  if (insertError || !application) {
+    await supabase.from('team_invitations').update({ used: false }).eq('id', invitation.id)
+    console.error('Application insert error:', insertError)
+    return NextResponse.json({ error: 'Nepodařilo se uložit přihlášku.' }, { status: 500 })
+  }
+
+  const playerName = `${data.firstName} ${data.lastName}`
+  const minor = isMinor(data.dateBirth)
+  const manager = await getClubManager(invitation.club_id)
+
+  if (manager) {
+    await supabase.from('notifications').insert({
+      user_id: manager.userId,
+      club_id: invitation.club_id,
+      type: 'player_application',
+      title: `Nová přihláška: ${playerName}`,
+      body: minor ? 'Nezletilý hráč · zkontrolujte e-mail rodiče' : 'Čeká na schválení',
+    })
+
+    if (manager.email) {
+      try {
+        const emailContent = buildManagerNewApplicationEmail({
+          managerFirstName: manager.firstName || 'manažere',
+          clubName: getClubName(invitation),
+          playerName,
+          isMinor: minor,
+          applicationUrl: `${getAppBaseUrl()}/applications/${application.id}`,
+        })
+        await sendTransactionalEmail({ to: manager.email, ...emailContent })
+      } catch (mailErr) {
+        console.error('Manager new application email error:', mailErr)
+      }
+    }
+  }
+
+  return NextResponse.json({ success: true, pending: true, minor })
+}
+
+async function acceptInvite(body: Record<string, unknown>) {
+  try {
+    const { token, firstName, lastName, phone, dateBirth, password, passwordConfirm } = body
 
     const safeToken = String(token || '').trim()
     const safeFirst = String(firstName || '').trim()
@@ -216,7 +378,7 @@ export async function POST(request: NextRequest) {
 
     // Notify manager via in-app notification too (fire-and-forget)
     if (manager?.owner_user_id) {
-      void supabase.from('notifications').insert({
+      await supabase.from('notifications').insert({
         user_id: manager.owner_user_id,
         club_id: invitation.club_id,
         type: 'member_joined',

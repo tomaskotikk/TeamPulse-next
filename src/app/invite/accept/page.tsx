@@ -4,12 +4,14 @@ import Link from 'next/link'
 import { FormEvent, Suspense, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import AuthShowcaseLayout from '@/components/AuthShowcaseLayout'
+import PlayerApplicationForm from './PlayerApplicationForm'
 
 type InviteInfo = {
   email: string
   role: string
   club_name: string
   expires_at: string
+  requires_application?: boolean
 }
 
 function AcceptInviteContent() {
@@ -109,13 +111,27 @@ function AcceptInviteContent() {
     >
       <div className="auth-form-panel">
         <h2>Přijmout pozvánku</h2>
-        <p className="auth-note">Dokončete registraci a aktivujte svůj účet člena klubu.</p>
+        <p className="auth-note">
+          {invite?.requires_application
+            ? 'Vyplňte přihlášku. Po schválení klubem se váš účet aktivuje.'
+            : 'Dokončete registraci a aktivujte svůj účet člena klubu.'}
+        </p>
 
         {loading && <div className="auth-feedback success">Načítám pozvánku…</div>}
         {!loading && error && !success && <div className="auth-feedback error">{error}</div>}
         {!loading && success && <div className="auth-feedback success">{success}</div>}
 
-        {!loading && invite && !success && (
+        {!loading && invite?.requires_application && (
+          <>
+            <div className="onb-invite-meta">
+              <span>Klub <strong>{invite.club_name}</strong></span>
+              <span>Role <strong>{invite.role}</strong></span>
+            </div>
+            <PlayerApplicationForm token={token} email={invite.email} clubName={invite.club_name} />
+          </>
+        )}
+
+        {!loading && invite && !invite.requires_application && !success && (
           <>
             <div className="auth-feedback success">
               Klub: <strong>{invite.club_name}</strong><br />

@@ -4,6 +4,10 @@ import { createAdminClient } from '@/lib/supabase/server'
 import { buildClubInviteEmail } from '@/lib/email/templates'
 import { getInviteAcceptUrl } from '@/lib/email/config'
 import { sendTransactionalEmail } from '@/lib/email/send'
+import { findOpenApplicationByEmail } from '@/lib/onboarding/applications'
+
+const PLAYER_INVITE_EXPIRY_DAYS = 7
+const OTHER_INVITE_EXPIRY_HOURS = 1
 
 const ALLOWED_ROLES = new Set(['hráč', 'trenér', 'rodič'])
 
@@ -57,6 +61,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Tento e-mail už je registrovaný v systému.' }, { status: 409 })
     }
 
+    const openApplication = await findOpenApplicationByEmail(supabase, email)
+
+    if (openApplication) {
+      return NextResponse.json({ error: 'Pro tento e-mail už existuje přihláška čekající na schválení.' }, { status: 409 })
+    }
+
     const nowIso = new Date().toISOString()
 
     const { data: existingInvitation } = await supabase
@@ -74,7 +84,10 @@ export async function POST(request: NextRequest) {
     }
 
     const token = crypto.randomUUID().replace(/-/g, '') + crypto.randomUUID().replace(/-/g, '')
-    const expiresAt = new Date(Date.now() + 60 * 60 * 1000).toISOString()
+    const expiryMs = role === 'hráč'
+      ? PLAYER_INVITE_EXPIRY_DAYS * 24 * 60 * 60 * 1000
+      : OTHER_INVITE_EXPIRY_HOURS * 60 * 60 * 1000
+    const expiresAt = new Date(Date.now() + expiryMs).toISOString()
 
     const { data: invitation, error: insertError } = await supabase
       .from('team_invitations')
@@ -102,7 +115,7 @@ export async function POST(request: NextRequest) {
       inviterName,
       role,
       inviteUrl,
-      expiresHours: 1,
+      expiresLabel: role === 'hráč' ? `${PLAYER_INVITE_EXPIRY_DAYS} dní` : `${OTHER_INVITE_EXPIRY_HOURS} hodinu`,
     })
 
     try {

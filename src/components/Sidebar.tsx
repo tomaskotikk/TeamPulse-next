@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react'
 import {
   Bell,
   CalendarDays,
+  ClipboardCheck,
   ChevronLeft,
   Layers,
   LineChart,
@@ -38,6 +39,21 @@ export default function Sidebar({ user, isManager }: SidebarProps) {
   const navRef = useRef<HTMLElement>(null)
   const pillRef = useRef<HTMLDivElement>(null)
   const firstRender = useRef(true)
+  const [pendingApplications, setPendingApplications] = useState(0)
+
+  useEffect(() => {
+    if (!isManager) return
+    let cancelled = false
+    fetch('/api/applications?count=1', { cache: 'no-store' })
+      .then((res) => (res.ok ? res.json() : { count: 0 }))
+      .then((data) => {
+        if (!cancelled) setPendingApplications(Number(data.count) || 0)
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
+  }, [isManager, pathname])
 
   useEffect(() => {
     window.localStorage.setItem('tp-sidebar-collapsed', collapsed ? '1' : '0')
@@ -150,6 +166,18 @@ export default function Sidebar({ user, isManager }: SidebarProps) {
             <Users className="nav-icon" />
             <span className="nav-label">Členové</span>
           </Link>
+
+          {isManager && (
+            <Link href="/applications" className={navClass('/applications')}>
+              <ClipboardCheck className="nav-icon" />
+              <span className="nav-label">Přihlášky</span>
+              {pendingApplications > 0 && (
+                <span className="nav-count" aria-label={`${pendingApplications} čeká na schválení`}>
+                  {pendingApplications}
+                </span>
+              )}
+            </Link>
+          )}
 
           {isManager && (
             <Link href="/categories" className={navClass('/categories')}>
