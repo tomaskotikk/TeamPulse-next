@@ -5,7 +5,10 @@ import * as Haptics from 'expo-haptics'
 import type { ComponentProps, ReactNode } from 'react'
 import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native'
 import Animated, { FadeInDown } from 'react-native-reanimated'
+import { withChild } from '@/lib/api'
+import { useAuth } from '@/lib/auth'
 import { formatEventRange, initials } from '@/lib/format'
+import { primeCache } from '@/lib/useFetch'
 import { eventTypeColor, eventTypeLabel, palette, useTheme } from '@/lib/theme'
 import type { ClubEvent, Response } from '@/lib/types'
 
@@ -125,13 +128,22 @@ export function ResponseBadge({ response, size = 28 }: { response: Response; siz
 }
 
 /* ── Event card ── */
-export function EventCard({ event, index = 0, onOpen, showStatus = true }: { event: ClubEvent; index?: number; onOpen?: () => void; showStatus?: boolean }) {
+export function EventCard({ event, index = 0, onOpen, showStatus = true, animate = true }: { event: ClubEvent; index?: number; onOpen?: () => void; showStatus?: boolean; animate?: boolean }) {
+  const { me, childId } = useAuth()
   return (
-    <Animated.View entering={FadeInDown.delay(index * 60).duration(380)}>
+    <Animated.View entering={animate ? FadeInDown.delay(Math.min(index, 5) * 40).duration(260) : undefined}>
       <Pressable
         onPress={() => {
           tapFeedback()
           onOpen?.()
+          // open the detail instantly with what the card already knows; the screen refreshes it
+          primeCache(withChild(`/api/mobile/events/${event.id}`, childId), {
+            event,
+            reason: null,
+            started: new Date(event.starts_at).getTime() <= Date.now(),
+            canRespond: showStatus,
+            memberId: childId ?? me?.user.id ?? null,
+          })
           router.push({ pathname: '/event/[id]', params: { id: String(event.id) } })
         }}
         style={({ pressed }) => [s.card, pressed && s.cardPressed]}

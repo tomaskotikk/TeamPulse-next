@@ -1,7 +1,8 @@
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { useMemo, useState } from 'react'
 import { Modal, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
-import Animated, { FadeIn, SlideInDown } from 'react-native-reanimated'
+import Animated, {
+  Easing, FadeIn, SlideInDown } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { EmptyState, EventCard, LargeTitle, SectionHeader, tapFeedback, ui } from '@/components/ui'
 import { withChild } from '@/lib/api'
@@ -134,14 +135,14 @@ export default function EventsScreen() {
       <Modal visible={openDay !== null} transparent animationType="none" onRequestClose={() => setOpenDay(null)}>
         <Animated.View entering={FadeIn.duration(180)} style={styles.backdrop}>
           <Pressable style={StyleSheet.absoluteFill} onPress={() => setOpenDay(null)} accessibilityLabel="Zavřít" />
-          <Animated.View entering={SlideInDown.springify().damping(20)} style={[styles.sheet, { paddingBottom: insets.bottom + 16 }]}>
+          <Animated.View entering={SlideInDown.duration(240).easing(Easing.out(Easing.cubic))} style={[styles.sheet, { paddingBottom: insets.bottom + 16 }]}>
             <View style={styles.handle} />
             <Text style={styles.sheetTitle}>
               {openDay ? new Date(`${openDay}T12:00:00`).toLocaleDateString('cs-CZ', { weekday: 'long', day: 'numeric', month: 'numeric', year: 'numeric' }) : ''}
             </Text>
             <ScrollView style={{ maxHeight: 460 }}>
               {openEvents.map((e) => (
-                <EventCard key={e.id} event={e} onOpen={() => setOpenDay(null)} showStatus={!data?.staff} />
+                <EventCard key={e.id} event={e} onOpen={() => setOpenDay(null)} showStatus={!data?.staff} animate={false} />
               ))}
             </ScrollView>
           </Animated.View>

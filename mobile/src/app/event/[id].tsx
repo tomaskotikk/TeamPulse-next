@@ -16,7 +16,8 @@ import {
   TextInput,
   View,
 } from 'react-native'
-import Animated, { FadeIn, FadeInDown, SlideInDown } from 'react-native-reanimated'
+import Animated, {
+  Easing, FadeIn, FadeInDown, SlideInDown } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Avatar, EmptyState, Group, GroupLabel, ResponseBadge, Row, Segmented, ui } from '@/components/ui'
 import { api, withChild } from '@/lib/api'
@@ -218,7 +219,7 @@ export default function EventDetailScreen() {
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
           <Animated.View entering={FadeIn.duration(180)} style={styles.backdrop}>
             <Pressable style={StyleSheet.absoluteFill} onPress={() => !saving && setSheet(null)} accessibilityLabel="Zavřít" />
-            <Animated.View entering={SlideInDown.springify().damping(20)} style={[styles.sheet, { paddingBottom: insets.bottom + 20 }]}>
+            <Animated.View entering={SlideInDown.duration(240).easing(Easing.out(Easing.cubic))} style={[styles.sheet, { paddingBottom: insets.bottom + 20 }]}>
               <View style={styles.handle} />
               <Text style={styles.sheetTitle} numberOfLines={2}>{e.title}</Text>
               <Text style={styles.sheetSub}>{formatEventRange(e.starts_at, e.ends_at, e.all_day)}</Text>

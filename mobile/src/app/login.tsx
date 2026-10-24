@@ -135,7 +135,8 @@ export default function LoginScreen() {
               : 'Přihlaste se ke svému klubu v TeamPulse.'}
           </Animated.Text>
 
-          <Animated.View entering={FadeInDown.delay(350).duration(500)} style={[styles.form, shakeStyle]}>
+          <Animated.View entering={FadeInDown.delay(350).duration(500)}>
+          <Animated.View style={[styles.form, shakeStyle]}>
             {twoFactorUserId ? (
               <TextInput
                 value={code}
@@ -226,6 +227,7 @@ export default function LoginScreen() {
             ) : (
               <Text style={styles.hint}>Účet vám vytvoří klub pozvánkou. Heslo obnovíte na webu teampulse.cfd.</Text>
             )}
+          </Animated.View>
           </Animated.View>
         </ScrollView>
       </KeyboardAvoidingView>

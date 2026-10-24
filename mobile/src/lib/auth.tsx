@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { api, loadToken, saveToken, setUnauthorizedHandler } from './api'
 import { ThemeContext, themeFromClub } from './theme'
+import { clearCache } from './useFetch'
 import type { Me } from './types'
 
 type LoginResult = { ok: true } | { ok: false; error: string } | { ok: false; twoFactorUserId: number }
@@ -27,6 +28,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(async () => {
     await saveToken(null)
+    clearCache()
     setToken(null)
     setMe(null)
     setChildId(null)

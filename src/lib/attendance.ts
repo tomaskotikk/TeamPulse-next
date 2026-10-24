@@ -47,6 +47,12 @@ export function canManageAttendance(user: AppUser) {
   return user.role === 'manažer' || user.role === 'trenér'
 }
 
+/** Loads an event of an already-resolved club (avoids re-reading the club). */
+export async function getClubEvent(supabase: AdminClient, club: AppClub, eventId: number) {
+  const { data } = await supabase.from('club_events').select(EVENT_COLUMNS).eq('id', eventId).eq('club_id', club.id).maybeSingle()
+  return (data as ClubEventRow | null) ?? null
+}
+
 /** Loads an event only if it belongs to the viewer's club. */
 export async function getEventForUser(supabase: AdminClient, user: AppUser, eventId: number) {
   const club = await getClubForUser(user)
@@ -254,6 +260,7 @@ export function matrixToCsv(matrix: Awaited<ReturnType<typeof getAttendanceMatri
 
 export type EventWithResponse = ClubEventRow & {
   response: Response | null
+  reason: string | null
   categories: Array<{ name: string; color: string }>
 }
 
@@ -263,17 +270,23 @@ export async function withMemberResponses(events: ClubEventRow[], memberId: numb
   const supabase = await createAdminClient()
   const ids = events.map((e) => e.id)
   const [{ data: att }, { data: links }] = await Promise.all([
-    supabase.from('event_attendance').select('event_id, response').eq('user_id', memberId).in('event_id', ids),
+    supabase.from('event_attendance').select('event_id, response, response_reason').eq('user_id', memberId).in('event_id', ids),
     supabase.from('club_event_categories').select('event_id, club_categories(name, color)').in('event_id', ids),
   ])
-  const responseByEvent = new Map((att ?? []).map((r: { event_id: number; response: Response | null }) => [r.event_id, r.response]))
+  type Att = { event_id: number; response: Response | null; response_reason: string | null }
+  const attByEvent = new Map(((att ?? []) as Att[]).map((r) => [r.event_id, r]))
   const catsByEvent = new Map<number, Array<{ name: string; color: string }>>()
   type Cat = { name: string; color: string }
   for (const l of (links ?? []) as Array<{ event_id: number; club_categories: Cat | Cat[] | null }>) {
     const cat = Array.isArray(l.club_categories) ? l.club_categories[0] : l.club_categories
     if (cat) catsByEvent.set(l.event_id, [...(catsByEvent.get(l.event_id) ?? []), cat])
   }
-  return events.map((e) => ({ ...e, response: responseByEvent.get(e.id) ?? null, categories: catsByEvent.get(e.id) ?? [] }))
+  return events.map((e) => ({
+    ...e,
+    response: attByEvent.get(e.id)?.response ?? null,
+    reason: attByEvent.get(e.id)?.response_reason ?? null,
+    categories: catsByEvent.get(e.id) ?? [],
+  }))
 }
 
 /** Whose attendance the viewer manages on mobile: themselves, or the selected child for parents. */

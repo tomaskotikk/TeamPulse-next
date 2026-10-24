@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/server'
-import { eventHasStarted, getEventForUser, getInviteeIdsForEvents, withMemberResponses } from '@/lib/attendance'
+import { eventHasStarted, getClubEvent, getInviteeIdsForEvents, withMemberResponses } from '@/lib/attendance'
 import { requireMobileContext } from '@/lib/mobile-api'
 
 type Params = { params: Promise<{ id: string }> }
@@ -14,28 +14,22 @@ export async function GET(request: NextRequest, { params }: Params) {
     if (!Number.isInteger(eventId)) return NextResponse.json({ error: 'Neplatná událost.' }, { status: 400 })
 
     const supabase = await createAdminClient()
-    const found = await getEventForUser(supabase, ctx.user, eventId)
+    // event row and invitee list in parallel; club comes from the context (no second lookup)
+    const [found, inviteeMap] = await Promise.all([
+      getClubEvent(supabase, ctx.club, eventId),
+      getInviteeIdsForEvents(supabase, ctx.club, [eventId]),
+    ])
     if (!found) return NextResponse.json({ error: 'Událost nebyla nalezena.' }, { status: 404 })
 
-    const invited = (await getInviteeIdsForEvents(supabase, ctx.club, [eventId])).get(eventId) ?? new Set<number>()
+    const invited = inviteeMap.get(eventId) ?? new Set<number>()
     const canRespond = ctx.memberId !== null && invited.has(ctx.memberId)
-    const [event] = await withMemberResponses([found.event], ctx.memberId ?? -1)
-
-    let reason: string | null = null
-    if (canRespond) {
-      const { data } = await supabase
-        .from('event_attendance')
-        .select('response_reason')
-        .eq('event_id', eventId)
-        .eq('user_id', ctx.memberId!)
-        .maybeSingle()
-      reason = data?.response_reason ?? null
-    }
+    const [event] = await withMemberResponses([found], ctx.memberId ?? -1)
+    const reason = canRespond ? event.reason : null
 
     return NextResponse.json({
       event,
       reason,
-      started: eventHasStarted(found.event),
+      started: eventHasStarted(found),
       canRespond,
       memberId: ctx.memberId,
     })
