@@ -29,7 +29,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useAuth } from '@/lib/auth'
 import { palette } from '@/lib/theme'
 
-const BRAND = '#E8430A'
+const BRAND = '#FF3300'
 
 /** Slowly drifting sport icon in the background. */
 function FloatingBall({ icon, size, x, y, delay }: { icon: 'football-outline' | 'american-football-outline' | 'basketball-outline' | 'tennisball-outline'; size: number; x: number; y: number; delay: number }) {
@@ -235,7 +235,7 @@ export default function LoginScreen() {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: palette.bg, overflow: 'hidden' },
-  glow: { position: 'absolute', borderRadius: 9999, backgroundColor: 'rgba(232,67,10,0.22)' },
+  glow: { position: 'absolute', borderRadius: 9999, backgroundColor: 'rgba(255,51,0,0.2)' },
   content: { flexGrow: 1, paddingHorizontal: 24, justifyContent: 'center' },
   brand: { alignItems: 'flex-start', marginBottom: 28 },
   logo: { width: 72, height: 44 },

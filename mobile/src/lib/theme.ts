@@ -1,13 +1,15 @@
 import { createContext, useContext } from 'react'
 
+// Same values the web derives in getThemeVars() for clubs with a black secondary
+// colour and white accent (bg = secondary, surfaces lightened 8 % / 15 %, borders 20 %).
 export const palette = {
-  bg: '#0B0D10',
-  surface: '#16191F',
-  surface2: '#1E222A',
-  border: '#262B34',
-  text: '#F3F5F8',
-  muted: '#A3ACBA',
-  dim: '#6B7484',
+  bg: '#000000',
+  surface: '#141414',
+  surface2: '#262626',
+  border: '#333333',
+  text: '#FFFFFF',
+  muted: '#B3B3B3',
+  dim: '#808080',
   yes: '#1F9D55',
   no: '#D64545',
   warning: '#F2A93B',
@@ -41,7 +43,7 @@ function hexToRgb(hex: string) {
 
 /** Club primary color from the database drives the accent. */
 export function themeFromClub(primary?: string | null): Theme {
-  const accent = primary && /^#[0-9a-f]{6}$/i.test(primary) ? primary : '#E8430A'
+  const accent = primary && /^#[0-9a-f]{6}$/i.test(primary) ? primary : '#FF3300'
   const { r, g, b } = hexToRgb(accent)
   const light = (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.6
   return { accent, accentText: light ? '#0B0D10' : '#FFFFFF', accentSoft: `rgba(${r}, ${g}, ${b}, 0.16)` }

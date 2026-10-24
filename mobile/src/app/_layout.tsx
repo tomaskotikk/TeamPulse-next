@@ -5,6 +5,15 @@ import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { AuthProvider, useAuth } from '@/lib/auth'
 import { palette } from '@/lib/theme'
 
+const detailHeader = {
+  headerShown: true,
+  title: '',
+  headerBackTitle: 'Zpět',
+  headerTintColor: palette.text,
+  headerStyle: { backgroundColor: palette.bg },
+  headerShadowVisible: false,
+} as const
+
 function RootNavigator() {
   const { ready } = useAuth()
 
@@ -26,17 +35,9 @@ function RootNavigator() {
     >
       <Stack.Screen name="login" options={{ animation: 'fade' }} />
       <Stack.Screen name="(tabs)" options={{ animation: 'fade' }} />
-      <Stack.Screen
-        name="event/[id]"
-        options={{
-          headerShown: true,
-          title: '',
-          headerBackTitle: 'Zpět',
-          headerTintColor: palette.text,
-          headerStyle: { backgroundColor: palette.bg },
-          headerShadowVisible: false,
-        }}
-      />
+      <Stack.Screen name="wall/club" options={detailHeader} />
+      <Stack.Screen name="wall/[id]" options={detailHeader} />
+      <Stack.Screen name="event/[id]" options={detailHeader} />
     </Stack>
   )
 }

@@ -31,19 +31,17 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
+        name="walls"
+        options={{
+          title: 'Zdi',
+          tabBarIcon: ({ color, focused }) => <Ionicons name={focused ? 'people' : 'people-outline'} size={25} color={color as string} />,
+        }}
+      />
+      <Tabs.Screen
         name="events"
         options={{
           title: 'Události',
           tabBarIcon: ({ color, focused }) => <Ionicons name={focused ? 'calendar' : 'calendar-outline'} size={24} color={color as string} />,
-        }}
-      />
-      <Tabs.Screen
-        name="chat"
-        options={{
-          title: 'Zprávy',
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? 'chatbubbles' : 'chatbubbles-outline'} size={24} color={color as string} />
-          ),
         }}
       />
       <Tabs.Screen

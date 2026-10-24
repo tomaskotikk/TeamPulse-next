@@ -115,7 +115,7 @@ export default function HomeScreen() {
             icon="chatbubbles"
             label="Klubová zeď"
             value={data?.lastMessage ? `${dayLabel(data.lastMessage.created_at) === 'Dnes' ? formatTime(data.lastMessage.created_at) : dayLabel(data.lastMessage.created_at)}` : undefined}
-            onPress={() => router.push('/chat')}
+            onPress={() => router.push('/wall/club')}
             last
           />
         </Group>
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingBottom: 26,
-    backgroundColor: '#11151B',
+    backgroundColor: palette.surface,
     borderBottomLeftRadius: 28,
     borderBottomRightRadius: 28,
     overflow: 'hidden',
@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
     borderRadius: 17,
     borderWidth: 1,
     borderColor: palette.border,
-    backgroundColor: 'rgba(11,13,16,0.6)',
+    backgroundColor: 'rgba(0,0,0,0.5)',
   },
   profilePillText: { color: palette.text, fontSize: 14, fontWeight: '700' },
   children: { gap: 8, paddingTop: 16 },

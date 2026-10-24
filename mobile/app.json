@@ -29,7 +29,7 @@
       "expo-font"
     ],
     "scheme": "teampulse",
-    "backgroundColor": "#0B0D10",
+    "backgroundColor": "#000000",
     "experiments": {
       "typedRoutes": true
     }
