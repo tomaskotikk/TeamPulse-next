@@ -1,0 +1,242 @@
+/* Shared mobile building blocks (iOS-style grouped lists, event cards). */
+
+.sectionHead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 4px 10px;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.sectionSub {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--color-text-dim);
+}
+
+.sectionLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-primary) 16%, transparent);
+  color: var(--color-primary);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.groupLabel {
+  margin: 22px 16px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-text-dim);
+}
+
+/* grouped list */
+.group {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-radius: 14px;
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 0 14px;
+  color: inherit;
+  text-decoration: none;
+  background: none;
+  border: 0;
+  width: 100%;
+  font: inherit;
+  text-align: left;
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.row:active {
+  background: color-mix(in srgb, var(--color-text) 7%, transparent);
+}
+
+/* hairline separator inset past the icon, like iOS */
+.group > li + li .row::before,
+.group > .row + .row::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 58px;
+  right: 0;
+  height: 1px;
+  background: var(--color-border);
+}
+
+.rowIcon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--color-primary) 16%, transparent);
+  color: var(--color-primary);
+}
+
+.rowLabel {
+  font-size: 16px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rowValue {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  color: var(--color-text-muted);
+}
+
+.chevron {
+  color: var(--color-text-dim);
+}
+
+.badge {
+  min-width: 24px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--color-primary);
+  color: var(--red-text, #fff);
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+/* event card */
+.cards {
+  display: grid;
+  gap: 10px;
+}
+
+.card {
+  display: grid;
+  grid-template-columns: 5px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: stretch;
+  padding: 14px 14px 14px 12px;
+  border-radius: 14px;
+  background: var(--color-surface);
+  color: inherit;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 150ms ease;
+}
+
+.card:active {
+  background: color-mix(in srgb, var(--color-surface) 80%, var(--color-text));
+}
+
+.stripe {
+  border-radius: 3px;
+}
+
+.type_training { background: #ff5c66; }
+.type_match { background: #16c3ad; }
+.type_meeting { background: #8b95ab; }
+.type_event { background: #7e7cfc; }
+
+.cardBody {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.cardTitle {
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.cardMeta {
+  font-size: 14px;
+  line-height: 1.35;
+  color: var(--color-text-muted);
+}
+
+.cardMeta span + span::before {
+  content: ' · ';
+}
+
+.cardTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--color-text) 8%, transparent);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+.tag i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.cardStatus {
+  display: grid;
+  place-items: center;
+  padding-left: 12px;
+  border-left: 1px solid var(--color-border);
+}
+
+/* response status dot */
+.status {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+}
+
+.status_yes { background: #1f9d55; color: #fff; }
+.status_no { background: #d64545; color: #fff; }
+.status_pending { background: color-mix(in srgb, var(--color-text) 16%, transparent); color: var(--color-text); }
+
+.empty {
+  padding: 22px 16px;
+  border-radius: 14px;
+  background: var(--color-surface);
+  text-align: center;
+  font-size: 14px;
+  color: var(--color-text-muted);
+}

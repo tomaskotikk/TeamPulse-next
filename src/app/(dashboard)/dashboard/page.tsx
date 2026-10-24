@@ -9,6 +9,9 @@ import {
   getThemeVars,
 } from '@/lib/app-context'
 import DesktopOverview from '@/components/dashboard/DesktopOverview'
+import EventCard from '@/components/mobile/EventCard'
+import mobile from '@/components/mobile/mobile.module.css'
+import { getUpcomingEventsForMember, withMemberResponses } from '@/lib/attendance'
 import PendingApplicationsCard from '@/components/dashboard/PendingApplicationsCard'
 import ParentOverview from '@/components/parent/ParentOverview'
 import { createAdminClient } from '@/lib/supabase/server'
@@ -49,6 +52,10 @@ export default async function DashboardPage() {
       </DashboardLayout>
     )
   }
+
+  const upcoming = club
+    ? await withMemberResponses(await getUpcomingEventsForMember(club, user.id, 3), user.id)
+    : []
 
   const managedClub = isManager ? await getManagedClub(user) : null
   const pendingApplications = managedClub
@@ -95,6 +102,27 @@ export default async function DashboardPage() {
               <span>Otevřít profil</span>
             </Link>
           </section>
+
+          {club && (
+            <section className="mobile-home-section">
+              <div className={mobile.sectionHead}>
+                <div>
+                  <h2 className={mobile.sectionTitle}>Nejbližší události</h2>
+                  <p className={mobile.sectionSub}>Dejte vědět, jestli přijdete.</p>
+                </div>
+                <Link href="/events" className={mobile.sectionLink}>Všechny ›</Link>
+              </div>
+              {upcoming.length === 0 ? (
+                <p className={mobile.empty}>Žádné naplánované události.</p>
+              ) : (
+                <div className={mobile.cards}>
+                  {upcoming.map((event) => (
+                    <EventCard key={event.id} event={event} />
+                  ))}
+                </div>
+              )}
+            </section>
+          )}
 
           <section className="mobile-home-section">
             <div className="mobile-home-section-header">

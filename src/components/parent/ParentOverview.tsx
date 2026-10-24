@@ -1,6 +1,8 @@
 import { createAdminClient } from '@/lib/supabase/server'
 import type { AppClub } from '@/lib/app-context'
-import { getUpcomingEventsForMember } from '@/lib/attendance'
+import { getUpcomingEventsForMember, withMemberResponses } from '@/lib/attendance'
+import EventCard from '@/components/mobile/EventCard'
+import mobile from '@/components/mobile/mobile.module.css'
 import { getMemberProfile } from '@/lib/member-profiles'
 import type { ParentChild } from '@/lib/parent'
 import { formatDate } from '@/lib/onboarding/labels'
@@ -8,13 +10,6 @@ import { getAge } from '@/lib/onboarding/validation'
 import ChildSwitcher from './ChildSwitcher'
 import ChildProfileForm from './ChildProfileForm'
 import styles from './parent.module.css'
-
-const EVENT_TYPE_LABELS: Record<string, string> = {
-  training: 'Trénink',
-  match: 'Zápas',
-  meeting: 'Schůzka',
-  event: 'Akce',
-}
 
 async function getMemberCategoryName(memberId: number, clubId: number) {
   const supabase = await createAdminClient()
@@ -31,10 +26,6 @@ async function getMemberCategoryName(memberId: number, clubId: number) {
     if (value && value.club_id === clubId) return value.name
   }
   return null
-}
-
-function formatTime(value: string) {
-  return new Date(value).toLocaleTimeString('cs-CZ', { hour: '2-digit', minute: '2-digit' })
 }
 
 type Props = {
@@ -63,7 +54,7 @@ export default async function ParentOverview({ parentFirstName, club, items, sel
   }
 
   const [events, profile, categoryName] = await Promise.all([
-    getUpcomingEventsForMember(club, selected.id),
+    getUpcomingEventsForMember(club, selected.id).then((list) => withMemberResponses(list, selected.id)),
     getMemberProfile(selected.id),
     getMemberCategoryName(selected.id, clubId),
   ])
@@ -90,30 +81,11 @@ export default async function ParentOverview({ parentFirstName, club, items, sel
               {events.length === 0 ? (
                 <p className={styles.empty}>Žádné naplánované tréninky ani zápasy.</p>
               ) : (
-                <ul className={styles.events}>
-                  {events.map((ev) => {
-                    const start = new Date(ev.starts_at)
-                    return (
-                      <li key={ev.id} className={styles.event}>
-                        <div className={styles.date} aria-hidden="true">
-                          <strong>{start.getDate()}</strong>
-                          <span>{start.toLocaleDateString('cs-CZ', { month: 'short' })}</span>
-                        </div>
-                        <div>
-                          <div className={styles.eventTitle}>
-                            <span className={styles.type}>{EVENT_TYPE_LABELS[ev.type] ?? 'Akce'}</span>
-                            {ev.title}
-                          </div>
-                          <div className={styles.eventMeta}>
-                            {start.toLocaleDateString('cs-CZ', { weekday: 'long', day: 'numeric', month: 'long' })}
-                            {ev.all_day ? ' · celý den' : ` · ${formatTime(ev.starts_at)}${ev.ends_at ? `–${formatTime(ev.ends_at)}` : ''}`}
-                            {ev.location ? ` · ${ev.location}` : ''}
-                          </div>
-                        </div>
-                      </li>
-                    )
-                  })}
-                </ul>
+                <div className={mobile.cards}>
+                  {events.map((ev) => (
+                    <EventCard key={ev.id} event={ev} />
+                  ))}
+                </div>
               )}
             </div>
           </section>

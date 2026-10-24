@@ -249,3 +249,40 @@ export function matrixToCsv(matrix: Awaited<ReturnType<typeof getAttendanceMatri
   // BOM + semicolons so Czech Excel opens it correctly
   return '﻿' + [header, ...lines].map((l) => l.map(csvEscape).join(';')).join('\r\n')
 }
+
+export type EventWithResponse = ClubEventRow & {
+  response: Response | null
+  categories: Array<{ name: string; color: string }>
+}
+
+/** Adds the member's own response and category labels to a list of events. */
+export async function withMemberResponses(events: ClubEventRow[], memberId: number): Promise<EventWithResponse[]> {
+  if (events.length === 0) return []
+  const supabase = await createAdminClient()
+  const ids = events.map((e) => e.id)
+  const [{ data: att }, { data: links }] = await Promise.all([
+    supabase.from('event_attendance').select('event_id, response').eq('user_id', memberId).in('event_id', ids),
+    supabase.from('club_event_categories').select('event_id, club_categories(name, color)').in('event_id', ids),
+  ])
+  const responseByEvent = new Map((att ?? []).map((r: { event_id: number; response: Response | null }) => [r.event_id, r.response]))
+  const catsByEvent = new Map<number, Array<{ name: string; color: string }>>()
+  type Cat = { name: string; color: string }
+  for (const l of (links ?? []) as Array<{ event_id: number; club_categories: Cat | Cat[] | null }>) {
+    const cat = Array.isArray(l.club_categories) ? l.club_categories[0] : l.club_categories
+    if (cat) catsByEvent.set(l.event_id, [...(catsByEvent.get(l.event_id) ?? []), cat])
+  }
+  return events.map((e) => ({ ...e, response: responseByEvent.get(e.id) ?? null, categories: catsByEvent.get(e.id) ?? [] }))
+}
+
+/** Whose attendance the viewer manages on mobile: themselves, or the selected child for parents. */
+export async function getAttendanceSubject(user: AppUser) {
+  if (user.role !== 'rodič') return { memberId: user.id, memberName: null as string | null, children: [] as Array<{ id: number; first_name: string; last_name: string; profile_picture: string | null }> }
+  const { getChildrenForParent, getSelectedChild } = await import('@/lib/parent')
+  const children = await getChildrenForParent(user.id)
+  const selected = await getSelectedChild(children)
+  return {
+    memberId: selected?.id ?? null,
+    memberName: selected ? selected.first_name : null,
+    children,
+  }
+}

@@ -17,6 +17,7 @@ import {
   Users,
   X,
 } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import EventAttendancePanel from '@/components/attendance/EventAttendancePanel'
 import DashboardLayout from '@/components/DashboardLayout'
 import Topbar from '@/components/Topbar'
@@ -152,6 +153,7 @@ function defaultForm(selectedDay: string): EventFormState {
 }
 
 export default function EventsPage() {
+  const router = useRouter()
   const [user, setUser] = useState<AppUser | null>(null)
   const [themeVars, setThemeVars] = useState<Record<string, string>>({})
   const [events, setEvents] = useState<ClubEvent[]>([])
@@ -332,7 +334,7 @@ export default function EventsPage() {
     setSelectedEvent(event)
     setSelectedDate(dateKeyFromIso(event.starts_at))
     if (isMobileViewport) {
-      setShowEventModal(true)
+      router.push(`/events/${event.id}`)
     } else {
       setShowEventModal(false)
     }
