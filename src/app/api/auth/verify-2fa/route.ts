@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/server'
-import { attachSessionCookie } from '@/lib/auth/session'
+import { attachSessionCookie, signMobileToken } from '@/lib/auth/session'
 import { clearRememberedDeviceCookie, createRememberedDevice } from '@/lib/auth/device-tokens'
 import { verifyTwoFactorCode } from '@/lib/auth/two-factor'
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId, code, rememberMe } = await request.json()
+    const { userId, code, rememberMe, client } = await request.json()
 
     if (!userId || !code || code.length !== 6) {
       return NextResponse.json({ error: 'Neplatný kód.' }, { status: 400 })
@@ -57,6 +57,11 @@ export async function POST(request: NextRequest) {
 
     if (!user) {
       return NextResponse.json({ error: 'Uživatel nenalezen.' }, { status: 404 })
+    }
+
+    if (client === 'mobile') {
+      const token = await signMobileToken({ userId: user.id, email: user.email, role: user.role })
+      return NextResponse.json({ success: true, token })
     }
 
     const response = NextResponse.json({ success: true })

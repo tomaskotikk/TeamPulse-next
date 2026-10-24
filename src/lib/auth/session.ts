@@ -1,5 +1,5 @@
 import { SignJWT, jwtVerify } from 'jose'
-import { cookies } from 'next/headers'
+import { cookies, headers } from 'next/headers'
 import { NextResponse } from 'next/server'
 import { DEVICE_COOKIE_NAME, resolveSessionFromRememberedDevice } from '@/lib/auth/device-tokens'
 
@@ -68,7 +68,23 @@ export async function readSessionFromCookieValue(cookieValue?: string) {
   }
 }
 
+/** Long-lived token for the mobile app (sent as `Authorization: Bearer <token>`). */
+export async function signMobileToken(payload: SessionPayload) {
+  return new SignJWT({ ...payload, client: 'mobile' })
+    .setProtectedHeader({ alg: 'HS256' })
+    .setIssuedAt()
+    .setExpirationTime('60d')
+    .sign(getSessionSecret())
+}
+
 export async function readSessionFromCookies() {
+  // mobile app: bearer token takes precedence over cookies
+  const headerStore = await headers()
+  const authorization = headerStore.get('authorization')
+  if (authorization?.startsWith('Bearer ')) {
+    return readSessionFromCookieValue(authorization.slice(7).trim())
+  }
+
   const cookieStore = await cookies()
   const session = await readSessionFromCookieValue(cookieStore.get(SESSION_COOKIE_NAME)?.value)
 

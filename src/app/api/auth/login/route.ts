@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import { createAdminClient } from '@/lib/supabase/server'
-import { attachSessionCookie } from '@/lib/auth/session'
+import { attachSessionCookie, signMobileToken } from '@/lib/auth/session'
 import { clearRememberedDeviceCookie, createRememberedDevice } from '@/lib/auth/device-tokens'
 import { generateTwoFactorCode, getTwoFactorExpiryIso, hashTwoFactorCode } from '@/lib/auth/two-factor'
 import { buildTwoFactorCodeEmail } from '@/lib/email/templates'
@@ -16,7 +16,8 @@ const APPLICATION_STATUS_MESSAGES: Record<string, string> = {
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, password, rememberMe } = await request.json()
+    const { email, password, rememberMe, client } = await request.json()
+    const isMobile = client === 'mobile'
     const safeEmail = String(email || '').trim().toLowerCase()
 
     if (!safeEmail || !password) {
@@ -139,6 +140,11 @@ export async function POST(request: NextRequest) {
         requires2FA: true,
         userId: profile.id,
       })
+    }
+
+    if (isMobile) {
+      const token = await signMobileToken({ userId: profile.id, email: profile.email, role: profile.role })
+      return NextResponse.json({ success: true, token })
     }
 
     const response = NextResponse.json({ success: true })
