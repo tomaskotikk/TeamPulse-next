@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/server'
-import { EVENT_COLUMNS, getInviteeIdsForEvents, withMemberResponses, type ClubEventRow } from '@/lib/attendance'
+import { EVENT_COLUMNS, canManageAttendance, getInviteeIdsForEvents, withMemberResponses, type ClubEventRow } from '@/lib/attendance'
 import { requireMobileContext } from '@/lib/mobile-api'
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/
@@ -31,9 +31,9 @@ export async function GET(request: NextRequest) {
 
     const events = (data ?? []) as ClubEventRow[]
     const invitees = await getInviteeIdsForEvents(supabase, ctx.club, events.map((e) => e.id))
-    const mine = events.filter((e) => invitees.get(e.id)?.has(ctx.memberId!))
+    const mine = canManageAttendance(ctx.user) ? events : events.filter((e) => invitees.get(e.id)?.has(ctx.memberId!))
 
-    return NextResponse.json({ events: await withMemberResponses(mine, ctx.memberId) })
+    return NextResponse.json({ staff: canManageAttendance(ctx.user), events: await withMemberResponses(mine, ctx.memberId) })
   } catch (err) {
     console.error('Mobile events error:', err)
     return NextResponse.json({ error: 'Nastala chyba serveru.' }, { status: 500 })

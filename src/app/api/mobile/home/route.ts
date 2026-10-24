@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/server'
-import { getUpcomingEventsForMember, withMemberResponses } from '@/lib/attendance'
+import { canManageAttendance, getUpcomingEventsForMember, withMemberResponses } from '@/lib/attendance'
 import { requireMobileContext } from '@/lib/mobile-api'
 
 /** Home screen: next events (with own response) + latest club chat message. */
@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
     if (ctx instanceof NextResponse) return ctx
 
     const upcoming = ctx.memberId
-      ? await withMemberResponses(await getUpcomingEventsForMember(ctx.club, ctx.memberId, 5), ctx.memberId)
+      ? await withMemberResponses(await getUpcomingEventsForMember(ctx.club, ctx.memberId, 5, canManageAttendance(ctx.user)), ctx.memberId)
       : []
 
     const supabase = await createAdminClient()
@@ -27,7 +27,8 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       upcoming,
-      pendingCount: upcoming.filter((e) => !e.response).length,
+      staff: canManageAttendance(ctx.user),
+      pendingCount: canManageAttendance(ctx.user) ? 0 : upcoming.filter((e) => !e.response).length,
       lastMessage: last
         ? { id: last.id, message: last.message, created_at: last.created_at, author: author ? `${author.first_name ?? ''} ${author.last_name ?? ''}`.trim() : '' }
         : null,

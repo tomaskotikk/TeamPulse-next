@@ -11,7 +11,7 @@ import {
 import DesktopOverview from '@/components/dashboard/DesktopOverview'
 import EventCard from '@/components/mobile/EventCard'
 import mobile from '@/components/mobile/mobile.module.css'
-import { getUpcomingEventsForMember, withMemberResponses } from '@/lib/attendance'
+import { canManageAttendance, getUpcomingEventsForMember, withMemberResponses } from '@/lib/attendance'
 import PendingApplicationsCard from '@/components/dashboard/PendingApplicationsCard'
 import ParentOverview from '@/components/parent/ParentOverview'
 import { createAdminClient } from '@/lib/supabase/server'
@@ -54,7 +54,7 @@ export default async function DashboardPage() {
   }
 
   const upcoming = club
-    ? await withMemberResponses(await getUpcomingEventsForMember(club, user.id, 3), user.id)
+    ? await withMemberResponses(await getUpcomingEventsForMember(club, user.id, 3, canManageAttendance(user)), user.id)
     : []
 
   const managedClub = isManager ? await getManagedClub(user) : null
@@ -117,7 +117,7 @@ export default async function DashboardPage() {
               ) : (
                 <div className={mobile.cards}>
                   {upcoming.map((event) => (
-                    <EventCard key={event.id} event={event} />
+                    <EventCard key={event.id} event={event} showStatus={!canManageAttendance(user)} />
                   ))}
                 </div>
               )}

@@ -136,7 +136,7 @@ export async function canRespondFor(user: AppUser, targetUserId: number) {
 }
 
 /** Upcoming events a member is invited to (used by the parent overview and mobile list). */
-export async function getUpcomingEventsForMember(club: AppClub, memberId: number, limit = 10) {
+export async function getUpcomingEventsForMember(club: AppClub, memberId: number, limit = 10, allClubEvents = false) {
   const supabase = await createAdminClient()
   const { data } = await supabase
     .from('club_events')
@@ -147,6 +147,8 @@ export async function getUpcomingEventsForMember(club: AppClub, memberId: number
     .limit(80)
 
   const events = (data ?? []) as ClubEventRow[]
+  // staff (manager / coach) see every club event; players and parents only their invitations
+  if (allClubEvents) return events.slice(0, limit)
   const invitees = await getInviteeIdsForEvents(supabase, club, events.map((e) => e.id))
   return events.filter((e) => invitees.get(e.id)?.has(memberId)).slice(0, limit)
 }

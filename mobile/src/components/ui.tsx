@@ -125,7 +125,7 @@ export function ResponseBadge({ response, size = 28 }: { response: Response; siz
 }
 
 /* ── Event card ── */
-export function EventCard({ event, index = 0, onOpen }: { event: ClubEvent; index?: number; onOpen?: () => void }) {
+export function EventCard({ event, index = 0, onOpen, showStatus = true }: { event: ClubEvent; index?: number; onOpen?: () => void; showStatus?: boolean }) {
   return (
     <Animated.View entering={FadeInDown.delay(index * 60).duration(380)}>
       <Pressable
@@ -155,9 +155,11 @@ export function EventCard({ event, index = 0, onOpen }: { event: ClubEvent; inde
             ))}
           </View>
         </View>
-        <View style={s.cardStatus}>
-          <ResponseBadge response={event.response} />
-        </View>
+        {showStatus ? (
+          <View style={s.cardStatus}>
+            <ResponseBadge response={event.response} />
+          </View>
+        ) : null}
       </Pressable>
     </Animated.View>
   )

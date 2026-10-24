@@ -21,7 +21,7 @@ export default function HomeScreen() {
   const { me, childId, setChildId } = useAuth()
   const theme = useTheme()
   const insets = useSafeAreaInsets()
-  const { data, error, refreshing, refresh } = useFetch<Home>(withChild('/api/mobile/home', childId))
+  const { data, error, refreshing, refresh } = useFetch<Home & { staff?: boolean }>(withChild('/api/mobile/home', childId))
 
   if (!me) return null
   const isParent = me.user.role === 'rodič'
@@ -33,10 +33,10 @@ export default function HomeScreen() {
       contentContainerStyle={{ paddingBottom: 32 }}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} tintColor={palette.muted} />}
     >
-      {/* club hero */}
-      <View style={[styles.hero, { paddingTop: insets.top + 20, backgroundColor: me.club.secondary_color }]}>
-        <View style={[styles.heroTint, { backgroundColor: theme.accentSoft }]} />
-        <Animated.View entering={FadeIn.duration(500)} style={styles.heroRow}>
+      {/* club hero (matches the web mobile header) */}
+      <View style={[styles.hero, { paddingTop: insets.top + 28 }]}>
+        <View style={[styles.heroGlow, { backgroundColor: theme.accentSoft }]} pointerEvents="none" />
+        <Animated.View entering={FadeIn.duration(500)}>
           {me.club.logo ? (
             <Image source={{ uri: me.club.logo }} style={styles.clubLogo} contentFit="contain" transition={200} />
           ) : (
@@ -44,16 +44,25 @@ export default function HomeScreen() {
               <Text style={[styles.clubLogoText, { color: theme.accentText }]}>{me.club.name.slice(0, 2).toUpperCase()}</Text>
             </View>
           )}
-          <Pressable onPress={() => router.push('/profile')} hitSlop={8}>
-            <Avatar uri={me.user.avatar} first={me.user.first_name} last={me.user.last_name} size={40} />
-          </Pressable>
         </Animated.View>
         <Animated.Text entering={FadeInDown.delay(100).duration(450)} style={styles.heroName}>
           {me.user.first_name} {me.user.last_name}
         </Animated.Text>
-        <Animated.Text entering={FadeInDown.delay(180).duration(450)} style={styles.heroClub}>
+        <Animated.Text entering={FadeInDown.delay(160).duration(450)} style={styles.heroClub}>
           {me.club.name.toUpperCase()}
         </Animated.Text>
+        <Animated.View entering={FadeInDown.delay(220).duration(450)}>
+          <Pressable
+            onPress={() => {
+              tapFeedback()
+              router.push('/profile')
+            }}
+            style={({ pressed }) => [styles.profilePill, pressed && { opacity: 0.8 }]}
+          >
+            <Avatar uri={me.user.avatar} first={me.user.first_name} last={me.user.last_name} size={24} />
+            <Text style={styles.profilePillText}>Otevřít profil</Text>
+          </Pressable>
+        </Animated.View>
       </View>
 
       <View style={ui.content}>
@@ -97,7 +106,7 @@ export default function HomeScreen() {
         ) : data.upcoming.length === 0 ? (
           <EmptyState icon="calendar-clear-outline" title="Nic naplánováno" text="Jakmile trenér vypíše trénink nebo zápas, uvidíte ho tady." />
         ) : (
-          data.upcoming.map((event, i) => <EventCard key={event.id} event={event} index={i} />)
+          data.upcoming.map((event, i) => <EventCard key={event.id} event={event} index={i} showStatus={!data.staff} />)
         )}
 
         <SectionHeader title="Zprávy" />
@@ -122,14 +131,35 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  hero: { paddingHorizontal: 20, paddingBottom: 24, overflow: 'hidden' },
-  heroTint: { ...StyleSheet.absoluteFill },
-  heroRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 18 },
-  clubLogo: { width: 84, height: 84 },
-  clubLogoFallback: { width: 64, height: 64, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
-  clubLogoText: { fontSize: 22, fontWeight: '800' },
-  heroName: { color: palette.text, fontSize: 30, fontWeight: '800', letterSpacing: -0.5 },
-  heroClub: { color: palette.muted, fontSize: 14, fontWeight: '600', letterSpacing: 1, marginTop: 4 },
+  hero: {
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingBottom: 26,
+    backgroundColor: '#11151B',
+    borderBottomLeftRadius: 28,
+    borderBottomRightRadius: 28,
+    overflow: 'hidden',
+  },
+  heroGlow: { position: 'absolute', width: 420, height: 420, borderRadius: 210, top: -260, alignSelf: 'center', opacity: 0.9 },
+  clubLogo: { width: 96, height: 96 },
+  clubLogoFallback: { width: 80, height: 80, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
+  clubLogoText: { fontSize: 26, fontWeight: '800' },
+  heroName: { color: palette.text, fontSize: 26, fontWeight: '700', letterSpacing: -0.3, marginTop: 14, textAlign: 'center' },
+  heroClub: { color: palette.muted, fontSize: 13, fontWeight: '700', letterSpacing: 2, marginTop: 6 },
+  profilePill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 16,
+    paddingLeft: 4,
+    paddingRight: 14,
+    height: 34,
+    borderRadius: 17,
+    borderWidth: 1,
+    borderColor: palette.border,
+    backgroundColor: 'rgba(11,13,16,0.6)',
+  },
+  profilePillText: { color: palette.text, fontSize: 14, fontWeight: '700' },
   children: { gap: 8, paddingTop: 16 },
   childChip: {
     flexDirection: 'row',

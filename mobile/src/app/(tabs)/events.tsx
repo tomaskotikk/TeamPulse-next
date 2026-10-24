@@ -41,7 +41,7 @@ export default function EventsScreen() {
 
   const days = useMemo(() => monthGrid(month), [month])
   const path = withChild(`/api/mobile/events?from=${isoDate(days[0])}&to=${isoDate(days[days.length - 1])}`, childId)
-  const { data, refreshing, refresh, error } = useFetch<{ events: ClubEvent[] }>(path)
+  const { data, refreshing, refresh, error } = useFetch<{ events: ClubEvent[]; staff?: boolean }>(path)
 
   const byDay = useMemo(() => {
     const map = new Map<string, ClubEvent[]>()
@@ -127,7 +127,7 @@ export default function EventsScreen() {
         ) : upcoming.length === 0 ? (
           <EmptyState icon="calendar-clear-outline" title="Tento měsíc nic dalšího" text="Přepněte na další měsíc šipkou nahoře." />
         ) : (
-          upcoming.map((e, i) => <EventCard key={e.id} event={e} index={i} />)
+          upcoming.map((e, i) => <EventCard key={e.id} event={e} index={i} showStatus={!data?.staff} />)
         )}
       </ScrollView>
 
@@ -141,7 +141,7 @@ export default function EventsScreen() {
             </Text>
             <ScrollView style={{ maxHeight: 460 }}>
               {openEvents.map((e) => (
-                <EventCard key={e.id} event={e} onOpen={() => setOpenDay(null)} />
+                <EventCard key={e.id} event={e} onOpen={() => setOpenDay(null)} showStatus={!data?.staff} />
               ))}
             </ScrollView>
           </Animated.View>

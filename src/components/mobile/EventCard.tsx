@@ -34,7 +34,7 @@ export function ResponseStatus({ response, size = 15 }: { response: 'yes' | 'no'
 }
 
 /** Mobile event card: type stripe, title, time/place, categories, own response on the right. */
-export default function EventCard({ event, goingCount }: { event: EventWithResponse; goingCount?: number }) {
+export default function EventCard({ event, goingCount, showStatus = true }: { event: EventWithResponse; goingCount?: number; showStatus?: boolean }) {
   return (
     <Link href={`/events/${event.id}`} className={styles.card}>
       <span className={`${styles.stripe} ${styles[`type_${event.type}`]}`} aria-hidden="true" />
@@ -59,9 +59,11 @@ export default function EventCard({ event, goingCount }: { event: EventWithRespo
           )}
         </span>
       </span>
-      <span className={styles.cardStatus}>
-        <ResponseStatus response={event.response} />
-      </span>
+      {showStatus && (
+        <span className={styles.cardStatus}>
+          <ResponseStatus response={event.response} />
+        </span>
+      )}
     </Link>
   )
 }
