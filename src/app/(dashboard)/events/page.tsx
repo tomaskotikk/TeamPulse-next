@@ -17,6 +17,7 @@ import {
   Users,
   X,
 } from 'lucide-react'
+import EventAttendancePanel from '@/components/attendance/EventAttendancePanel'
 import DashboardLayout from '@/components/DashboardLayout'
 import Topbar from '@/components/Topbar'
 import styles from './events.module.css'
@@ -624,13 +625,16 @@ export default function EventsPage() {
                         <button
                           key={event.id}
                           type="button"
-                          className={styles.timeStackBtn}
+                          className={`${styles.timeStackBtn} ${selectedEvent?.id === event.id ? styles.timeStackActive : ''}`}
+                          title={`${eventTypeLabel(event.type)}: ${event.title}`}
+                          aria-label={`${eventTypeLabel(event.type)} ${event.title}, ${localTimeLabel(event.starts_at, event.all_day)}`}
                           onClick={(e) => {
                             e.stopPropagation()
                             openEventDetails(event)
                           }}
                         >
                           <span className={`${styles.timeBlock} ${timeStartClass(event.type)}`}>{localTimeLabel(event.starts_at, event.all_day)}</span>
+                          <span className={styles.timeStackTitle}>{event.title}</span>
                         </button>
                       ))}
 
@@ -645,7 +649,7 @@ export default function EventsPage() {
 
             <aside className={styles.sideRail}>
               <section className={styles.panelCard}>
-                <h4 className={styles.panelTitle}>Aktuálně rozkliknutá událost</h4>
+                <h4 className={styles.panelTitle}>Detail události</h4>
                 {selectedEvent ? (
                   <div className={styles.selectedCard}>
                     <div className={styles.dayEventTop}>
@@ -708,6 +712,13 @@ export default function EventsPage() {
                   </div>
                 ) : (
                   <p className={styles.panelSub}>Klikněte na událost v kalendáři.</p>
+                )}
+
+                {selectedEvent && canCreate && (
+                  <div className={styles.attendanceBlock}>
+                    <h5 className={styles.dayEventsTitle}>Docházka</h5>
+                    <EventAttendancePanel eventId={selectedEvent.id} />
+                  </div>
                 )}
 
                 <div className={styles.dayEventsList}>

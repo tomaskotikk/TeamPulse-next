@@ -149,7 +149,7 @@
 .sectionTitle {
   margin: 0;
   font-size: 20px;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .sectionSub {
@@ -186,7 +186,7 @@
 .requestTitle {
   margin: 0;
   font-size: 18px;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .requestMeta {
@@ -231,7 +231,7 @@
   background: #1a2432;
   color: #d7e0ee;
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .infoGrid {
@@ -246,7 +246,7 @@
   display: inline-flex;
   border-radius: 999px;
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 700;
   padding: 5px 10px;
   border: 1px solid transparent;
 }

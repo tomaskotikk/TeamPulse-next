@@ -1071,7 +1071,7 @@ export default function DesktopOverview({ userName, club, members, isManager, cu
       </section>
 
       <section className={styles.sectionHeader}>
-        <h3 className={styles.sectionTitle}>Rychlé KPI</h3>
+        <h3 className={styles.sectionTitle}>Klíčové ukazatele</h3>
         {isLayoutEditable && (
           <button type="button" className={styles.miniPlus} onClick={() => openModal('kpi')} aria-label="Přidat KPI kartu">
             +
@@ -1104,7 +1104,7 @@ export default function DesktopOverview({ userName, club, members, isManager, cu
       {canSeeAnalytics ? (
         <>
           <section className={styles.sectionHeader}>
-            <h3 className={styles.sectionTitle}>Statistické karty</h3>
+            <h3 className={styles.sectionTitle}>Statistiky</h3>
             {isLayoutEditable && (
               <button type="button" className={styles.miniPlus} onClick={() => openModal('analytics')} aria-label="Přidat statistickou kartu">
                 +

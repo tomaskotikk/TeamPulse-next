@@ -28,7 +28,7 @@
 .sidebarTitle {
   margin: 0;
   font-size: 1rem;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: -0.03em;
 }
 
@@ -52,7 +52,7 @@
 
 .iconBtn:hover {
   background: color-mix(in srgb, var(--color-primary) 14%, var(--color-surface-alt));
-  border-color: color-mix(in srgb, var(--color-primary) 45%, var(--color-border));
+  border-color: color-mix(in srgb, var(--color-text) 24%, var(--color-border));
 }
 
 .createBtn {
@@ -163,7 +163,7 @@
   margin: 0;
   flex: 1;
   font-size: 1.1rem;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: -0.03em;
 }
 
@@ -216,7 +216,7 @@
   display: grid;
   place-items: center;
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 700;
   flex-shrink: 0;
 }
 
@@ -404,7 +404,7 @@
 .modalTitle {
   margin: 0;
   font-size: 1rem;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: -0.03em;
 }
 
@@ -638,7 +638,7 @@
   display: grid;
   place-items: center;
   font-size: 12px;
-  font-weight: 800;
+  font-weight: 700;
   flex-shrink: 0;
 }
 

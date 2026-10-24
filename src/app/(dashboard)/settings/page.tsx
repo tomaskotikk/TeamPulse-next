@@ -630,7 +630,7 @@ export default function SettingsPage() {
 
                     <div className="theme-preview-v2-hero">
                       <h4>Vítejte zpět, Tomas. RC Zlín je připravený na další růst.</h4>
-                      <p>Přehled výkonu, složení týmu a klíčových metrik na jednom místě. Dashboard je optimalizovaný pro rychlé rozhodování vedení moderního klubu.</p>
+                      <p>Složení týmu, docházka a klíčové ukazatele klubu na jednom místě.</p>
                       <div className="theme-preview-v2-hero-actions">
                         <button type="button">Pozvat nového člena</button>
                         <button type="button">Otevřít správu členů</button>

@@ -41,8 +41,7 @@ export default async function DashboardPage() {
         <div className="app-content">
           <ParentOverview
             parentFirstName={user.first_name}
-            clubId={club.id}
-            clubName={club.name}
+            club={club}
             items={children}
             selected={selected}
           />

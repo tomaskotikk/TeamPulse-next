@@ -102,7 +102,7 @@
 }
 
 .btnGhost:hover {
-  border-color: color-mix(in srgb, var(--color-primary) 35%, var(--color-border));
+  border-color: color-mix(in srgb, var(--color-text) 24%, var(--color-border));
   background: var(--color-surface-alt);
 }
 
@@ -179,7 +179,7 @@
 }
 
 .kpiCard:hover {
-  border-color: color-mix(in srgb, var(--color-primary) 35%, var(--color-border));
+  border-color: color-mix(in srgb, var(--color-text) 24%, var(--color-border));
 }
 
 .kpiLabel {

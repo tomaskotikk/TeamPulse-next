@@ -321,7 +321,7 @@ export default function ChatPage() {
     <DashboardLayout user={layoutUser} isManager={isManager} themeVars={themeVars}>
       <Topbar title="Týmový chat" />
 
-      <div className="app-content">
+      <div className="app-content chat-page">
         <div className="page-intro">
           <div className="page-intro-meta">Komunikace týmu</div>
           <h2 className="content-title">Týmový chat</h2>

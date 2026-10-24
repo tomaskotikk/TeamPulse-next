@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react'
 import {
   Bell,
   CalendarDays,
+  CalendarCheck,
   ClipboardCheck,
   ChevronLeft,
   Layers,
@@ -133,6 +134,13 @@ export default function Sidebar({ user, isManager }: SidebarProps) {
             <CalendarDays className="nav-icon" />
             <span className="nav-label">Události</span>
           </Link>
+
+          {canSeeGraphs && (
+            <Link href="/attendance" className={navClass('/attendance')}>
+              <CalendarCheck className="nav-icon" />
+              <span className="nav-label">Docházka</span>
+            </Link>
+          )}
 
           {canSeeGraphs && (
             <Link href="/grafy" className={navClass('/grafy')}>

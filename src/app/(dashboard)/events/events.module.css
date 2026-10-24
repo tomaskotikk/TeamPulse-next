@@ -25,7 +25,7 @@
 .monthTitle {
   margin: 0;
   font-size: clamp(1rem, 1.85vw, 1.24rem);
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: -0.03em;
 }
 
@@ -60,7 +60,7 @@
 }
 
 .iconBtn:hover {
-  border-color: color-mix(in srgb, var(--color-primary) 50%, var(--color-border));
+  border-color: color-mix(in srgb, var(--color-text) 24%, var(--color-border));
 }
 
 .weekdayRow {
@@ -214,7 +214,7 @@
 .panelTitle {
   margin: 0;
   font-size: 1.08rem;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .panelSub {
@@ -302,7 +302,7 @@
 .dayEventsTitle {
   margin: 4px 0 2px;
   font-size: 0.92rem;
-  font-weight: 800;
+  font-weight: 700;
   color: var(--color-text-muted);
 }
 
@@ -327,7 +327,7 @@
 }
 
 .upcomingItem:hover {
-  border-color: color-mix(in srgb, var(--color-primary) 45%, var(--color-border));
+  border-color: color-mix(in srgb, var(--color-text) 24%, var(--color-border));
 }
 
 .upcomingIcon {
@@ -375,7 +375,7 @@
 .upcomingTitle {
   margin: 0;
   font-size: 1.03rem;
-  font-weight: 800;
+  font-weight: 700;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -443,7 +443,7 @@
 }
 
 .iconActionBtn:hover {
-  border-color: color-mix(in srgb, var(--color-primary) 45%, var(--color-border));
+  border-color: color-mix(in srgb, var(--color-text) 24%, var(--color-border));
 }
 
 .iconActionDelete {
@@ -463,7 +463,7 @@
 }
 
 .dayEventBtn:hover {
-  border-color: color-mix(in srgb, var(--color-primary) 40%, var(--color-border));
+  border-color: color-mix(in srgb, var(--color-text) 24%, var(--color-border));
 }
 
 .dayEventTop {
@@ -475,7 +475,7 @@
 
 .dayEventTitle {
   margin: 0;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .dayEventMeta {
@@ -522,7 +522,7 @@
 .modalTitle {
   margin: 0;
   font-size: 1.2rem;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .modalMeta {
@@ -553,7 +553,7 @@
 
 .categoryMembersHeader {
   font-size: 0.86rem;
-  font-weight: 800;
+  font-weight: 700;
   color: var(--color-text-muted);
 }
 
@@ -576,7 +576,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-weight: 800;
+  font-weight: 700;
   font-size: 0.92rem;
 }
 
@@ -734,4 +734,105 @@
   .actions .btn {
     flex: 1 1 100%;
   }
+}
+
+.timeStackTitle {
+  display: none;
+}
+
+/* Desktop: events are full-width, readable, easy-to-hit rows inside the day cell */
+@media (min-width: 1024px) {
+  .dayCell {
+    min-height: 112px;
+    padding: 6px;
+    gap: 3px;
+    transition: background-color 150ms ease;
+  }
+
+  .dayCell:hover {
+    background: color-mix(in srgb, var(--color-text) 3%, transparent);
+  }
+
+  .daySelected {
+    outline: none;
+    background: color-mix(in srgb, var(--color-primary) 7%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 55%, transparent);
+  }
+
+  .dayButton {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 2px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .timeStackBtn {
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    min-height: 24px;
+    padding: 3px 6px 3px 4px;
+    border-radius: 6px;
+    background: color-mix(in srgb, var(--color-text) 6%, transparent);
+    color: var(--color-text);
+    text-align: left;
+    transition: background-color 150ms ease;
+  }
+
+  .timeStackBtn:hover {
+    background: color-mix(in srgb, var(--color-text) 12%, transparent);
+  }
+
+  .timeStackBtn:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 1px;
+  }
+
+  .timeStackActive {
+    background: color-mix(in srgb, var(--color-primary) 22%, transparent);
+  }
+
+  .timeBlock {
+    flex: none;
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .timeStackTitle {
+    display: block;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .moreBadge {
+    padding-left: 4px;
+    font-size: 11px;
+  }
+
+  .dayEventBtn,
+  .upcomingItem {
+    cursor: pointer;
+    transition: background-color 150ms ease, border-color 150ms ease;
+  }
+
+  .dayEventBtn:hover,
+  .upcomingItem:hover {
+    background: color-mix(in srgb, var(--color-text) 5%, transparent);
+  }
+}
+
+.attendanceBlock {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-border);
+  display: grid;
+  gap: 8px;
 }

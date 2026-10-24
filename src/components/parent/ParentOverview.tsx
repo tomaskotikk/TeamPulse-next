@@ -1,4 +1,6 @@
 import { createAdminClient } from '@/lib/supabase/server'
+import type { AppClub } from '@/lib/app-context'
+import { getUpcomingEventsForMember } from '@/lib/attendance'
 import { getMemberProfile } from '@/lib/member-profiles'
 import type { ParentChild } from '@/lib/parent'
 import { formatDate } from '@/lib/onboarding/labels'
@@ -12,39 +14,6 @@ const EVENT_TYPE_LABELS: Record<string, string> = {
   match: 'Zápas',
   meeting: 'Schůzka',
   event: 'Akce',
-}
-
-type UpcomingEvent = {
-  id: number
-  type: string
-  title: string
-  location: string | null
-  starts_at: string
-  ends_at: string | null
-  all_day: boolean
-}
-
-async function getUpcomingEventsForMember(memberId: number, clubId: number): Promise<UpcomingEvent[]> {
-  const supabase = await createAdminClient()
-  const { data: participations } = await supabase
-    .from('club_event_participants')
-    .select('event_id')
-    .eq('user_id', memberId)
-    .eq('excluded', false)
-
-  const eventIds = (participations ?? []).map((p: { event_id: number }) => p.event_id)
-  if (eventIds.length === 0) return []
-
-  const { data } = await supabase
-    .from('club_events')
-    .select('id, type, title, location, starts_at, ends_at, all_day')
-    .eq('club_id', clubId)
-    .in('id', eventIds)
-    .gte('starts_at', new Date().toISOString())
-    .order('starts_at', { ascending: true })
-    .limit(10)
-
-  return (data ?? []) as UpcomingEvent[]
 }
 
 async function getMemberCategoryName(memberId: number, clubId: number) {
@@ -70,13 +39,14 @@ function formatTime(value: string) {
 
 type Props = {
   parentFirstName: string
-  clubId: number
-  clubName: string
+  club: AppClub
   items: ParentChild[]
   selected: ParentChild | null
 }
 
-export default async function ParentOverview({ parentFirstName, clubId, clubName, items, selected }: Props) {
+export default async function ParentOverview({ parentFirstName, club, items, selected }: Props) {
+  const clubId = club.id
+  const clubName = club.name
   if (!selected) {
     return (
       <div className="section">
@@ -93,7 +63,7 @@ export default async function ParentOverview({ parentFirstName, clubId, clubName
   }
 
   const [events, profile, categoryName] = await Promise.all([
-    getUpcomingEventsForMember(selected.id, clubId),
+    getUpcomingEventsForMember(club, selected.id),
     getMemberProfile(selected.id),
     getMemberCategoryName(selected.id, clubId),
   ])

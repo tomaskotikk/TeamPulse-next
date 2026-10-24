@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useState } from 'react'
 import DashboardLayout from '@/components/DashboardLayout'
 import Topbar from '@/components/Topbar'
+import styles from './invite.module.css'
 
 type AppUser = {
   id: number
@@ -14,6 +15,25 @@ type AppUser = {
 }
 
 type InviteRole = 'hráč' | 'trenér' | 'rodič'
+
+const ROLE_OPTIONS: Array<{ value: InviteRole; label: string; description: string }> = [
+  { value: 'hráč', label: 'Hráč', description: 'Vyplní přihlášku, u nezletilých schvaluje rodič.' },
+  { value: 'trenér', label: 'Trenér', description: 'Plánuje události a vidí údaje hráčů.' },
+  { value: 'rodič', label: 'Rodič', description: 'Sleduje program a údaje svých dětí.' },
+]
+
+const PLAYER_STEPS = [
+  'Hráči přijde e-mail s odkazem na přihlášku.',
+  'Vyplní osobní údaje, zdraví a kontakty.',
+  'Přihláška se objeví v sekci Přihlášky ke schválení.',
+  'U nezletilých se po schválení zaregistruje rodič a aktivují se oba účty.',
+]
+
+const OTHER_STEPS = [
+  'Adresátovi přijde e-mail s odkazem.',
+  'Dokončí registraci a nastaví si heslo.',
+  'Účet je aktivní a člen se objeví v seznamu.',
+]
 
 export default function InvitePage() {
   const [user, setUser] = useState<AppUser | null>(null)
@@ -160,45 +180,68 @@ export default function InvitePage() {
           </div>
         )}
 
-        <div className="section">
-          <div className="section-header">
-            <h3 className="section-title">Nová pozvánka</h3>
-            <p className="section-description">Vyplňte e-mail adresáta a roli v týmu</p>
-          </div>
+        <div className={styles.layout}>
+          <div className="section">
+            <div className="section-header">
+              <h3 className="section-title">Nová pozvánka</h3>
+            </div>
 
-          <div className="section-content">
-            <form onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label className="form-label">E-mail</label>
+            <form onSubmit={handleSubmit} className={styles.form}>
+              <div className={styles.field}>
+                <label htmlFor="invite-email" className="form-label">E-mail adresáta</label>
                 <input
+                  id="invite-email"
                   type="email"
                   className="form-input"
-                  placeholder="napr. hrac@email.cz"
+                  placeholder="např. hrac@email.cz"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  autoComplete="off"
                   required
                 />
-                <p className="form-help">Na tuto adresu bude odeslána pozvánka do klubu.</p>
               </div>
 
-              <div className="form-group">
-                <label className="form-label">Role</label>
-                <select
-                  className="form-select"
-                  value={role}
-                  onChange={(e) => setRole(e.target.value as InviteRole)}
-                >
-                  <option value="hráč">Hráč</option>
-                  <option value="trenér">Trenér</option>
-                  <option value="rodič">Rodič</option>
-                </select>
-              </div>
+              <fieldset className={styles.field}>
+                <legend className="form-label">Role v klubu</legend>
+                <div className={styles.roles}>
+                  {ROLE_OPTIONS.map((option) => (
+                    <label key={option.value} className={`${styles.role} ${role === option.value ? styles.roleActive : ''}`}>
+                      <input
+                        type="radio"
+                        name="role"
+                        value={option.value}
+                        checked={role === option.value}
+                        onChange={() => setRole(option.value)}
+                      />
+                      <span className={styles.roleTitle}>{option.label}</span>
+                      <span className={styles.roleDesc}>{option.description}</span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
 
-              <button type="submit" className="btn btn-primary" disabled={loading}>
-                {loading ? 'Odesílám pozvánku...' : 'Odeslat pozvánku'}
-              </button>
+              <div className={styles.actions}>
+                <button type="submit" className="btn btn-primary" disabled={loading}>
+                  {loading ? 'Odesílám…' : 'Odeslat pozvánku'}
+                </button>
+                <span className={styles.hint}>Odkaz v e-mailu platí {role === 'hráč' ? '7 dní' : '1 hodinu'}.</span>
+              </div>
             </form>
           </div>
+
+          <aside className="section">
+            <div className="section-header">
+              <h3 className="section-title">Co se stane po odeslání</h3>
+            </div>
+            <ol className={styles.steps}>
+              {(role === 'hráč' ? PLAYER_STEPS : OTHER_STEPS).map((step, i) => (
+                <li key={step}>
+                  <span className={styles.stepNum}>{i + 1}</span>
+                  <span>{step}</span>
+                </li>
+              ))}
+            </ol>
+          </aside>
         </div>
       </div>
     </DashboardLayout>

@@ -46,7 +46,7 @@
 
 .back:hover {
   background: color-mix(in srgb, var(--color-primary) 14%, var(--color-surface-alt));
-  border-color: color-mix(in srgb, var(--color-primary) 35%, var(--color-border));
+  border-color: color-mix(in srgb, var(--color-text) 24%, var(--color-border));
   color: var(--color-text);
 }
 
