@@ -127,56 +127,6 @@ export function ResponseBadge({ response, size = 28 }: { response: Response; siz
   )
 }
 
-/* ── Event card ── */
-export function EventCard({ event, index = 0, onOpen, showStatus = true, animate = true }: { event: ClubEvent; index?: number; onOpen?: () => void; showStatus?: boolean; animate?: boolean }) {
-  const { me, childId } = useAuth()
-  return (
-    <Animated.View entering={animate ? FadeInDown.delay(Math.min(index, 5) * 40).duration(260) : undefined}>
-      <Pressable
-        onPress={() => {
-          tapFeedback()
-          onOpen?.()
-          // open the detail instantly with what the card already knows; the screen refreshes it
-          primeCache(withChild(`/api/mobile/events/${event.id}`, childId), {
-            event,
-            reason: null,
-            started: new Date(event.starts_at).getTime() <= Date.now(),
-            canRespond: showStatus,
-            memberId: childId ?? me?.user.id ?? null,
-          })
-          router.push({ pathname: '/event/[id]', params: { id: String(event.id) } })
-        }}
-        style={({ pressed }) => [s.card, pressed && s.cardPressed]}
-      >
-        <View style={[s.stripe, { backgroundColor: eventTypeColor[event.type] ?? eventTypeColor.event }]} />
-        <View style={s.cardBody}>
-          <Text style={s.cardTitle} numberOfLines={2}>{event.title}</Text>
-          <Text style={s.cardMeta}>
-            {formatEventRange(event.starts_at, event.ends_at, event.all_day)}
-            {event.location ? ` · ${event.location}` : ''}
-          </Text>
-          <View style={s.tags}>
-            <View style={s.tag}>
-              <Text style={s.tagText}>{eventTypeLabel[event.type] ?? 'Akce'}</Text>
-            </View>
-            {event.categories.map((c) => (
-              <View key={c.name} style={s.tag}>
-                <View style={[s.tagDot, { backgroundColor: c.color }]} />
-                <Text style={s.tagText}>{c.name}</Text>
-              </View>
-            ))}
-          </View>
-        </View>
-        {showStatus ? (
-          <View style={s.cardStatus}>
-            <ResponseBadge response={event.response} />
-          </View>
-        ) : null}
-      </Pressable>
-    </Animated.View>
-  )
-}
-
 /* ── States ── */
 export function EmptyState({ icon, title, text }: { icon: IconName; title: string; text?: string }) {
   return (
@@ -267,3 +217,5 @@ const s = StyleSheet.create({
   segmentText: { color: palette.muted, fontSize: 15, fontWeight: '600' },
   segmentTextActive: { color: palette.text },
 })
+
+export { default as EventCard } from './EventCard'
