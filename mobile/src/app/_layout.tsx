@@ -38,6 +38,7 @@ function RootNavigator() {
       <Stack.Screen name="wall/club" options={detailHeader} />
       <Stack.Screen name="wall/[id]" options={detailHeader} />
       <Stack.Screen name="event/[id]" options={detailHeader} />
+      <Stack.Screen name="event/new" options={{ ...detailHeader, presentation: 'modal', animation: 'slide_from_bottom' }} />
     </Stack>
   )
 }

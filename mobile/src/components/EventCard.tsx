@@ -1,4 +1,3 @@
-import Ionicons from '@expo/vector-icons/Ionicons'
 import { router } from 'expo-router'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import Animated, { FadeInDown } from 'react-native-reanimated'
@@ -40,28 +39,21 @@ export default function EventCard({ event, index = 0, onOpen, showStatus = true,
         style={({ pressed }) => [s.card, pressed && s.pressed]}
         accessibilityRole="button"
       >
-        <View style={s.dateBlock}>
+        <View style={[s.dateBlock, { backgroundColor: `${color}24` }]}>
           <Text style={[s.weekday, { color }]}>{start.toLocaleDateString('cs-CZ', { weekday: 'short' }).toUpperCase()}</Text>
           <Text style={s.day}>{start.getDate()}</Text>
           <Text style={s.month}>{start.toLocaleDateString('cs-CZ', { month: 'short' }).replace('.', '')}</Text>
         </View>
 
         <View style={s.body}>
-          <View style={s.typeLine}>
-            <View style={[s.typeDot, { backgroundColor: color }]} />
-            <Text style={s.typeText}>{eventTypeLabel[event.type] ?? 'Akce'}</Text>
+          <View style={[s.typeChip, { backgroundColor: `${color}2E` }]}>
+            <Text style={[s.typeText, { color }]}>{eventTypeLabel[event.type] ?? 'Akce'}</Text>
           </View>
-          <Text style={s.title} numberOfLines={2}>{event.title}</Text>
-          <View style={s.meta}>
-            <Ionicons name="time-outline" size={14} color={palette.dim} />
-            <Text style={s.metaText}>{time}</Text>
-          </View>
-          {event.location ? (
-            <View style={s.meta}>
-              <Ionicons name="location-outline" size={14} color={palette.dim} />
-              <Text style={s.metaText} numberOfLines={1}>{event.location}</Text>
-            </View>
-          ) : null}
+          <Text style={s.title} numberOfLines={1}>{event.title}</Text>
+          <Text style={s.metaText} numberOfLines={1}>
+            {time}
+            {event.location ? ` · ${event.location}` : ''}
+          </Text>
           {event.categories.length > 0 ? (
             <View style={s.tags}>
               {event.categories.slice(0, 2).map((c) => (
@@ -80,9 +72,7 @@ export default function EventCard({ event, index = 0, onOpen, showStatus = true,
         </View>
 
         {showStatus ? (
-          <View style={s.status}>
-            <ResponseBadge response={event.response} />
-          </View>
+          <ResponseBadge response={event.response} size={26} />
         ) : null}
       </Pressable>
     </Animated.View>
@@ -90,30 +80,19 @@ export default function EventCard({ event, index = 0, onOpen, showStatus = true,
 }
 
 const s = StyleSheet.create({
-  card: { flexDirection: 'row', backgroundColor: palette.surface, borderRadius: 16, padding: 14, gap: 14, marginBottom: 10 },
+  card: { flexDirection: 'row', alignItems: 'center', backgroundColor: palette.surface, borderRadius: 16, padding: 12, gap: 12, marginBottom: 8 },
   pressed: { opacity: 0.7 },
-  dateBlock: {
-    width: 54,
-    borderRadius: 12,
-    backgroundColor: palette.surface2,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 8,
-    alignSelf: 'flex-start',
-  },
-  weekday: { fontSize: 11, fontWeight: '700', letterSpacing: 0.5 },
-  day: { color: palette.text, fontSize: 24, fontWeight: '700', lineHeight: 28 },
+  dateBlock: { width: 52, borderRadius: 12, alignItems: 'center', justifyContent: 'center', paddingVertical: 7, alignSelf: 'stretch' },
+  weekday: { fontSize: 11, fontWeight: '800', letterSpacing: 0.5 },
+  day: { color: palette.text, fontSize: 22, fontWeight: '700', lineHeight: 26 },
   month: { color: palette.muted, fontSize: 12, fontWeight: '500' },
-  body: { flex: 1, gap: 3 },
-  typeLine: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  typeDot: { width: 7, height: 7, borderRadius: 4 },
-  typeText: { color: palette.muted, fontSize: 12, fontWeight: '600', letterSpacing: 0.3, textTransform: 'uppercase' },
-  title: { color: palette.text, fontSize: 17, fontWeight: '600', lineHeight: 22, marginBottom: 2 },
-  meta: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  metaText: { flex: 1, color: palette.muted, fontSize: 14 },
-  tags: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 6 },
+  body: { flex: 1, gap: 3, minWidth: 0 },
+  typeChip: { alignSelf: 'flex-start', borderRadius: 6, paddingHorizontal: 7, paddingVertical: 2 },
+  typeText: { fontSize: 11, fontWeight: '700' },
+  title: { color: palette.text, fontSize: 16, fontWeight: '600', lineHeight: 21 },
+  metaText: { color: palette.muted, fontSize: 13.5 },
+  tags: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 4 },
   tag: { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: palette.surface2, borderRadius: 6, paddingHorizontal: 7, paddingVertical: 3 },
   tagDot: { width: 6, height: 6, borderRadius: 3 },
   tagText: { color: palette.muted, fontSize: 12, fontWeight: '500' },
-  status: { justifyContent: 'center', paddingLeft: 12, borderLeftWidth: StyleSheet.hairlineWidth, borderLeftColor: palette.border },
 })

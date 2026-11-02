@@ -9,7 +9,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="/tp-logo.png">
-    <link rel="stylesheet" href="/landing/styles.css">
+    <link rel="stylesheet" href="/landing/styles.css?v=5">
+    <link rel="stylesheet" href="/landing/sections.css?v=5">
 </head>
 <body>
 
@@ -27,10 +28,11 @@
                 <img src="/img/tp logo.png" alt="TeamPulse logo">
             </a>
             <nav class="desktop-nav" aria-label="Hlavní navigace">
+                <a href="#aplikace">Aplikace</a>
                 <a href="#funkce">Funkce</a>
-                <a href="#ukazka">Ukázka</a>
+                <a href="#ukazka">Web</a>
                 <a href="#reference">Reference</a>
-                <a href="#kontakt">Kontakt</a>
+                <a href="#faq">FAQ</a>
             </nav>
             <div class="nav-actions">
                 <a class="btn ghost" href="/login">Přihlášení</a>
@@ -42,10 +44,11 @@
             </button>
         </div>
         <div class="mobile-nav" aria-label="Mobilní menu">
+            <a href="#aplikace">Aplikace</a>
             <a href="#funkce">Funkce</a>
-            <a href="#ukazka">Ukázka</a>
+            <a href="#ukazka">Web</a>
             <a href="#reference">Reference</a>
-            <a href="#kontakt">Kontakt</a>
+            <a href="#faq">FAQ</a>
             <div class="mobile-nav-actions">
                 <a class="btn ghost" href="/login">Přihlášení</a>
                 <a class="btn solid" href="/zalozit-klub">Začít zdarma</a>
@@ -75,7 +78,7 @@
                     </p>
                     <div class="hero-ctas">
                         <a href="/zalozit-klub" class="btn solid large">Spustit TeamPulse</a>
-                        <a href="#ukazka" class="btn ghost-dark large">Prohlédnout aplikaci</a>
+                        <a href="#aplikace" class="btn ghost-dark large">Prohlédnout aplikaci</a>
                     </div>
                     <div class="hero-trust">
                         <span class="trust-dot"></span>
@@ -97,306 +100,482 @@
             </div>
         </section>
 
-        <!-- FEATURES -->
-        <section class="section features" id="funkce">
-            <div class="container">
-                <div class="section-intro" data-reveal>
-                    <p class="eyebrow">Co TeamPulse umí</p>
-                    <h2>Jeden systém. Všechny agendy.</h2>
+        <!-- CLUB LOGOS -->
+        <section class="logos" aria-label="Kluby používající TeamPulse">
+            <p class="logos-label">Kluby, které už řídí sezonu v TeamPulse</p>
+            <div class="logos-rail">
+                <div class="logos-track">
+                    <div class="logos-group">
+                        <img src="/img/logos/Liberec.png" alt="Liberec">
+                        <img src="/img/logos/fczlin.png" alt="FC Zlín">
+                        <img src="/img/logos/hc_dynamo_pardubice.png" alt="HC Dynamo Pardubice">
+                        <img src="/img/logos/trinec.png" alt="HC Třinec">
+                        <img src="/img/logos/sparta.png" alt="Sparta">
+                        <img src="/img/logos/olomouc.png" alt="Olomouc">
+                        <img src="/img/logos/slavie.png" alt="SK Slavia">
+                        <img src="/img/logos/chomutov.png" alt="Chomutov">
+                        <img src="/img/logos/hokej zlin.png" alt="Hokej Zlín">
+                        <img src="/img/logos/litomerice.png" alt="Litoměřice">
+                        <img src="/img/logos/rczlin.png" alt="RC Zlín">
+                        <img src="/img/logos/skb.png" alt="SKB">
+                        <img src="/img/logos/trebic.png" alt="Třebíč">
+                    </div>
+                    <div class="logos-group" aria-hidden="true">
+                        <img src="/img/logos/Liberec.png" alt="">
+                        <img src="/img/logos/fczlin.png" alt="">
+                        <img src="/img/logos/hc_dynamo_pardubice.png" alt="">
+                        <img src="/img/logos/trinec.png" alt="">
+                        <img src="/img/logos/sparta.png" alt="">
+                        <img src="/img/logos/olomouc.png" alt="">
+                        <img src="/img/logos/slavie.png" alt="">
+                        <img src="/img/logos/chomutov.png" alt="">
+                        <img src="/img/logos/hokej zlin.png" alt="">
+                        <img src="/img/logos/litomerice.png" alt="">
+                        <img src="/img/logos/rczlin.png" alt="">
+                        <img src="/img/logos/skb.png" alt="">
+                        <img src="/img/logos/trebic.png" alt="">
+                    </div>
                 </div>
-                <div class="feature-list" role="list">
-                    <article class="feature-row" data-reveal role="listitem">
-                        <div class="feature-row-num" aria-hidden="true">01</div>
-                        <div class="feature-row-body">
-                            <h3>Správa členů</h3>
-                            <p>Centrální profil — dokumenty, role, platební historie, skupiny. Žádné hledání v tabulkách.</p>
+            </div>
+        </section>
+
+        <!-- MOBILE APP -->
+        <section class="app" id="aplikace" aria-labelledby="app-title">
+            <div class="container app-grid">
+                <div class="app-copy">
+                    <p class="eyebrow eyebrow-light">Mobilní aplikace</p>
+                    <h2 id="app-title">Klub v kapse hráčů, rodičů i trenérů.</h2>
+                    <p class="app-lead">Skutečné rozhraní aplikace TeamPulse. Ukázky se střídají samy, nebo si je proklikejte, telefon jde ovládat.</p>
+
+                    <ol class="app-list" role="tablist" aria-label="Ukázky aplikace">
+                        <li><button class="app-item is-active" role="tab" aria-selected="true" data-go="0">
+                            <span class="ai-head"><span class="ai-num">01</span><b>Přehled a potvrzení účasti</b></span>
+                            <span class="ai-body">Nejbližší trénink s odpočtem. Hráč nebo rodič potvrdí účast jedním ťuknutím.</span>
+                            <span class="ai-bar"><i></i></span>
+                        </button></li>
+                        <li><button class="app-item" role="tab" aria-selected="false" data-go="1">
+                            <span class="ai-head"><span class="ai-num">02</span><b>Kalendář celé sezony</b></span>
+                            <span class="ai-body">Tréninky, zápasy, schůzky i akce. Každý vidí jen to, kam je pozvaný.</span>
+                            <span class="ai-bar"><i></i></span>
+                        </button></li>
+                        <li><button class="app-item" role="tab" aria-selected="false" data-go="2">
+                            <span class="ai-head"><span class="ai-num">03</span><b>Trénink vypsaný z lavičky</b></span>
+                            <span class="ai-body">Opakované tréninky na celou sezonu jedním formulářem, pozvánky odejdou samy.</span>
+                            <span class="ai-bar"><i></i></span>
+                        </button></li>
+                        <li><button class="app-item" role="tab" aria-selected="false" data-go="3">
+                            <span class="ai-head"><span class="ai-num">04</span><b>Docházka v reálném čase</b></span>
+                            <span class="ai-body">Trenér ví, kdo přijde a kdo se omluvil, ještě než dorazí na hřiště.</span>
+                            <span class="ai-bar"><i></i></span>
+                        </button></li>
+                        <li><button class="app-item" role="tab" aria-selected="false" data-go="4">
+                            <span class="ai-head"><span class="ai-num">05</span><b>Zdi místo skupinových chatů</b></span>
+                            <span class="ai-body">Zprávy pro klub nebo jen pro jednu kategorii. Zkuste napsat do telefonu.</span>
+                            <span class="ai-bar"><i></i></span>
+                        </button></li>
+                    </ol>
+                </div>
+
+                <div class="app-stage">
+                    <div class="phone" data-tilt>
+                                <div class="phone-glow" aria-hidden="true"></div>
+                                <div class="phone-frame">
+                                    <div class="phone-island" aria-hidden="true"></div>
+                                    <div class="phone-screen" aria-live="polite">
+                                        <div class="ps-push" aria-hidden="true">
+                                            <span class="push-icon"></span>
+                                            <span class="push-text"><small><b>TeamPulse</b> · teď</small><span data-push></span></span>
+                                        </div>
+                                        <div class="ps-status" aria-hidden="true">
+                                            <span>9:41</span>
+                                            <span class="ps-sys"><i></i><i></i><i></i></span>
+                                        </div>
+
+                                        <!-- 0 · HOME -->
+                                        <div class="ps-view is-active" data-view="0">
+                                            <div class="ps-scroll">
+                                                <div class="ph-club">
+                                                    <div class="ph-logo">FK</div>
+                                                    <div>
+                                                        <p class="ph-hello">Ahoj, Jakube</p>
+                                                        <p class="ph-clubname">FK Ukázkov · U15</p>
+                                                    </div>
+                                                </div>
+
+                                                <div class="ph-next">
+                                                    <div class="ph-next-top">
+                                                        <span class="ph-type" style="--c:var(--t-training)">Trénink</span>
+                                                        <span class="ph-count" data-countdown>za 2 h 14 min</span>
+                                                    </div>
+                                                    <p class="ph-next-title">Trénink U15</p>
+                                                    <p class="ph-meta">Dnes · 17:00 – 18:30</p>
+                                                    <p class="ph-meta">Hala Sever, Sportovní 12</p>
+                                                    <div class="ph-rsvp">
+                                                        <button class="rsvp-yes" data-rsvp="yes">Přijdu</button>
+                                                        <button class="rsvp-no" data-rsvp="no">Nepřijdu</button>
+                                                    </div>
+                                                    <p class="ph-rsvp-state" data-rsvp-state>Zatím jste neodpověděl</p>
+                                                </div>
+
+                                                <div class="ph-section">
+                                                    <span>Nejbližší události</span><em>Všechny</em>
+                                                </div>
+                                                <div class="ev-card">
+                                                    <div class="ev-date" style="--c:var(--t-match)"><small>SO</small><b>7</b><small>lis</small></div>
+                                                    <div class="ev-body"><span class="ev-type" style="--c:var(--t-match)">Zápas</span><b>FK Ukázkov – SK Lípa</b><small>10:00 · Stadion Jih</small></div>
+                                                    <span class="ev-badge is-yes" aria-label="Přijdu"></span>
+                                                </div>
+                                                <div class="ev-card">
+                                                    <div class="ev-date" style="--c:var(--t-training)"><small>ČT</small><b>5</b><small>lis</small></div>
+                                                    <div class="ev-body"><span class="ev-type" style="--c:var(--t-training)">Trénink</span><b>Trénink U15</b><small>17:00 · Hala Sever</small></div>
+                                                    <span class="ev-badge" aria-label="Bez odpovědi"></span>
+                                                </div>
+                                                <div class="ev-card">
+                                                    <div class="ev-date" style="--c:var(--t-meeting)"><small>ČT</small><b>12</b><small>lis</small></div>
+                                                    <div class="ev-body"><span class="ev-type" style="--c:var(--t-meeting)">Schůzka</span><b>Schůzka rodičů</b><small>18:30 · Klubovna</small></div>
+                                                    <span class="ev-badge" aria-label="Bez odpovědi"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- 1 · CALENDAR -->
+                                        <div class="ps-view" data-view="1">
+                                            <div class="ps-scroll">
+                                                <p class="ps-large">Události</p>
+                                                <div class="cal">
+                                                    <div class="cal-head"><b>listopad 2026</b><span>‹ ›</span></div>
+                                                    <div class="cal-week"><i>po</i><i>út</i><i>st</i><i>čt</i><i>pá</i><i>so</i><i>ne</i></div>
+                                                    <div class="cal-grid" data-cal></div>
+                                                </div>
+                                                <div class="cal-day" data-cal-day>
+                                                    <p class="cal-day-label">úterý 3. listopadu</p>
+                                                    <div class="cal-day-list"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- 2 · CREATE -->
+                                        <div class="ps-view ps-modal" data-view="2">
+                                            <div class="ps-navbar"><span>Zrušit</span><b>Nová událost</b><span></span></div>
+                                            <div class="ps-scroll">
+                                                <div class="cr-types">
+                                                    <div class="cr-type is-on" style="--c:var(--t-training)"><i></i>Trénink</div>
+                                                    <div class="cr-type" style="--c:var(--t-match)"><i></i>Zápas</div>
+                                                    <div class="cr-type" style="--c:var(--t-meeting)"><i></i>Schůzka</div>
+                                                    <div class="cr-type" style="--c:var(--t-event)"><i></i>Akce</div>
+                                                </div>
+                                                <div class="cr-title"><span data-typed></span><i class="caret"></i></div>
+                                                <p class="cr-label">KDY</p>
+                                                <div class="cr-group">
+                                                    <div class="cr-row"><span>Datum</span><em>út 3. listopadu</em></div>
+                                                    <div class="cr-row"><span>Čas</span><em>17:00 – 18:30</em></div>
+                                                </div>
+                                                <p class="cr-label">OPAKOVÁNÍ</p>
+                                                <div class="cr-group">
+                                                    <div class="cr-row"><span>Opakovat každý týden</span><i class="cr-switch" data-switch></i></div>
+                                                    <div class="cr-days">
+                                                        <i>Po</i><i data-day>Út</i><i>St</i><i data-day>Čt</i><i>Pá</i><i>So</i><i>Ne</i>
+                                                    </div>
+                                                    <p class="cr-hint" data-hint>Vytvoří se 1 termín.</p>
+                                                </div>
+                                                <p class="cr-label">KDO JE POZVÁN</p>
+                                                <div class="cr-chips">
+                                                    <i>Všichni</i><i data-cat>U15</i><i>U13</i><i>Muži A</i>
+                                                </div>
+                                            </div>
+                                            <div class="cr-footer"><button class="cr-submit" data-submit tabindex="-1">Vytvořit událost</button></div>
+                                            <div class="ps-toast" data-toast>
+                                                <span class="toast-check"></span>
+                                                <div><b>Vytvořeno 16 tréninků</b><small>Pozvánka odešla 18 hráčům U15</small></div>
+                                            </div>
+                                        </div>
+
+                                        <!-- 3 · ATTENDANCE -->
+                                        <div class="ps-view" data-view="3">
+                                            <div class="ps-navbar ps-navbar-back"><span>‹ Zpět</span><b></b><span></span></div>
+                                            <div class="ps-scroll">
+                                                <div class="at-head">
+                                                    <div class="ev-date ev-date-lg" style="--c:var(--t-match)"><small>SO</small><b>7</b><small>lis</small></div>
+                                                    <div>
+                                                        <span class="ev-type" style="--c:var(--t-match)">Zápas</span>
+                                                        <p class="at-title">FK Ukázkov – SK Lípa</p>
+                                                        <small class="at-meta">10:00 · Stadion Jih</small>
+                                                    </div>
+                                                </div>
+                                                <div class="at-seg"><i>Informace</i><i class="is-on">Docházka</i></div>
+                                                <div class="at-sum">
+                                                    <div><b data-at="invited">18</b><small>Pozvaní</small></div>
+                                                    <div class="yes"><b data-at="yes">0</b><small>Přijde</small></div>
+                                                    <div class="no"><b data-at="no">0</b><small>Nepřijde</small></div>
+                                                    <div><b data-at="pending">18</b><small>Čeká</small></div>
+                                                </div>
+                                                <div class="at-bar"><i class="yes" data-bar="yes"></i><i class="no" data-bar="no"></i></div>
+                                                <ul class="at-list" data-at-list></ul>
+                                            </div>
+                                        </div>
+
+                                        <!-- 4 · WALL -->
+                                        <div class="ps-view" data-view="4">
+                                            <div class="ps-navbar ps-navbar-back"><span>‹ Zdi</span><b>U15 · zeď kategorie</b><span></span></div>
+                                            <div class="wall" data-wall>
+                                                <div class="wall-day">Dnes</div>
+                                            </div>
+                                            <form class="wall-input" data-wall-form>
+                                                <label class="sr-only" for="wallMsg">Napsat zprávu</label>
+                                                <input id="wallMsg" type="text" placeholder="Napište zprávu…" maxlength="120" autocomplete="off">
+                                                <button type="submit" aria-label="Odeslat"></button>
+                                            </form>
+                                        </div>
+
+                                        <nav class="ps-tabs" aria-label="Záložky aplikace">
+                                            <button data-tab="0" class="is-on"><i class="ti ti-home"></i>Přehled</button>
+                                            <button data-tab="4"><i class="ti ti-people"></i>Zdi</button>
+                                            <button data-tab="1"><i class="ti ti-cal"></i>Události</button>
+                                            <button data-tab="profile"><i class="ti ti-user"></i>Profil</button>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FEATURES BENTO -->
+        <section class="section bento-sec" id="funkce" aria-labelledby="bento-title">
+            <div class="container">
+                <div class="sec-head sec-head-split">
+                    <div>
+                        <p class="eyebrow">Správa klubu</p>
+                        <h2 id="bento-title">Všechno o členech a sezoně na jednom místě.</h2>
+                    </div>
+                    <p>Soupiska, karty členů, nábor i docházka. Data, která dnes leží v tabulkách, e-mailech a papírech, má vedení klubu po ruce.</p>
+                </div>
+
+                <div class="bento">
+                    <!-- attendance -->
+                    <article class="tile tile-att">
+                        <header class="tile-head">
+                            <div>
+                                <h3>Docházka</h3>
+                                <p>Hráči × termíny za zvolené období. Export pro svaz nebo dotace.</p>
+                            </div>
+                            <div class="tile-filters" aria-hidden="true">
+                                <span>U15</span><span>Tréninky a zápasy</span><span>Září – říjen</span>
+                            </div>
+                        </header>
+                        <div class="att-stats">
+                            <div><b data-count="87" data-suffix=" %">87 %</b><small>Průměrná docházka</small></div>
+                            <div><b data-count="18" data-suffix="">18</b><small>Hráčů v kategorii</small></div>
+                            <div><b data-count="24" data-suffix="">24</b><small>Tréninků a zápasů</small></div>
                         </div>
-                        <div class="feature-row-icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.2" stroke="currentColor" stroke-width="1.6"/><path d="M5.5 20c0-3.59 2.91-6.5 6.5-6.5s6.5 2.91 6.5 6.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                        <div class="matrix" data-matrix aria-hidden="true"></div>
+                        <div class="matrix-legend" aria-hidden="true">
+                            <span><i class="m-yes"></i>Přítomen</span><span><i class="m-no"></i>Omluven</span><span><i class="m-none"></i>Bez odpovědi</span>
+                            <em>Export CSV</em>
                         </div>
                     </article>
-                    <article class="feature-row" data-reveal role="listitem">
-                        <div class="feature-row-num" aria-hidden="true">02</div>
-                        <div class="feature-row-body">
-                            <h3>Události a docházka</h3>
-                            <p>Tréninky, zápasy i akce v jednom kalendáři s potvrzováním účasti v reálném čase.</p>
-                        </div>
-                        <div class="feature-row-icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="3" stroke="currentColor" stroke-width="1.6"/><path d="M3 10h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+
+                    <!-- roster -->
+                    <article class="tile tile-roster">
+                        <header class="tile-head">
+                            <div>
+                                <h3>Soupiska klubu</h3>
+                                <p>Hráči, trenéři i rodiče s rolemi a kategoriemi.</p>
+                            </div>
+                        </header>
+                        <ul class="roster" aria-hidden="true">
+                            <li><span class="av">MK</span><span class="rn"><b>Matěj Kovář</b><small>2011 · U15</small></span><i class="role r-player">Hráč</i></li>
+                            <li><span class="av">PT</span><span class="rn"><b>Petr Tichý</b><small>U15, U17</small></span><i class="role r-coach">Trenér</i></li>
+                            <li><span class="av">LN</span><span class="rn"><b>Lucie Nová</b><small>Ema N. · U11</small></span><i class="role r-parent">Rodič</i></li>
+                            <li><span class="av">TS</span><span class="rn"><b>Tadeáš Svoboda</b><small>2012 · U15</small></span><i class="role r-player">Hráč</i></li>
+                            <li><span class="av">JH</span><span class="rn"><b>Jana Horáková</b><small>Celý klub</small></span><i class="role r-manager">Manažer</i></li>
+                            <li><span class="av">OP</span><span class="rn"><b>Ondřej Procházka</b><small>2011 · U15</small></span><i class="role r-player">Hráč</i></li>
+                        </ul>
+                        <p class="tile-foot"><b>186</b> členů · <b>7</b> kategorií</p>
+                    </article>
+
+                    <!-- member card -->
+                    <article class="tile tile-member">
+                        <header class="tile-head">
+                            <div>
+                                <h3>Karta člena</h3>
+                                <p>Kontakty, zákonný zástupce a zdravotní údaje. Vidí je jen vedení, trenéři a rodiče.</p>
+                            </div>
+                        </header>
+                        <div class="member" aria-hidden="true">
+                            <div class="member-top">
+                                <span class="av av-lg">MK</span>
+                                <span><b>Matěj Kovář</b><small>Hráč · U15 · člen od 2021</small></span>
+                            </div>
+                            <dl class="member-rows">
+                                <div><dt>Zákonný zástupce</dt><dd>Jana Kovářová</dd></div>
+                                <div><dt>Nouzový kontakt</dt><dd>+420 604 ••• •••</dd></div>
+                                <div><dt>Alergie a omezení</dt><dd>Pyl, antihistaminika s sebou</dd></div>
+                                <div><dt>Souhlas s fotografiemi</dt><dd class="ok">Ano</dd></div>
+                            </dl>
                         </div>
                     </article>
-                    <article class="feature-row" data-reveal role="listitem">
-                        <div class="feature-row-num" aria-hidden="true">03</div>
-                        <div class="feature-row-body">
-                            <h3>Klubová komunikace</h3>
-                            <p>Cílené zprávy trenérům, týmům i rodičům. Push notifikace a e-maily bez samostatné aplikace.</p>
-                        </div>
-                        <div class="feature-row-icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="none"><path d="M4 4h16c1.1 0 2 .9 2 2v10c0 1.1-.9 2-2 2H8l-4 3V6c0-1.1.9-2 2-2Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
-                        </div>
+
+                    <!-- applications -->
+                    <article class="tile tile-apps">
+                        <header class="tile-head">
+                            <div>
+                                <h3>Nábor a přihlášky</h3>
+                                <p>Zájemci se přihlásí sami, vy jen schválíte. Při zamítnutí dostanou důvod.</p>
+                            </div>
+                        </header>
+                        <p class="apps-count">3 nové přihlášky čekají na schválení</p>
+                        <ul class="apps" data-apps>
+                            <li><span class="av">AH</span><span class="rn"><b>Adam Horák</b><small>2012 · zájem o U15</small></span>
+                                <span class="app-actions"><button type="button" data-approve>Schválit</button></span></li>
+                            <li><span class="av">EB</span><span class="rn"><b>Eliška Bártová</b><small>2015 · zájem o U11</small></span>
+                                <span class="app-actions"><button type="button" data-approve>Schválit</button></span></li>
+                            <li><span class="av">VK</span><span class="rn"><b>Vojtěch Král</b><small>2010 · zájem o U17</small></span>
+                                <span class="app-actions"><button type="button" data-approve>Schválit</button></span></li>
+                        </ul>
+                        <p class="tile-foot">Schválený hráč dostane přístup a zařadí se do kategorie podle ročníku.</p>
                     </article>
-                    <article class="feature-row" data-reveal role="listitem">
-                        <div class="feature-row-num" aria-hidden="true">04</div>
-                        <div class="feature-row-body">
-                            <h3>Dashboard vedení</h3>
-                            <p>Stav týmů, aktivity, plateb a upozornění na jednom přehledném panelu. Vždy aktuální.</p>
-                        </div>
-                        <div class="feature-row-icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="none"><path d="M4 20V14M9 20V10M14 20V6M19 20V3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-                        </div>
-                    </article>
-                    <article class="feature-row" data-reveal role="listitem">
-                        <div class="feature-row-num" aria-hidden="true">05</div>
-                        <div class="feature-row-body">
-                            <h3>Vlastní web klubu</h3>
-                            <p>Web napojený na živá data z platformy. Aktualizace obsahu bez dvojité práce.</p>
-                        </div>
-                        <div class="feature-row-icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.3" stroke="currentColor" stroke-width="1.6"/><ellipse cx="12" cy="12" rx="3.5" ry="8.3" stroke="currentColor" stroke-width="1.6"/><line x1="3.7" y1="12" x2="20.3" y2="12" stroke="currentColor" stroke-width="1.6"/></svg>
-                        </div>
-                    </article>
-                    <article class="feature-row" data-reveal role="listitem">
-                        <div class="feature-row-num" aria-hidden="true">06</div>
-                        <div class="feature-row-body">
-                            <h3>Bezpečnost a role</h3>
-                            <p>Oprávnění podle funkce, dvoufaktorové ověření a auditovatelná historie změn.</p>
-                        </div>
-                        <div class="feature-row-icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="none"><path d="M12 3L4 7v5c0 4.5 3.4 8.7 8 9.7 4.6-1 8-5.2 8-9.7V7l-8-4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+
+                    <!-- analytics -->
+                    <article class="tile tile-chart">
+                        <header class="tile-head">
+                            <div>
+                                <h3>Analytika klubu</h3>
+                                <p>Docházka podle měsíců a složení týmů v průběhu sezony.</p>
+                            </div>
+                        </header>
+                        <div class="chart" aria-hidden="true">
+                            <div class="chart-bars">
+                                <i style="--v:62"></i><i style="--v:71"></i><i style="--v:68"></i><i style="--v:79"></i>
+                                <i style="--v:84"></i><i style="--v:76"></i><i style="--v:88"></i><i style="--v:91"></i>
+                            </div>
+                            <div class="chart-x"><span>bře</span><span>dub</span><span>kvě</span><span>čvn</span><span>srp</span><span>zář</span><span>říj</span><span>lis</span></div>
                         </div>
                     </article>
                 </div>
             </div>
         </section>
 
-        <!-- SHOWCASE -->
-        <section class="section showcase" id="ukazka">
+        <!-- WEB ADMIN -->
+        <section class="section web" id="ukazka" aria-labelledby="web-title">
             <div class="container">
-                <div class="showcase-intro" data-reveal>
-                    <p class="eyebrow">Aplikace v praxi</p>
-                    <h2>Podívejte se dovnitř</h2>
-                    <p>Každý modul je navržený pro rychlou orientaci — bez onboardingových videí a tutoriálů.</p>
+                <div class="sec-head sec-head-split">
+                    <div>
+                        <p class="eyebrow">Webová administrace</p>
+                        <h2 id="web-title">Vedení klubu na velké obrazovce.</h2>
+                    </div>
+                    <p>Co trenér zadá v telefonu, vidí vedení okamžitě na webu, a naopak.</p>
                 </div>
-                <div class="showcase-tabs" role="tablist" aria-label="Moduly aplikace">
-                    <button class="stab active" data-key="dashboard" aria-selected="true" role="tab">Dashboard</button>
-                    <button class="stab" data-key="clenove" aria-selected="false" role="tab">Členové</button>
-                    <button class="stab" data-key="profil" aria-selected="false" role="tab">Profil</button>
-                    <button class="stab" data-key="nastaveni" aria-selected="false" role="tab">Nastavení</button>
+
+                <div class="web-tabs" role="tablist" aria-label="Moduly webové aplikace">
+                    <button class="stab active" data-key="dashboard" aria-selected="true" role="tab">Dashboard<i class="stab-progress"></i></button>
+                    <button class="stab" data-key="clenove" aria-selected="false" role="tab">Členové<i class="stab-progress"></i></button>
+                    <button class="stab" data-key="profil" aria-selected="false" role="tab">Profil člena<i class="stab-progress"></i></button>
+                    <button class="stab" data-key="nastaveni" aria-selected="false" role="tab">Nastavení<i class="stab-progress"></i></button>
                 </div>
-                <div class="showcase-window-wrap" data-reveal>
-                    <div class="showcase-window">
+
+                <div class="web-stage">
+                    <div class="web-window">
                         <div class="sw-chrome">
-                            <div class="sw-dots" aria-hidden="true">
-                                <span></span><span></span><span></span>
-                            </div>
-                            <div class="sw-bar">
-                                <p id="showcaseRoute">/app/dashboard</p>
-                            </div>
+                            <div class="sw-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+                            <div class="sw-bar"><p id="showcaseRoute">teampulse.cfd/app/dashboard</p></div>
                         </div>
                         <div class="sw-screen">
-                            <img id="showcaseImage" src="/img/web-dashboard.png" alt="Dashboard TeamPulse">
+                            <img id="showcaseImage" src="/img/web-dashboard.png" alt="Dashboard TeamPulse" width="1899" height="952">
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- TESTIMONIALS + MARQUEE -->
-        <section class="section testimonials" id="reference">
+        <!-- REFERENCES -->
+        <section class="section refs" id="reference" aria-labelledby="refs-title">
             <div class="container">
-                <div class="section-intro" data-reveal>
-                    <p class="eyebrow">Reálný provoz</p>
-                    <h2>Co říkají kluby, které přešly</h2>
-                </div>
-                <div class="testi-rows">
-                    <article class="testi-row" data-reveal>
-                        <div class="testi-row-club">
-                            <img src="/img/logos/fczlin.png" alt="FC Zlín">
-                            <div>
-                                <strong>FC Zlín</strong>
-                                <span>Fotbalový klub</span>
-                            </div>
+                <div class="refs-grid">
+                    <div class="refs-left">
+                        <p class="eyebrow eyebrow-light">Reference</p>
+                        <h2 id="refs-title" class="sr-only">Co říkají kluby</h2>
+                        <div class="quotes" aria-live="polite">
+                            <figure class="quote is-on" data-quote="0">
+                                <blockquote>Před TeamPulse jsme měli data v pěti různých tabulkách. Dnes máme přehled v reálném čase a trenéři šetří hodiny týdně.</blockquote>
+                                <figcaption><img src="/img/logos/fczlin.png" alt=""><span><b>FC Zlín</b>Fotbalový klub</span></figcaption>
+                            </figure>
+                            <figure class="quote" data-quote="1">
+                                <blockquote>Největší rozdíl je v komunikaci s rodiči. Notifikace fungují spolehlivě a změny v rozpisu jdou ven okamžitě.</blockquote>
+                                <figcaption><img src="/img/logos/trinec.png" alt=""><span><b>HC Třinec</b>Hokejový klub</span></figcaption>
+                            </figure>
+                            <figure class="quote" data-quote="2">
+                                <blockquote>TeamPulse působí profesionálně i navenek. Vlastní web a centrální data nám pomohly sjednotit celou organizaci.</blockquote>
+                                <figcaption><img src="/img/logos/slavie.png" alt=""><span><b>SK Slavia</b>Mládežnický oddíl</span></figcaption>
+                            </figure>
                         </div>
-                        <blockquote class="testi-row-quote">
-                            Před TeamPulse jsme měli data v pěti různých tabulkách. Dnes máme přehled v reálném čase a trenéři šetří hodiny týdně.
-                        </blockquote>
-                    </article>
-                    <article class="testi-row" data-reveal>
-                        <div class="testi-row-club">
-                            <img src="/img/logos/trinec.png" alt="HC Třinec">
-                            <div>
-                                <strong>HC Třinec</strong>
-                                <span>Hokejový klub</span>
-                            </div>
-                        </div>
-                        <blockquote class="testi-row-quote">
-                            Největší rozdíl je v komunikaci s rodiči. Notifikace fungují spolehlivě a změny v rozpisu jdou ven okamžitě.
-                        </blockquote>
-                    </article>
-                    <article class="testi-row" data-reveal>
-                        <div class="testi-row-club">
-                            <img src="/img/logos/slavie.png" alt="SK Slavia">
-                            <div>
-                                <strong>SK Slavia</strong>
-                                <span>Mládežnický oddíl</span>
-                            </div>
-                        </div>
-                        <blockquote class="testi-row-quote">
-                            TeamPulse působí profesionálně i navenek. Vlastní web a centrální data nám pomohly sjednotit celou organizaci.
-                        </blockquote>
-                    </article>
-                </div>
-
-                <div class="ref-stats" data-reveal>
-                    <span class="ref-stat"><strong>100+</strong> klubů</span>
-                    <span class="ref-stat-sep" aria-hidden="true"></span>
-                    <span class="ref-stat"><strong>15+</strong> sportů</span>
-                    <span class="ref-stat-sep" aria-hidden="true"></span>
-                    <span class="ref-stat"><strong>12 000+</strong> členů</span>
-                </div>
-
-                <div class="reference-logo-rail" aria-label="Klubová loga">
-                    <div class="logo-marquee">
-                        <div class="logo-marquee-track">
-                            <div class="logo-marquee-group">
-                                <span class="club-logo"><img src="/img/logos/Liberec.png" alt="Liberec"></span>
-                                <span class="club-logo"><img src="/img/logos/chomutov.png" alt="Chomutov"></span>
-                                <span class="club-logo"><img src="/img/logos/fczlin.png" alt="FC Zlín"></span>
-                                <span class="club-logo"><img src="/img/logos/hc_dynamo_pardubice.png" alt="HC Dynamo Pardubice"></span>
-                                <span class="club-logo"><img src="/img/logos/hokej zlin.png" alt="Hokej Zlín"></span>
-                                <span class="club-logo"><img src="/img/logos/litomerice.png" alt="Litoměřice"></span>
-                                <span class="club-logo"><img src="/img/logos/olomouc.png" alt="Olomouc"></span>
-                                <span class="club-logo"><img src="/img/logos/Liberec.png" alt="Liberec"></span>
-                                <span class="club-logo"><img src="/img/logos/chomutov.png" alt="Chomutov"></span>
-                                <span class="club-logo"><img src="/img/logos/fczlin.png" alt="FC Zlín"></span>
-                                <span class="club-logo"><img src="/img/logos/hc_dynamo_pardubice.png" alt="HC Dynamo Pardubice"></span>
-                                <span class="club-logo"><img src="/img/logos/hokej zlin.png" alt="Hokej Zlín"></span>
-                                <span class="club-logo"><img src="/img/logos/litomerice.png" alt="Litoměřice"></span>
-                                <span class="club-logo"><img src="/img/logos/olomouc.png" alt="Olomouc"></span>
-                                <span class="club-logo"><img src="/img/logos/Liberec.png" alt="Liberec"></span>
-                                <span class="club-logo"><img src="/img/logos/chomutov.png" alt="Chomutov"></span>
-                                <span class="club-logo"><img src="/img/logos/fczlin.png" alt="FC Zlín"></span>
-                                <span class="club-logo"><img src="/img/logos/hc_dynamo_pardubice.png" alt="HC Dynamo Pardubice"></span>
-                                <span class="club-logo"><img src="/img/logos/hokej zlin.png" alt="Hokej Zlín"></span>
-                                <span class="club-logo"><img src="/img/logos/litomerice.png" alt="Litoměřice"></span>
-                                <span class="club-logo"><img src="/img/logos/olomouc.png" alt="Olomouc"></span>
-                            </div>
-                            <div class="logo-marquee-group" aria-hidden="true">
-                                <span class="club-logo"><img src="/img/logos/Liberec.png" alt="Liberec"></span>
-                                <span class="club-logo"><img src="/img/logos/chomutov.png" alt="Chomutov"></span>
-                                <span class="club-logo"><img src="/img/logos/fczlin.png" alt="FC Zlín"></span>
-                                <span class="club-logo"><img src="/img/logos/hc_dynamo_pardubice.png" alt="HC Dynamo Pardubice"></span>
-                                <span class="club-logo"><img src="/img/logos/hokej zlin.png" alt="Hokej Zlín"></span>
-                                <span class="club-logo"><img src="/img/logos/litomerice.png" alt="Litoměřice"></span>
-                                <span class="club-logo"><img src="/img/logos/olomouc.png" alt="Olomouc"></span>
-                                <span class="club-logo"><img src="/img/logos/Liberec.png" alt="Liberec"></span>
-                                <span class="club-logo"><img src="/img/logos/chomutov.png" alt="Chomutov"></span>
-                                <span class="club-logo"><img src="/img/logos/fczlin.png" alt="FC Zlín"></span>
-                                <span class="club-logo"><img src="/img/logos/hc_dynamo_pardubice.png" alt="HC Dynamo Pardubice"></span>
-                                <span class="club-logo"><img src="/img/logos/hokej zlin.png" alt="Hokej Zlín"></span>
-                                <span class="club-logo"><img src="/img/logos/litomerice.png" alt="Litoměřice"></span>
-                                <span class="club-logo"><img src="/img/logos/olomouc.png" alt="Olomouc"></span>
-                                <span class="club-logo"><img src="/img/logos/Liberec.png" alt="Liberec"></span>
-                                <span class="club-logo"><img src="/img/logos/chomutov.png" alt="Chomutov"></span>
-                                <span class="club-logo"><img src="/img/logos/fczlin.png" alt="FC Zlín"></span>
-                                <span class="club-logo"><img src="/img/logos/hc_dynamo_pardubice.png" alt="HC Dynamo Pardubice"></span>
-                                <span class="club-logo"><img src="/img/logos/hokej zlin.png" alt="Hokej Zlín"></span>
-                                <span class="club-logo"><img src="/img/logos/litomerice.png" alt="Litoměřice"></span>
-                                <span class="club-logo"><img src="/img/logos/olomouc.png" alt="Olomouc"></span>
-                            </div>
+                        <div class="quote-nav" role="tablist" aria-label="Reference">
+                            <button role="tab" aria-selected="true" aria-label="FC Zlín" class="is-on"><i></i></button>
+                            <button role="tab" aria-selected="false" aria-label="HC Třinec"><i></i></button>
+                            <button role="tab" aria-selected="false" aria-label="SK Slavia"><i></i></button>
                         </div>
                     </div>
-                    <div class="logo-marquee logo-marquee--reverse">
-                        <div class="logo-marquee-track logo-marquee-track--reverse">
-                            <div class="logo-marquee-group">
-                                <span class="club-logo"><img src="/img/logos/rczlin.png" alt="RC Zlín"></span>
-                                <span class="club-logo"><img src="/img/logos/skb.png" alt="SKB"></span>
-                                <span class="club-logo"><img src="/img/logos/slavie.png" alt="SK Slavia"></span>
-                                <span class="club-logo"><img src="/img/logos/sparta.png" alt="Sparta"></span>
-                                <span class="club-logo"><img src="/img/logos/trebic.png" alt="Třebíč"></span>
-                                <span class="club-logo"><img src="/img/logos/trinec.png" alt="HC Třinec"></span>
-                                <span class="club-logo"><img src="/img/logos/rczlin.png" alt="RC Zlín"></span>
-                                <span class="club-logo"><img src="/img/logos/skb.png" alt="SKB"></span>
-                                <span class="club-logo"><img src="/img/logos/slavie.png" alt="SK Slavia"></span>
-                                <span class="club-logo"><img src="/img/logos/sparta.png" alt="Sparta"></span>
-                                <span class="club-logo"><img src="/img/logos/trebic.png" alt="Třebíč"></span>
-                                <span class="club-logo"><img src="/img/logos/trinec.png" alt="HC Třinec"></span>
-                                <span class="club-logo"><img src="/img/logos/rczlin.png" alt="RC Zlín"></span>
-                                <span class="club-logo"><img src="/img/logos/skb.png" alt="SKB"></span>
-                                <span class="club-logo"><img src="/img/logos/slavie.png" alt="SK Slavia"></span>
-                                <span class="club-logo"><img src="/img/logos/sparta.png" alt="Sparta"></span>
-                                <span class="club-logo"><img src="/img/logos/trebic.png" alt="Třebíč"></span>
-                                <span class="club-logo"><img src="/img/logos/trinec.png" alt="HC Třinec"></span>
-                            </div>
-                            <div class="logo-marquee-group" aria-hidden="true">
-                                <span class="club-logo"><img src="/img/logos/rczlin.png" alt="RC Zlín"></span>
-                                <span class="club-logo"><img src="/img/logos/skb.png" alt="SKB"></span>
-                                <span class="club-logo"><img src="/img/logos/slavie.png" alt="SK Slavia"></span>
-                                <span class="club-logo"><img src="/img/logos/sparta.png" alt="Sparta"></span>
-                                <span class="club-logo"><img src="/img/logos/trebic.png" alt="Třebíč"></span>
-                                <span class="club-logo"><img src="/img/logos/trinec.png" alt="HC Třinec"></span>
-                                <span class="club-logo"><img src="/img/logos/rczlin.png" alt="RC Zlín"></span>
-                                <span class="club-logo"><img src="/img/logos/skb.png" alt="SKB"></span>
-                                <span class="club-logo"><img src="/img/logos/slavie.png" alt="SK Slavia"></span>
-                                <span class="club-logo"><img src="/img/logos/sparta.png" alt="Sparta"></span>
-                                <span class="club-logo"><img src="/img/logos/trebic.png" alt="Třebíč"></span>
-                                <span class="club-logo"><img src="/img/logos/trinec.png" alt="HC Třinec"></span>
-                                <span class="club-logo"><img src="/img/logos/rczlin.png" alt="RC Zlín"></span>
-                                <span class="club-logo"><img src="/img/logos/skb.png" alt="SKB"></span>
-                                <span class="club-logo"><img src="/img/logos/slavie.png" alt="SK Slavia"></span>
-                                <span class="club-logo"><img src="/img/logos/sparta.png" alt="Sparta"></span>
-                                <span class="club-logo"><img src="/img/logos/trebic.png" alt="Třebíč"></span>
-                                <span class="club-logo"><img src="/img/logos/trinec.png" alt="HC Třinec"></span>
-                            </div>
-                        </div>
-                    </div>
+                    <dl class="refs-stats">
+                        <div><dt>Klubů</dt><dd data-count="100" data-suffix="+">100+</dd></div>
+                        <div><dt>Sportů</dt><dd data-count="15" data-suffix="+">15+</dd></div>
+                        <div><dt>Členů</dt><dd data-count="12000" data-suffix="+">12 000+</dd></div>
+                    </dl>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ -->
+        <section class="section faq" id="faq" aria-labelledby="faq-title">
+            <div class="container faq-wrap">
+                <div class="sec-head">
+                    <p class="eyebrow">Časté otázky</p>
+                    <h2 id="faq-title">Než se rozhodnete</h2>
+                    <p class="faq-note">Další otázky rádi zodpovíme na <a href="mailto:podpora@teampulse.cz">podpora@teampulse.cz</a>.</p>
+                </div>
+                <div class="faq-list">
+                    <details class="faq-item">
+                        <summary>Musí si hráči a rodiče něco instalovat?</summary>
+                        <div class="faq-a"><p>Mohou používat mobilní aplikaci TeamPulse, nebo web v prohlížeči. Účet, data i oprávnění jsou v obou případech stejné.</p></div>
+                    </details>
+                    <details class="faq-item">
+                        <summary>Jak dlouho trvá spuštění klubu?</summary>
+                        <div class="faq-a"><p>Registraci klubu schvalujeme obvykle do 1–3 dnů. Pak stačí pozvat členy a vypsat první události. S onboardingem pomůžeme.</p></div>
+                    </details>
+                    <details class="faq-item">
+                        <summary>Kdo uvidí jaké události?</summary>
+                        <div class="faq-a"><p>Událost je určená vybraným kategoriím nebo celému klubu. Hráči vidí jen to, kam jsou pozvaní, vedení a trenéři vidí celý kalendář.</p></div>
+                    </details>
+                    <details class="faq-item">
+                        <summary>Jak jsou chráněná data členů?</summary>
+                        <div class="faq-a"><p>Přístup se řídí rolemi v klubu, účty lze chránit dvoufázovým ověřením a citlivé údaje vidí jen oprávnění lidé.</p></div>
+                    </details>
                 </div>
             </div>
         </section>
 
         <!-- CTA + CONTACT -->
-        <section class="section cta-contact" id="kontakt">
+        <section class="section cta" id="kontakt" aria-labelledby="cta-title">
             <div class="container">
-                <div class="cta-contact-band" data-reveal>
-                    <div class="cta-contact-top">
-                        <div class="cta-contact-text">
+                <div class="cta-band">
+                    <div class="cta-top">
+                        <div>
                             <p class="eyebrow eyebrow-light">Připraveno pro sezonu</p>
-                            <h2>Nastartujte klub během dnů, ne měsíců</h2>
-                            <p>Import členů, nastavení rolí a první workflow — pomůžeme s onboardingem od začátku do konce.</p>
+                            <h2 id="cta-title">Rozjeďte klub během dnů, ne měsíců.</h2>
                         </div>
-                        <div class="cta-contact-actions">
-                            <a class="btn solid large" href="/zalozit-klub">Chci onboarding</a>
-                            <a class="btn ghost-dark large" href="/login">Vstoupit do aplikace</a>
+                        <div class="cta-actions">
+                            <a class="btn solid large" href="/zalozit-klub">Založit klub zdarma</a>
+                            <a class="btn ghost-dark large" href="/login">Přihlásit se</a>
                         </div>
                     </div>
-                    <div class="cta-contact-divider" aria-hidden="true"></div>
-                    <div class="cta-contact-methods">
-                        <a href="mailto:podpora@teampulse.cz" class="contact-method">
-                            <div class="cm-icon" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="none"><path d="M4 6.5C4 5.67 4.67 5 5.5 5h13c.83 0 1.5.67 1.5 1.5v11c0 .83-.67 1.5-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5v-11Z" stroke="currentColor" stroke-width="1.6"/><path d="m5 7 7 5 7-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-                            </div>
-                            <span class="cm-label">E-mail</span>
-                            <span class="cm-value">podpora@teampulse.cz</span>
-                            <span class="cm-note">Do 2 hodin v pracovní dny</span>
-                        </a>
-                        <div class="contact-method-sep" aria-hidden="true"></div>
-                        <a href="tel:+420777000111" class="contact-method">
-                            <div class="cm-icon" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="none"><path d="M7.2 3.8h2.3c.45 0 .84.3.95.73l.67 2.67a1 1 0 0 1-.3 1.02l-1.23 1.05a13.1 13.1 0 0 0 5.15 5.15l1.05-1.23a1 1 0 0 1 1.02-.3l2.67.67c.43.11.73.5.73.95v2.3A1.2 1.2 0 0 1 19.72 19C11.64 19 5 12.36 5 4.28c0-.66.54-1.2 1.2-1.2Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
-                            </div>
-                            <span class="cm-label">Telefon</span>
-                            <span class="cm-value">+420 777 000 111</span>
-                            <span class="cm-note">Pro urgentní situace</span>
-                        </a>
-                        <div class="contact-method-sep" aria-hidden="true"></div>
-                        <div class="contact-method">
-                            <div class="cm-icon" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.6"/><path d="M12 8v4l2.8 1.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                            </div>
-                            <span class="cm-label">Onboarding</span>
-                            <span class="cm-value">Do 1–3 dnů</span>
-                            <span class="cm-note">Po potvrzení registrace</span>
-                        </div>
+                    <ol class="cta-steps">
+                        <li><span>1</span><b>Založte klub</b><small>Název, sport, město. Schválení do 1–3 dnů.</small></li>
+                        <li><span>2</span><b>Pozvěte členy</b><small>E-mailem. Kategorie se naplní samy.</small></li>
+                        <li><span>3</span><b>Vypište tréninky</b><small>Hráči a rodiče potvrzují z telefonu.</small></li>
+                    </ol>
+                    <div class="cta-contact">
+                        <a href="mailto:podpora@teampulse.cz"><small>E-mail</small>podpora@teampulse.cz</a>
+                        <a href="tel:+420777000111"><small>Telefon</small>+420 777 000 111</a>
+                        <p><small>Odpovídáme</small>do 2 hodin v pracovní dny</p>
                     </div>
                 </div>
             </div>
@@ -416,8 +595,10 @@
             <div class="footer-nav-col">
                 <h3>Produkt</h3>
                 <a href="#funkce">Funkce</a>
-                <a href="#ukazka">Ukázka</a>
+                <a href="#aplikace">Aplikace</a>
+                <a href="#ukazka">Web</a>
                 <a href="#reference">Reference</a>
+                <a href="#faq">FAQ</a>
             </div>
             <div class="footer-nav-col">
                 <h3>Kontakt</h3>
@@ -433,6 +614,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
-    <script src="/landing/script.js"></script>
+    <script src="/landing/script.js?v=5"></script>
+    <script src="/landing/story.js?v=5"></script>
 </body>
 </html>

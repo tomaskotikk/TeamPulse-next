@@ -43,41 +43,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    /* ── Showcase tabs ── */
-    const showcaseData = {
-        dashboard: { image: "/img/web-dashboard.png", route: "/app/dashboard", alt: "Dashboard TeamPulse" },
-        clenove:   { image: "/img/clenove.png",        route: "/app/clenove",   alt: "Správa členů" },
-        profil:    { image: "/img/profil.png",          route: "/app/profil",    alt: "Uživatelský profil" },
-        nastaveni: { image: "/img/nastaveni.png",       route: "/app/nastaveni", alt: "Nastavení klubu" }
-    };
-    const showcaseImg   = document.getElementById("showcaseImage");
-    const showcaseRoute = document.getElementById("showcaseRoute");
-    const stabs = Array.from(document.querySelectorAll(".stab"));
-
-    const switchShowcase = key => {
-        const payload = showcaseData[key];
-        if (!payload || !showcaseImg || !showcaseRoute) return;
-        stabs.forEach(t => {
-            const active = t.dataset.key === key;
-            t.classList.toggle("active", active);
-            t.setAttribute("aria-selected", String(active));
-        });
-        if (!prefersReducedMotion && window.gsap) {
-            gsap.to(".showcase-window", { opacity: 0.5, y: 8, duration: 0.14, ease: "power2.out", onComplete: applyData });
-        } else {
-            applyData();
-        }
-        function applyData() {
-            showcaseImg.src   = payload.image;
-            showcaseImg.alt   = payload.alt;
-            showcaseRoute.textContent = payload.route;
-            if (!prefersReducedMotion && window.gsap) {
-                gsap.to(".showcase-window", { opacity: 1, y: 0, duration: 0.32, ease: "power3.out" });
-            }
-        }
-    };
-    stabs.forEach(tab => tab.addEventListener("click", () => tab.dataset.key && switchShowcase(tab.dataset.key)));
-
     /* ── Proof counter (simple, no GSAP dependency) ── */
     const proofCounters = Array.from(document.querySelectorAll("[data-counter]"));
 
@@ -214,22 +179,6 @@ document.addEventListener("DOMContentLoaded", () => {
         );
     });
 
-    /* ── Feature rows stagger ── */
-    gsap.fromTo(".feature-row",
-        { opacity: 0, x: -24 },
-        {
-            opacity: 1, x: 0,
-            duration: 0.62,
-            stagger: 0.08,
-            ease: "power3.out",
-            scrollTrigger: {
-                trigger: ".feature-list",
-                start: "top 80%",
-                once: true
-            }
-        }
-    );
-
     /* ── Proof stats counter ── */
     proofCounters.forEach(counter => {
         const end = Number(counter.getAttribute("data-counter"));
@@ -242,40 +191,6 @@ document.addEventListener("DOMContentLoaded", () => {
             scrollTrigger: { trigger: counter, start: "top 84%", once: true },
             onUpdate: () => { counter.textContent = Math.round(val.n); }
         });
-    });
-
-    /* ── Testimonial rows stagger ── */
-    gsap.fromTo(".testi-row",
-        { opacity: 0, x: -20 },
-        {
-            opacity: 1, x: 0,
-            duration: 0.6,
-            stagger: 0.1,
-            ease: "power3.out",
-            scrollTrigger: { trigger: ".testi-rows", start: "top 82%", once: true }
-        }
-    );
-
-    /* ── Contact methods stagger ── */
-    gsap.fromTo(".contact-method",
-        { opacity: 0, y: 16 },
-        {
-            opacity: 1, y: 0,
-            duration: 0.55,
-            stagger: 0.1,
-            ease: "power3.out",
-            scrollTrigger: { trigger: ".cta-contact-band", start: "top 84%", once: true }
-        }
-    );
-
-    /* ── CTA+contact band glow pulse ── */
-    gsap.to(".cta-contact-band", {
-        boxShadow: "0 0 0 1px oklch(47% 0.21 20 / 0.30), 0 32px 80px oklch(0% 0 0 / 0.16)",
-        duration: 2.4,
-        ease: "sine.inOut",
-        repeat: -1,
-        yoyo: true,
-        scrollTrigger: { trigger: ".cta-contact-band", start: "top 80%" }
     });
 
     /* ── Mouse parallax on hero ── */

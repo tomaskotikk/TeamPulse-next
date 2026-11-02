@@ -148,19 +148,19 @@ export default function Conversation({ myId, load, send, realtime, emptyText, ke
                   </View>
                 ) : null}
                 <View style={[styles.msgCol, own && { alignItems: 'flex-end' }]}>
-                  {showAuthor && !own ? (
-                    <Text style={styles.author}>
-                      {msg.first_name} {msg.last_name}
-                      {msg.role ? <Text style={styles.authorRole}> · {msg.role}</Text> : null}
-                    </Text>
-                  ) : null}
                   <View
                     style={[
                       styles.bubble,
                       own ? { backgroundColor: theme.accent } : styles.bubbleOther,
-                      showAuthor ? (own ? styles.ownFirst : styles.otherFirst) : null,
+                      showAvatar ? (own ? styles.ownLast : styles.otherLast) : null,
                     ]}
                   >
+                    {showAuthor && !own ? (
+                      <Text style={[styles.author, { color: theme.accent }]}>
+                        {msg.first_name} {msg.last_name}
+                        {msg.role ? <Text style={styles.authorRole}>  {msg.role}</Text> : null}
+                      </Text>
+                    ) : null}
                     <Text style={[styles.bubbleText, own && { color: theme.accentText }]}>{msg.message}</Text>
                   </View>
                   {showAvatar ? <Text style={styles.time}>{formatTime(msg.created_at)}</Text> : null}
@@ -211,12 +211,12 @@ const styles = StyleSheet.create({
   msgRowOwn: { justifyContent: 'flex-end' },
   avatarSlot: { width: 30 },
   msgCol: { maxWidth: '78%' },
-  author: { color: palette.muted, fontSize: 12, fontWeight: '600', marginBottom: 3, marginLeft: 4 },
+  author: { fontSize: 12, fontWeight: '700', marginBottom: 2 },
   authorRole: { color: palette.dim, fontWeight: '500' },
   bubble: { borderRadius: 18, paddingHorizontal: 14, paddingVertical: 9 },
-  bubbleOther: { backgroundColor: palette.surface2 },
-  ownFirst: { borderTopRightRadius: 6 },
-  otherFirst: { borderTopLeftRadius: 6 },
+  bubbleOther: { backgroundColor: palette.surface },
+  ownLast: { borderBottomRightRadius: 5 },
+  otherLast: { borderBottomLeftRadius: 5 },
   bubbleText: { color: palette.text, fontSize: 16, lineHeight: 21 },
   time: { color: palette.dim, fontSize: 11, marginTop: 3, marginHorizontal: 4 },
   inlineError: { color: palette.no, fontSize: 13, textAlign: 'center', paddingVertical: 4 },

@@ -134,7 +134,7 @@ export default function EventDetailScreen() {
         }
       >
         <Animated.View entering={FadeInDown.duration(350)} style={styles.hero}>
-          <View style={styles.heroDate}>
+          <View style={[styles.heroDate, { backgroundColor: `${eventTypeColor[e.type] ?? eventTypeColor.event}24` }]}>
             <Text style={[styles.heroWeekday, { color: eventTypeColor[e.type] ?? eventTypeColor.event }]}>
               {new Date(e.starts_at).toLocaleDateString('cs-CZ', { weekday: 'short' }).toUpperCase()}
             </Text>
@@ -143,8 +143,7 @@ export default function EventDetailScreen() {
           </View>
           <View style={{ flex: 1, gap: 6 }}>
             <View style={styles.heroChips}>
-              <View style={[styles.typeChip, { backgroundColor: `${eventTypeColor[e.type] ?? eventTypeColor.event}26` }]}>
-                <View style={[styles.typeDot, { backgroundColor: eventTypeColor[e.type] ?? eventTypeColor.event }]} />
+              <View style={[styles.typeChip, { backgroundColor: `${eventTypeColor[e.type] ?? eventTypeColor.event}2E` }]}>
                 <Text style={[styles.typeChipText, { color: eventTypeColor[e.type] ?? eventTypeColor.event }]}>{eventTypeLabel[e.type] ?? 'Akce'}</Text>
               </View>
               <Text style={styles.countdown}>{countdown(e.starts_at, e.ends_at)}</Text>
@@ -279,9 +278,9 @@ export default function EventDetailScreen() {
                 <View style={styles.summary}>
                   {[
                     ['Pozvaní', attendance.data.summary.invited, palette.text],
-                    ['Přijde', attendance.data.summary.yes, palette.yes],
-                    ['Nepřijde', attendance.data.summary.no, palette.no],
-                    ['Čeká', attendance.data.summary.pending, palette.muted],
+                    ['Přijde', attendance.data.summary.yes, '#3EC27B'],
+                    ['Nepřijde', attendance.data.summary.no, '#EF6A6A'],
+                    ['Čeká', attendance.data.summary.pending, palette.text],
                   ].map(([label, count, color]) => (
                     <View key={label as string} style={styles.summaryItem}>
                       <Text style={[styles.summaryCount, { color: color as string }]}>{count as number}</Text>
@@ -289,6 +288,13 @@ export default function EventDetailScreen() {
                     </View>
                   ))}
                 </View>
+                {attendance.data.summary.invited > 0 ? (
+                  <View style={[styles.partBar, { marginTop: 12 }]}>
+                    <View style={{ flex: attendance.data.summary.yes, backgroundColor: palette.yes }} />
+                    <View style={{ flex: attendance.data.summary.no, backgroundColor: palette.no }} />
+                    <View style={{ flex: attendance.data.summary.pending, backgroundColor: palette.surface2 }} />
+                  </View>
+                ) : null}
                 <Group style={{ marginTop: 12 }}>
                   {attendance.data.rows.map((r, i) => (
                     <View key={r.user.id} style={[styles.person, i < attendance.data!.rows.length - 1 && styles.personDivider]}>
@@ -377,14 +383,13 @@ export default function EventDetailScreen() {
 const styles = StyleSheet.create({
   center: { alignItems: 'center', justifyContent: 'center', padding: 24 },
   hero: { flexDirection: 'row', gap: 16, paddingTop: 6, paddingBottom: 20, alignItems: 'flex-start' },
-  heroDate: { width: 70, paddingVertical: 10, borderRadius: 16, backgroundColor: palette.surface, alignItems: 'center' },
+  heroDate: { width: 70, paddingVertical: 10, borderRadius: 16, alignItems: 'center' },
   heroWeekday: { fontSize: 12, fontWeight: '700', letterSpacing: 0.6 },
   heroDay: { color: palette.text, fontSize: 32, fontWeight: '700', lineHeight: 38 },
   heroMonth: { color: palette.muted, fontSize: 13, fontWeight: '500' },
   heroChips: { flexDirection: 'row', alignItems: 'center', gap: 8, flexWrap: 'wrap' },
-  typeChip: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 9, height: 24, borderRadius: 12 },
-  typeDot: { width: 7, height: 7, borderRadius: 4 },
-  typeChipText: { fontSize: 12, fontWeight: '700', letterSpacing: 0.3, textTransform: 'uppercase' },
+  typeChip: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 9, height: 24, borderRadius: 7 },
+  typeChipText: { fontSize: 12, fontWeight: '700' },
   countdown: { color: palette.muted, fontSize: 13, fontWeight: '600' },
   partCard: { backgroundColor: palette.surface, borderRadius: 16, padding: 16, gap: 14 },
   partStats: { flexDirection: 'row' },
@@ -415,8 +420,8 @@ const styles = StyleSheet.create({
   myResponseValue: { fontSize: 16, fontWeight: '600' },
   note: { color: palette.dim, fontSize: 13, lineHeight: 19, marginTop: 8, marginHorizontal: 16 },
   description: { color: palette.text, fontSize: 15, lineHeight: 22 },
-  summary: { flexDirection: 'row', backgroundColor: palette.surface, borderRadius: 14, paddingVertical: 12 },
-  summaryItem: { flex: 1, alignItems: 'center', gap: 2 },
+  summary: { flexDirection: 'row', gap: 8 },
+  summaryItem: { flex: 1, alignItems: 'center', gap: 2, backgroundColor: palette.surface, borderRadius: 14, paddingVertical: 12 },
   summaryCount: { fontSize: 24, fontWeight: '700' },
   summaryLabel: { color: palette.muted, fontSize: 12, fontWeight: '500' },
   person: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 14, paddingVertical: 10 },

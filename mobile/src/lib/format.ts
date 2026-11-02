@@ -30,3 +30,24 @@ export function dayLabel(iso: string) {
 export function initials(first?: string | null, last?: string | null) {
   return `${(first ?? '').charAt(0)}${(last ?? '').charAt(0)}`.toUpperCase()
 }
+
+/** "za 2 h 14 min", "Zítra", "Za 3 dny"… relative to now. */
+export function countdownLabel(startsAt: string, endsAt: string | null) {
+  const start = new Date(startsAt).getTime()
+  const end = endsAt ? new Date(endsAt).getTime() : start
+  const now = Date.now()
+  if (now >= start && now <= end) return 'Právě probíhá'
+  if (now > end) return 'Proběhlo'
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const day = new Date(startsAt)
+  day.setHours(0, 0, 0, 0)
+  const days = Math.round((day.getTime() - today.getTime()) / 86400000)
+  if (days === 0) {
+    const mins = Math.round((start - now) / 60000)
+    return mins < 60 ? `za ${mins} min` : `za ${Math.floor(mins / 60)} h ${mins % 60} min`
+  }
+  if (days === 1) return 'Zítra'
+  if (days < 5) return `Za ${days} dny`
+  return `Za ${days} dní`
+}
